@@ -5,7 +5,7 @@ Application::Application(const AppData& appDataInput) : appData(appDataInput) {
     Startup(); // Initialize the application and subsystems
 
     Loop();    // Run the main application loop
-    
+
     Shutdown();// Perform cleanup before exiting the application
 }
 
@@ -15,6 +15,25 @@ Application::~Application() {}
 // Startup function that initializes the application and subsystems
 int Application::Startup() {
     LogManager::Log("Application: Startup");
+    // Create a buffer to store the formatted string
+    char appDataPrintout[256];
+
+    // Use snprintf to format the string
+    snprintf(appDataPrintout, sizeof(appDataPrintout),
+        "AppData:\n"
+        "  applicationName: %s\n"
+        "  windowXPos: %d\n"
+        "  windowYPos: %d\n"
+        "  windowWidth: %d\n"
+        "  windowHeight: %d\n"
+        "  fullscreen: %s\n",
+        appData.applicationName,
+        appData.windowXPos,
+        appData.windowYPos,
+        appData.windowWidth,
+        appData.windowHeight,
+        appData.fullscreen ? "true" : "false");
+    LogManager::Log(appDataPrintout);
 
     // Get a reference to the LogManager singleton instance
     appSubSystem.logManagerPtr = &LogManager::GetInstance();

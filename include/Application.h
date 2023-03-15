@@ -1,9 +1,10 @@
 #pragma once
 #include "LogManager.h"
+const int MAX_APP_NAME_LENGTH = 128;
 
 // Structure to hold the application data, such as window properties and settings
 struct AppData {
-    const char* applicationName;
+    char applicationName[MAX_APP_NAME_LENGTH];
     int windowXPos;
     int windowYPos;
     int windowWidth;
