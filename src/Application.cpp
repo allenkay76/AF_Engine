@@ -1,36 +1,44 @@
 #include "Application.h"
 
-Application::Application() {
-    Startup();
-    Loop();
-    Shutdown();
+// Constructor that initializes the application and starts its lifecycle
+Application::Application(const AppData& appDataInput) : appData(appDataInput) {
+    Startup(); // Initialize the application and subsystems
+
+    Loop();    // Run the main application loop
+    
+    Shutdown();// Perform cleanup before exiting the application
 }
 
+// Destructor
 Application::~Application() {}
 
+// Startup function that initializes the application and subsystems
 int Application::Startup() {
-    // TODO: Implement startup code
     LogManager::Log("Application: Startup");
+
+    // Get a reference to the LogManager singleton instance
     appSubSystem.logManagerPtr = &LogManager::GetInstance();
+
+    // Start up the LogManager
     appSubSystem.logManagerPtr->Startup();
+
     return 0;
 }
 
+// Main application loop
 int Application::Loop() {
-    // TODO: Implement main loop code
+    // TODO: Implement the main loop code
     LogManager::Log("Application: Loop");
     return 0;
 }
 
+// Shutdown function that cleans up the application and subsystems
 int Application::Shutdown() {
-    // TODO: Implement shutdown code
+    // TODO: Implement the shutdown code
     LogManager::Log("Application: Shutdown");
-    appSubSystem.logManagerPtr->Shutdown();
 
-    if(appSubSystem.logManagerPtr != nullptr){
-        appSubSystem.logManagerPtr->DestroyInstance();
-        appSubSystem.logManagerPtr = nullptr;
-    }
+    // Shutdown the LogManager
+    appSubSystem.logManagerPtr->Shutdown();
 
     return 0;
 }

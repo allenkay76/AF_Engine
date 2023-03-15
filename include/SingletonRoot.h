@@ -1,13 +1,24 @@
 #pragma once
+#include <mutex>
 
 class SingletonRoot {
 public:
-    static SingletonRoot& getInstance();
+    // Deleted copy constructor and assignment operator to prevent copying
+    SingletonRoot(const SingletonRoot&) = delete;
+    SingletonRoot& operator=(const SingletonRoot&) = delete;
+
+    // Get the singleton instance of SingletonRoot
+    static SingletonRoot& getInstance() {
+        // Call the helper function to get the unique instance
+        static SingletonRoot instance;
+        return instance;
+    }
 
 protected:
-    SingletonRoot(); // private constructor to prevent direct instantiation
-    ~SingletonRoot(); // private destructor to prevent deletion of the instance
-    SingletonRoot(const SingletonRoot&) = delete; // disable copy constructor
-    SingletonRoot& operator=(const SingletonRoot&) = delete; // disable assignment operator
-   
+    // Default constructor for SingletonRoot
+    SingletonRoot() = default;
+
+    // Destructor for SingletonRoot
+    virtual ~SingletonRoot() = default;
 };
+

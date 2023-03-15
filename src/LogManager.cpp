@@ -1,35 +1,32 @@
 #include "LogManager.h"
 
-
+// Get the singleton instance of LogManager
 LogManager& LogManager::GetInstance() {
     static LogManager instance;
     return instance;
 }
 
+// Log a message to the console
 void LogManager::Log(const char* message) {
-    // log the message
     printf("%s\n", message);
 }
 
-int LogManager::Startup(){
+// Initialize the LogManager
+int LogManager::Startup() {
     Log("LogManager: Starting up");
     return 1;
 }
 
-int LogManager::Shutdown(){
-    Log("LogManager: Shutting up");
+// Shutdown the LogManager
+int LogManager::Shutdown() {
+    Log("LogManager: Shutting down");
     return 1;
 }
 
-void LogManager::DestroyInstance(){
-    delete &GetInstance();
-}
+// Constructor for LogManager (singleton, should not be explicitly called)
+LogManager::LogManager() {}
 
-
-LogManager::LogManager() {
-    // Constructor that should never happen
-}
-
+// Destructor for LogManager (performs any necessary cleanup)
 LogManager::~LogManager() {
-    // cleanup the logger
+    // Implement any cleanup code, if necessary
 }

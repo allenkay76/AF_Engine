@@ -1,39 +1,50 @@
+#pragma once
 #include "LogManager.h"
 
-struct AppData {  
-    const char* applicationName;  
-    int windowXPos;  
-    int windowYPos;  
-    int windowWidth;  
-    int windowHeight;  
-    bool fullscreen;  
+// Structure to hold the application data, such as window properties and settings
+struct AppData {
+    const char* applicationName;
+    int windowXPos;
+    int windowYPos;
+    int windowWidth;
+    int windowHeight;
+    bool fullscreen;
 };
 
+// Structure to hold pointers to the various subsystems used by the Application
+struct AppSubSystems {
+    // Pointer to LogManager subsystem
+    LogManager* logManagerPtr;
 
-struct AppSubSystems{
-    //MemoryManager* memoryManagerPtr;  
-    //TimeManager* timeManagerPtr;  
-    //ApplicationStruct* applicationStructPtr;  
-    LogManager* logManagerPtr;  
-    //InputManager* inputManagerPtr;  
-    //SceneManager* sceneManagerPtr;  
-    //UIManager* uiManagerPtr;  
-    //PhysicsManager* physicsManager;  
-    //RendererManager* rendererManager;  
-    //ExceptionManager* exceptionManager;  
-    //SoundManager* soundManager;  
+    // Uncomment and add the relevant headers to use the following subsystems
+    // MemoryManager* memoryManagerPtr;
+    // TimeManager* timeManagerPtr;
+    // ApplicationStruct* applicationStructPtr;
+    // InputManager* inputManagerPtr;
+    // SceneManager* sceneManagerPtr;
+    // UIManager* uiManagerPtr;
+    // PhysicsManager* physicsManager;
+    // RendererManager* rendererManager;
+    // ExceptionManager* exceptionManager;
+    // SoundManager* soundManager;
 };
 
 class Application {
-    public: 
-        AppSubSystems appSubSystem;
-        AppData appData;
+public:
+    // Application subsystems and data
+    AppSubSystems appSubSystem;
+    AppData appData;
 
-        Application();
-        ~Application();
+    // Constructor that takes a reference to an AppData object
+    Application(const AppData& appDataInput);
+    // Destructor
+    ~Application();
 
-    private:
-        int Startup();
-        int Loop();
-        int Shutdown();
+private:
+    // Startup function for initializing subsystems and resources
+    int Startup();
+    // Main application loop
+    int Loop();
+    // Shutdown function for cleaning up subsystems and resources
+    int Shutdown();
 };
