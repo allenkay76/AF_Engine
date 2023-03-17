@@ -12,10 +12,10 @@ public:
     static void Log(const char* message);
 
     // Initialize the LogManager
-    int Startup();
+    int startup();
 
     // Shutdown the LogManager
-    int Shutdown();
+    int shutdown();
 
 protected:
     // Constructor for LogManager (singleton, should not be explicitly called)

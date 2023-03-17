@@ -12,13 +12,13 @@ void LogManager::Log(const char* message) {
 }
 
 // Initialize the LogManager
-int LogManager::Startup() {
+int LogManager::startup() {
     Log("LogManager: Starting up");
     return 1;
 }
 
 // Shutdown the LogManager
-int LogManager::Shutdown() {
+int LogManager::shutdown() {
     Log("LogManager: Shutting down");
     return 1;
 }

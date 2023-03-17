@@ -50,11 +50,11 @@ public:
 
 private:
     // Startup function for initializing subsystems and resources
-    int Startup();
+    int startup();
     // Main application loop
-    int Loop();
+    int loop();
     // Shutdown function for cleaning up subsystems and resources
-    int Shutdown();
+    int shutdown();
 };
 
 
