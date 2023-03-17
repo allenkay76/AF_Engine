@@ -3,8 +3,6 @@
 
 #include "Application.h"
 #include "AF_MemoryLeakChecker.h"
-//if using Windows, check for memory leaks
-
 
 int main(int argc, char* args[]) {
     // Print the starting message and display the command-line arguments

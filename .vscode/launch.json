@@ -1,7 +1,43 @@
 {
     "configurations": [
         {
-            "name": "C/C++: g++.exe build and debug active file",
+            "name": "C/C++: g++.exe DEBUG",
+            "type": "cppdbg",
+            "request": "launch",
+            // Path to the executable to debug
+            "program": "${workspaceFolder}\\bin\\AF_Engine.exe",
+            // Command line arguments to the executable
+            "args": ["config/AF_Engine.json"],
+            // Whether or not to stop at the entry point of the program
+            "stopAtEntry": false,
+            // Current working directory of the program
+            "cwd": "${workspaceFolder}",
+            // Environment variables to set for the program
+            "environment": [],
+            // Which console to use for input/output
+            "console": "internalConsole",
+            // Which debugger to use
+            "MIMode": "gdb",
+            // Path to the debugger executable
+            "miDebuggerPath": "C:\\MinGW\\bin\\gdb.exe",
+            // Commands to send to the debugger before the program starts
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ],
+            // Task to run before launching the program
+            "preLaunchTask": "C/C++: g++.exe build linux DEBUG"
+        },
+        {
+            "name": "C/C++: g++.exe RELEASE",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}\\bin\\AF_Engine.exe",
@@ -9,7 +45,7 @@
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
-            "externalConsole": false,
+            "console": "internalConsole",
             "MIMode": "gdb",
             "miDebuggerPath": "C:\\MinGW\\bin\\gdb.exe",
             "setupCommands": [
@@ -24,10 +60,32 @@
                     "ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "C/C++: g++.exe build active file"
+            "preLaunchTask": "C/C++: g++.exe build linux RELEASE"
         },
         {
-            "name": "C/C++: MSVC build and debug active file",
+            // Name of the launch configuration
+            "name": "C/C++: MSVC DEBUG",
+            // Type of debugger to use
+            "type": "cppvsdbg",
+            // Request to launch the debugger
+            "request": "launch",
+            // Path to the executable file to debug
+            "program": "${workspaceFolder}\\bin\\AF_Engine.exe",
+            // Arguments to pass to the program
+            "args": ["config/AF_Engine.json"],
+            // Whether to stop at the entry point of the program
+            "stopAtEntry": false,
+            // Current working directory for the program
+            "cwd": "${workspaceFolder}",
+            // Environment variables to set for the program
+            "environment": [],
+            // Type of console to use for output
+            "console": "internalConsole",
+            // Task to run before launching the debugger
+            "preLaunchTask": "C/C++: cl.exe Windows DEBUG"
+        },
+        {
+            "name": "C/C++: MSVC RELEASE",
             "type": "cppvsdbg",
             "request": "launch",
             "program": "${workspaceFolder}\\bin\\AF_Engine.exe",
@@ -35,8 +93,9 @@
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
-            "externalConsole": false,
-            "preLaunchTask": "C/C++: cl.exe build Windows Debug"
+            "console": "internalConsole",
+            "preLaunchTask": "C/C++: cl.exe Windows RELEASE",
+            "debugging": false
         }
     ],
     "version": "2.0.0"
