@@ -1,7 +1,9 @@
 #include "Application.h"
+#include <cstring>
 #include <fstream>
 #include <iterator>
 #include <iostream>
+#include "AF_JsonParser.h"
 
 // Constructor that initializes the application and starts its lifecycle
 Application::Application(const AppData& appDataInput) : appData(appDataInput) {
@@ -18,11 +20,12 @@ Application::~Application() {}
 // Startup function that initializes the application and subsystems
 int Application::startup() {
     LogManager::Log("Application: Startup");
-    // Create a buffer to store the formatted string
-    char appDataPrintout[256];
+    // Calculate the required buffer size for the formatted string
+    constexpr int bufferSize = 256;
+    char appDataPrintout[bufferSize];
 
-    // Use snprintf to format the string
-    snprintf(appDataPrintout, sizeof(appDataPrintout),
+    // Use snprintf to format the string and check for truncation
+    int result = snprintf(appDataPrintout, bufferSize,
         "AppData:\n"
         "  applicationName: %s\n"
         "  windowXPos: %d\n"
@@ -36,8 +39,14 @@ int Application::startup() {
         appData.windowWidth,
         appData.windowHeight,
         appData.fullscreen ? "true" : "false");
-    LogManager::Log(appDataPrintout);
 
+    //ensure we don't have an encoding error or truncation
+    if (result >= bufferSize || result < 0) {
+        std::cerr << "Buffer size is not large enough to accommodate the formatted string or an encoding error occurred." << std::endl;
+    } else {
+        LogManager::Log(appDataPrintout);
+    }
+    
     // Get a reference to the LogManager singleton instance
     appSubSystem.logManagerPtr = &LogManager::GetInstance();
 
@@ -76,14 +85,15 @@ AppData Application::InitializeAppData(const char* configPathName) {
         false       // fullscreen
     };
 
-        // Set the default applicationName
+    // Set the default applicationName
     std::strncpy(appData.applicationName, "DEFAULT", MAX_APP_NAME_LENGTH - 1);
     appData.applicationName[MAX_APP_NAME_LENGTH - 1] = '\0'; // Ensure null-termination
 
     // Attempt to open the JSON configuration file
     std::ifstream configFile(configPathName);
 
-    if (configFile.is_open()) {
+    //check if the config file is open
+    if (configFile.good()) {
         try {
             // If the file is open, read the content and remove any whitespaces
             std::string content((std::istreambuf_iterator<char>(configFile)), std::istreambuf_iterator<char>());

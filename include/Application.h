@@ -1,7 +1,6 @@
 #pragma once
-#include <cstring>
 #include "LogManager.h"
-#include "AF_JsonParser.h"
+
 const int MAX_APP_NAME_LENGTH = 128;
 
 // Structure to hold the application data, such as window properties and settings

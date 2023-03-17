@@ -1,4 +1,5 @@
 #include "LogManager.h"
+#include <iostream>
 
 // Get the singleton instance of LogManager
 LogManager& LogManager::GetInstance() {
@@ -8,7 +9,7 @@ LogManager& LogManager::GetInstance() {
 
 // Log a message to the console
 void LogManager::Log(const char* message) {
-    printf("%s\n", message);
+    std::cout << message << std::endl;
 }
 
 // Initialize the LogManager

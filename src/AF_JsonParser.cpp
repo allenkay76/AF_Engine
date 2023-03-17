@@ -1,7 +1,6 @@
 #include "AF_JsonParser.h"
 #include <sstream>
 #include <fstream>
-#include <cctype>
 
 // Function to remove whitespaces from a string
 // input: A string containing any number of whitespaces

@@ -25,6 +25,18 @@
                 }
             ],
             "preLaunchTask": "C/C++: g++.exe build active file"
+        },
+        {
+            "name": "C/C++: MSVC build and debug active file",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}\\bin\\AF_Engine.exe",
+            "args": ["config/AF_Engine.json"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "preLaunchTask": "C/C++: cl.exe build Windows Debug"
         }
     ],
     "version": "2.0.0"
