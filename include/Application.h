@@ -1,5 +1,7 @@
 #pragma once
+#include <cstring>
 #include "LogManager.h"
+#include "AF_JsonParser.h"
 const int MAX_APP_NAME_LENGTH = 128;
 
 // Structure to hold the application data, such as window properties and settings
@@ -30,6 +32,7 @@ struct AppSubSystems {
     // SoundManager* soundManager;
 };
 
+
 class Application {
 public:
     // Application subsystems and data
@@ -41,6 +44,10 @@ public:
     // Destructor
     ~Application();
 
+    static AppData InitializeAppData(const char* configPathName);
+
+    
+
 private:
     // Startup function for initializing subsystems and resources
     int Startup();
@@ -49,3 +56,5 @@ private:
     // Shutdown function for cleaning up subsystems and resources
     int Shutdown();
 };
+
+
