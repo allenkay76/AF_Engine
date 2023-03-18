@@ -1,5 +1,7 @@
 #pragma once
 #include "LogManager.h"
+//#define SDL_MAIN_HANDLED //https://stackoverflow.com/questions/32342285/undefined-reference-to-winmain16-c-sdl-2/32343111#32343111
+#include <SDL.h>
 
 const int MAX_APP_NAME_LENGTH = 128;
 
@@ -48,6 +50,12 @@ public:
     
 
 private:
+    //SDL Stuff
+    SDL_Window *window;
+    SDL_Renderer *renderer;
+    bool isRunning;
+    SDL_Event event;
+
     // Startup function for initializing subsystems and resources
     int startup();
     // Main application loop

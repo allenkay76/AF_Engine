@@ -1,13 +1,21 @@
+
 #include <iostream>
 #include <stdlib.h>
 
 #include "Application.h"
 #include "AF_MemoryLeakChecker.h"
 
+
+
+
+
 int main(int argc, char* args[]) {
     // Print the starting message and display the command-line arguments
     std::cout << "Starting AF_Engine entry point" << std::endl;
     std::cout << "Number of arguments: " << argc << std::endl;
+
+    
+
 
     //Check if there is a config file path argument
     if(argc > 1){

@@ -5,6 +5,8 @@
 #include <iostream>
 #include "AF_JsonParser.h"
 
+
+
 // Constructor that initializes the application and starts its lifecycle
 Application::Application(const AppData& appDataInput) : appData(appDataInput) {
     startup(); // Initialize the application and subsystems
@@ -19,6 +21,7 @@ Application::~Application() {}
 
 // Startup function that initializes the application and subsystems
 int Application::startup() {
+    
     LogManager::Log("Application: Startup");
     // Calculate the required buffer size for the formatted string
     constexpr int bufferSize = 256;
@@ -53,6 +56,13 @@ int Application::startup() {
     // Start up the LogManager
     appSubSystem.logManagerPtr->startup();
 
+    SDL_Init(SDL_INIT_EVERYTHING);
+
+    window = SDL_CreateWindow("AF_Engine", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, appData.windowWidth, appData.windowHeight, 0);
+    renderer = SDL_CreateRenderer(window, -1, 0);
+
+    isRunning = true;
+    
     return 0;
 }
 
@@ -60,6 +70,30 @@ int Application::startup() {
 int Application::loop() {
     // TODO: Implement the main loop code
     LogManager::Log("Application: Loop");
+
+    while (isRunning)
+    {
+        while (SDL_PollEvent(&event))
+        {
+            switch (event.type)
+            {
+            case SDL_QUIT:
+                isRunning = false;
+                break;
+
+            case SDL_KEYDOWN:
+                if (event.key.keysym.sym == SDLK_ESCAPE)
+                {
+                    isRunning = false;
+                }
+            }
+        }
+
+        SDL_RenderClear(renderer);
+        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+
+        SDL_RenderPresent(renderer);
+    }
     return 0;
 }
 
@@ -70,6 +104,10 @@ int Application::shutdown() {
 
     // Shutdown the LogManager
     appSubSystem.logManagerPtr->shutdown();
+
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
 
     return 0;
 }

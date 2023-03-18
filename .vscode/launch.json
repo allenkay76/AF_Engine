@@ -13,7 +13,8 @@
             // Current working directory of the program
             "cwd": "${workspaceFolder}",
             // Environment variables to set for the program
-            "environment": [],
+            "environment": [
+            ],
             // Which console to use for input/output
             "console": "internalConsole",
             // Which debugger to use
