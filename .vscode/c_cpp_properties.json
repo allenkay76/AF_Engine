@@ -16,24 +16,6 @@
             "cppStandard": "gnu++14",
             "intelliSenseMode": "windows-gcc-x86",
             "configurationProvider": "ms-vscode.makefile-tools"
-        },
-        {
-            "name": "Win32_msvc",
-            "includePath": [
-                "${workspaceFolder}/**",
-                "${workspaceFolder}/include",
-                "${workspaceFolder}/SDL2-devel-2.26.4-mingw/SDL2-2.26.4/x86_64-w64-mingw32/include"
-            ],
-            "defines": [
-                "_DEBUG",
-                "UNICODE",
-                "_UNICODE"
-            ],
-            "compilerPath": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.28.29910\\bin\\Hostx86\\x86\\cl.exe",
-            "cStandard": "c11",
-            "cppStandard": "c++17",
-            "intelliSenseMode": "windows-msvc-x86",
-            "configurationProvider": "ms-vscode.makefile-tools"
         }
     ],
     "version": 4
