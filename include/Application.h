@@ -1,25 +1,18 @@
 #pragma once
+#include "AppData.h"
 #include "LogManager.h"
-//#define SDL_MAIN_HANDLED //https://stackoverflow.com/questions/32342285/undefined-reference-to-winmain16-c-sdl-2/32343111#32343111
-#include <SDL.h>
+#include "GameEngine.h"
 
-const int MAX_APP_NAME_LENGTH = 128;
 
-// Structure to hold the application data, such as window properties and settings
-struct AppData {
-    char applicationName[MAX_APP_NAME_LENGTH];
-    int windowXPos;
-    int windowYPos;
-    int windowWidth;
-    int windowHeight;
-    bool fullscreen;
-};
+
+
+
 
 // Structure to hold pointers to the various subsystems used by the Application
 struct AppSubSystems {
     // Pointer to LogManager subsystem
     LogManager* logManagerPtr;
-
+    GameEngine* gameEnginePtr;
     // Uncomment and add the relevant headers to use the following subsystems
     // MemoryManager* memoryManagerPtr;
     // TimeManager* timeManagerPtr;
@@ -51,10 +44,7 @@ public:
 
 private:
     //SDL Stuff
-    SDL_Window *window;
-    SDL_Renderer *renderer;
-    bool isRunning;
-    SDL_Event event;
+    
 
     // Startup function for initializing subsystems and resources
     int startup();

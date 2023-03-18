@@ -52,16 +52,13 @@ int Application::startup() {
     
     // Get a reference to the LogManager singleton instance
     appSubSystem.logManagerPtr = &LogManager::GetInstance();
+    appSubSystem.gameEnginePtr = &GameEngine::GetInstance();
 
     // Start up the LogManager
     appSubSystem.logManagerPtr->startup();
+    appSubSystem.gameEnginePtr->startup(&appData);
 
-    SDL_Init(SDL_INIT_EVERYTHING);
-
-    window = SDL_CreateWindow("AF_Engine", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, appData.windowWidth, appData.windowHeight, 0);
-    renderer = SDL_CreateRenderer(window, -1, 0);
-
-    isRunning = true;
+    appData.isRunning = true;
     
     return 0;
 }
@@ -69,31 +66,12 @@ int Application::startup() {
 // Main application loop
 int Application::loop() {
     // TODO: Implement the main loop code
-    LogManager::Log("Application: Loop");
-
-    while (isRunning)
-    {
-        while (SDL_PollEvent(&event))
-        {
-            switch (event.type)
-            {
-            case SDL_QUIT:
-                isRunning = false;
-                break;
-
-            case SDL_KEYDOWN:
-                if (event.key.keysym.sym == SDLK_ESCAPE)
-                {
-                    isRunning = false;
-                }
-            }
-        }
-
-        SDL_RenderClear(renderer);
-        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-
-        SDL_RenderPresent(renderer);
+    
+    LogManager::Log("Application: Loop starting");
+    while(appData.isRunning){
+        appSubSystem.gameEnginePtr->loop();
     }
+    
     return 0;
 }
 
@@ -101,13 +79,12 @@ int Application::loop() {
 int Application::shutdown() {
     // TODO: Implement the shutdown code
     LogManager::Log("Application: Shutdown");
-
+    appData.isRunning = false;
     // Shutdown the LogManager
     appSubSystem.logManagerPtr->shutdown();
+    appSubSystem.gameEnginePtr->shutdown();
 
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
+    
 
     return 0;
 }
@@ -120,7 +97,8 @@ AppData Application::InitializeAppData(const char* configPathName) {
         0,          // windowYPos
         720,        // windowWidth
         640,        // windowHeight
-        false       // fullscreen
+        false,       // fullscreen
+        false        // isRunning
     };
 
     // Set the default applicationName
