@@ -9,7 +9,7 @@ public:
     static LogManager& GetInstance();
 
     // Log a message to the console
-    static void Log(const char* message);
+    static void Log(const char* message, ...);
 
     // Initialize the LogManager
     int startup();

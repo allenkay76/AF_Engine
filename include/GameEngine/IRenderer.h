@@ -1,4 +1,5 @@
 #pragma once
+#include "Rendering/imageData.h"
 /*
 This is an interface class for a rendering engine. 
 It provides a set of pure virtual functions that define the basic operations that a renderer must support. 
@@ -11,10 +12,13 @@ and implementing the desired functions.
 */
 class IRenderer {
 public:
-    virtual void Initialize(const char* windowName, const int windowWidth, const int windowHeight) = 0;
+    virtual bool Initialize(const char* windowName, const int windowWidth, const int windowHeight) = 0;
     virtual void Shutdown() = 0;
     virtual void BeginFrame() = 0;
     virtual void EndFrame() = 0;
+
+    //Load Media from file path
+    virtual bool loadImage(const char* filePath, ImageData* imageData) = 0;
     // add more rendering functions as needed
 };
 

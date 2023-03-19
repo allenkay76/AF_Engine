@@ -35,11 +35,15 @@ int GameEngine::startup(AppData* applicationData)
 
     
     //Initialize the renderer
-    engineRenderer->Initialize(appData->applicationName, appData->windowWidth, appData->windowHeight);
+    bool rendererInitSuccess = engineRenderer->Initialize(appData->applicationName, appData->windowWidth, appData->windowHeight);
+    if(rendererInitSuccess == false){
+        LogManager::Log("GameEngine: Renderer failed to initialize");
+        return -1;
+    }
 
     //Initialize the input
     engineInput->Initialize();
-    return 0;
+    return 1;
 }
 
 int GameEngine::loop()

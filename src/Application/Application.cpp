@@ -5,11 +5,13 @@
 #include <iostream>
 #include "Utils/AF_JsonParser.h"
 
-
-
 // Constructor that initializes the application and starts its lifecycle
 Application::Application(const AppData& appDataInput) : appData(appDataInput) {
-    startup(); // Initialize the application and subsystems
+    int applicationStartupSuccess = startup(); // Initialize the application and subsystems
+    if(applicationStartupSuccess < 1){
+        LogManager::Log("Application: Startup failed");
+        return;
+    }
 
     loop();    // Run the main application loop
 
@@ -56,11 +58,15 @@ int Application::startup() {
 
     // Start up the LogManager
     appSubSystem.logManagerPtr->startup();
-    appSubSystem.gameEnginePtr->startup(&appData);
+    int gameEngineStartupSuccess = appSubSystem.gameEnginePtr->startup(&appData);
+    if(gameEngineStartupSuccess < 1){
+        LogManager::Log("GameEngine: Startup failed");
+        return 0;
+    }
 
     appData.isRunning = true;
     
-    return 0;
+    return 1;
 }
 
 // Main application loop

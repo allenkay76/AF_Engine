@@ -1,3 +1,4 @@
+#pragma once
 #include "GameEngine/IInput.h"          // include the IInput header file
 #include <SDL2/SDL.h>        // include the SDL2 library
 #include "SDL/SDLEventData.h"    // include the SDLEventData header file
