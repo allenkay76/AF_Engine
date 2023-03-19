@@ -2,8 +2,8 @@
 #include <iostream>
 #include <stdlib.h>
 
-#include "Application.h"
-#include "AF_MemoryLeakChecker.h"
+#include "Application/Application.h"
+//#include "Utils/AF_MemoryLeakChecker.h"
 
 
 
@@ -30,7 +30,7 @@ int main(int argc, char* args[]) {
     
     //MemoryLeakTest
     //int* x = (int*)malloc(sizeof(int)); // Allocate an integer on the heap testing a leak detection
-    AF_MemoryLeakChecker::AF_CheckForMemoryLeaks();
+    //AF_MemoryLeakChecker::AF_CheckForMemoryLeaks();
     
     
     // The program exits successfully

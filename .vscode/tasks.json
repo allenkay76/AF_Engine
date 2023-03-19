@@ -49,7 +49,8 @@
                 "-I${workspaceFolder}/include",
                 "-I${workspaceFolder}/../mingw_dev_lib/i686-w64-mingw32/include/SDL2",
                 "-L${workspaceFolder}/../mingw_dev_lib/i686-w64-mingw32/lib",
-                "${workspaceFolder}/src/*", //Always ensure this comes before loading the SDL Libraries
+                "${workspaceFolder}/src/*.cpp",
+                "${workspaceFolder}/src/**/*.cpp", //Always ensure this comes before loading the SDL Libraries
                 "-lmingw32",
                 "-lSDL2main",
                 "-lSDL2",
@@ -109,7 +110,8 @@
                 "-I${workspaceFolder}/include",
                 "-I${workspaceFolder}/../mingw_dev_lib/i686-w64-mingw32/include/SDL2",
                 "-L${workspaceFolder}/../mingw_dev_lib/i686-w64-mingw32/lib",
-                "${workspaceFolder}/src/*", //Always ensure this comes before loading the SDL Libraries
+                "${workspaceFolder}/src/*.cpp",
+                "${workspaceFolder}/src/**/*.cpp", //Always ensure this comes before loading the SDL Libraries
                 "-lmingw32",
                 "-lSDL2main",
                 "-lSDL2",

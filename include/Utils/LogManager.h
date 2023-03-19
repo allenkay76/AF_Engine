@@ -1,5 +1,5 @@
 #pragma once
-#include "SingletonRoot.h"
+#include "Utils/SingletonRoot.h"
 #include <stdio.h>
 
 // LogManager is a singleton class responsible for logging messages

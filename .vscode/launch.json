@@ -42,11 +42,17 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/bin/AF_Engine.exe",
+            "logging": {
+                "trace": true,
+                "traceResponse": false,
+                "engineLogging": false,
+                "moduleLoad": false
+              },
             "args": ["config/AF_Engine.json"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
-            "console": "internalConsole",
+            "console": "externalConsole",
             "MIMode": "gdb",
             "miDebuggerPath": "C:/MinGW/bin/gdb.exe",
             "setupCommands": [

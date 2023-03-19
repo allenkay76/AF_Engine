@@ -4,7 +4,8 @@
             "name": "Win32_gcc",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${workspaceFolder}/include"
+                "${workspaceFolder}/include/**",
+                "${workspaceFolder}/../mingw_dev_lib/i686-w64-mingw32/include/SDL2"
             ],
             "defines": [
                 "_DEBUG",

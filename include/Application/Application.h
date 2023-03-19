@@ -1,7 +1,7 @@
 #pragma once
-#include "AppData.h"
-#include "LogManager.h"
-#include "GameEngine.h"
+#include "Application/AppData.h"
+#include "Utils/LogManager.h"
+#include "GameEngine/GameEngine.h"
 
 
 
