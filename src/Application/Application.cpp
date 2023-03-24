@@ -37,13 +37,15 @@ int Application::startup() {
         "  windowYPos: %d\n"
         "  windowWidth: %d\n"
         "  windowHeight: %d\n"
-        "  fullscreen: %s\n",
+        "  fullscreen: %s\n"
+        "  scriptPath: %s\n",
         appData.applicationName,
         appData.windowXPos,
         appData.windowYPos,
         appData.windowWidth,
         appData.windowHeight,
-        appData.fullscreen ? "true" : "false");
+        appData.fullscreen ? "true" : "false",
+        appData.scriptPath);
 
     //ensure we don't have an encoding error or truncation
     if (result >= bufferSize || result < 0) {
@@ -104,7 +106,8 @@ AppData Application::InitializeAppData(const char* configPathName) {
         720,        // windowWidth
         640,        // windowHeight
         false,       // fullscreen
-        false        // isRunning
+        false,        // isRunning
+        "DEFAULT/Path"
     };
 
     // Set the default applicationName
@@ -126,15 +129,29 @@ AppData Application::InitializeAppData(const char* configPathName) {
 
             // Parse the key-value pairs and overwrite the default values
             std::map<std::string, std::string> configData = parseKeyValuePairs(content);
+
+            // Get the application name
             std::string appName = configData["\"applicationName\""].substr(1, configData["\"applicationName\""].length() - 2);
             std::strncpy(appData.applicationName, appName.c_str(), MAX_APP_NAME_LENGTH - 1);
             appData.applicationName[MAX_APP_NAME_LENGTH - 1] = '\0'; // Ensure null-termination
             
+            // Get the window position and size
             appData.windowXPos = std::stoi(configData["\"windowXPos\""]);
             appData.windowYPos = std::stoi(configData["\"windowYPos\""]);
             appData.windowWidth = std::stoi(configData["\"windowWidth\""]);
             appData.windowHeight = std::stoi(configData["\"windowHeight\""]);
             appData.fullscreen = configData["\"fullscreen\""] == "true";
+
+            // Get the script path
+            std::string scriptPathName = configData["\"scriptPath\""].substr(1, configData["\"scriptPath\""].length() - 2);
+            // Copy the script path to appData.scriptPath
+            std::strncpy(appData.scriptPath, scriptPathName.c_str(), MAX_SCRIPT_NAME_LENGTH - 1);
+            appData.scriptPath[MAX_SCRIPT_NAME_LENGTH - 1] = '\0'; // Ensure null termination
+
+            
+            //appData.scriptPath[MAX_APP_NAME_LENGTH - 1] = '\0'; // Ensure null-termination
+
+
         } catch (const std::exception& e) {
             std::cerr << "Error while parsing JSON configuration file: " << e.what() << std::endl;
             std::cerr << "Using default application settings" << std::endl;

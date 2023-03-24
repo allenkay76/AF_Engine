@@ -1,5 +1,6 @@
 #include "GameEngine/GameEngine.h"
 #include "Utils/LogManager.h"
+#include "GameEngine/ScriptManager.h"
 #include "SDL/SDLGameRenderer.h"
 #include "SDL/SDLGameInput.h"
 
@@ -33,6 +34,8 @@ int GameEngine::startup(AppData* applicationData)
     engineRenderer = new SDLGameRenderer(); //not a singleton pattern
     engineInput = new SDLGameInput(); //not a singleton pattern
 
+    scriptManager = &ScriptManager::GetInstance();
+
     
     //Initialize the renderer
     bool rendererInitSuccess = engineRenderer->Initialize(appData->applicationName, appData->windowWidth, appData->windowHeight);
@@ -43,11 +46,17 @@ int GameEngine::startup(AppData* applicationData)
 
     //Initialize the input
     engineInput->Initialize();
+
+    //Initialize the script manager
+    scriptManager->LoadScripts(appData->scriptPath);
+    scriptManager->startup();
     return 1;
 }
 
 int GameEngine::loop()
 {
+    
+
     //Do a frame for the input and renderer
     engineInput->BeginFrame();
     engineInput->EndFrame();
@@ -56,6 +65,9 @@ int GameEngine::loop()
     if(engineInput->GetIsRunning() == false){
         appData->isRunning = false;
     }
+
+    //update the script manager.
+    scriptManager->Update();
 
     //Rendering
     engineRenderer->BeginFrame();
@@ -69,7 +81,7 @@ int GameEngine::loop()
 int GameEngine::shutdown()
 {
     LogManager::Log("GameEngine: Shutting down");
-    
+    scriptManager->shutdown();
     engineInput->Shutdown();
     engineRenderer->Shutdown();
 

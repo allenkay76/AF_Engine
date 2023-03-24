@@ -1,6 +1,7 @@
 #pragma once // Header guard to ensure this file is included only once in a compilation unit
 
 // Include necessary header files
+#include "GameEngine/ScriptManager.h"
 #include "GameEngine/IRenderer.h"
 #include "GameEngine/IInput.h"
 #include "Utils/SingletonRoot.h"
@@ -31,6 +32,8 @@ protected:
     IInput* engineInput;
     AppData* appData;
     SDLRenderData* sdlData;
+
+    ScriptManager* scriptManager;
 
     // Declare the constructor for GameEngine (singleton, should not be explicitly called)
     GameEngine();

@@ -2,6 +2,7 @@
 
 // Structure to hold the application data, such as window properties and settings
 const int MAX_APP_NAME_LENGTH = 128;
+const int MAX_SCRIPT_NAME_LENGTH = 128;
 
 // Structure to hold the application data, such as window properties and settings
 struct AppData {
@@ -12,4 +13,5 @@ struct AppData {
     int windowHeight;
     bool fullscreen;
     bool isRunning;
+    char scriptPath[MAX_SCRIPT_NAME_LENGTH];
 };

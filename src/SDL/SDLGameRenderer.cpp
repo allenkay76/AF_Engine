@@ -74,8 +74,8 @@ void SDLGameRenderer::BeginFrame()
     SDL_SetRenderDrawColor(sdlRenderData.sdlRendererPtr, 50, 50, 100, 255);
     SDL_RenderClear(sdlRenderData.sdlRendererPtr);
 
+    //Work thrugh a list of render commands to draw things to the screen.
     // Render any sprites or other game objects here
-
     // Render the image using the renderer
     SDL_Texture* texture = SDL_CreateTextureFromSurface(sdlRenderData.sdlRendererPtr, sdlRenderData.sdlImageSurface);
     if (texture != nullptr) {

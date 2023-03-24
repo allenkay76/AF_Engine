@@ -1,10 +1,16 @@
 #pragma once
+#ifdef AF_ENGINE_EXPORTS
+#define AF_Engine_API __declspec(dllexport)
+#else
+#define AF_Engine_API __declspec(dllimport)
+#endif
+
 #include "Application/AppData.h"
 #include "Utils/LogManager.h"
 #include "GameEngine/GameEngine.h"
 
 
-
+//#define SDL_MAIN_HANDLE
 
 
 
@@ -27,7 +33,7 @@ struct AppSubSystems {
 };
 
 
-class Application {
+class AF_Engine_API Application {
 public:
     // Application subsystems and data
     AppSubSystems appSubSystem;
