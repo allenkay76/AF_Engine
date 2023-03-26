@@ -18,7 +18,7 @@ public:
     virtual void EndFrame() = 0;
 
     //Load Media from file path
-    virtual bool loadImage(const char* filePath, ImageData* imageData) = 0;
+    //virtual bool loadImage(const char* filePath, ImageData* imageData) = 0;
     // add more rendering functions as needed
 };
 

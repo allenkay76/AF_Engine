@@ -194,7 +194,7 @@
                 "-fstack-protector-strong", // Enable stack protection against buffer overflow attacks
                 "-D_FORTIFY_SOURCE=2",      // Enable runtime buffer overflow protection
                 "-shared",      // Build a shared library
-                "-DAF_ENGINE_EXPORTS", // Define the AF_ENGINE_EXPORTS macro
+                //"-DAF_ENGINE_EXPORTS", // Define the AF_ENGINE_EXPORTS macro
                 "-o",           // Specify the output file name
                 "${workspaceFolder}/bin/AF_Engine.dll"  // Specify the output file name
             ],

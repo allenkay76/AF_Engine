@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 // This header file includes the interface class for rendering.
 #include "GameEngine/IRenderer.h"
 
@@ -14,7 +15,11 @@
 
 // This class inherits from the IRenderer interface class and implements SDL2 rendering functions.
 class SDLGameRenderer : public IRenderer {
+
+
 public:
+    
+    
     // This struct holds the SDL2 specific render data.
     SDLRenderData sdlRenderData;
 
@@ -28,10 +33,12 @@ public:
     void EndFrame() override;
 
     //Load Media from file path and take in an image data struct pointer, and return true if the image is loaded successfully
-    bool loadImage(const char *filePath, ImageData* imageData) override;
+    std::unique_ptr<ImageData> loadImage(const char *filePath);
 
     // This is the constructor for the SDLGameRenderer class.
     SDLGameRenderer();
     // This is the destructor for the SDLGameRenderer class.
     ~SDLGameRenderer();
+
+    
 };

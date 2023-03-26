@@ -38,14 +38,14 @@ int Application::startup() {
         "  windowWidth: %d\n"
         "  windowHeight: %d\n"
         "  fullscreen: %s\n"
-        "  scriptPath: %s\n",
+        "  engineName: %s\n",
         appData.applicationName,
         appData.windowXPos,
         appData.windowYPos,
         appData.windowWidth,
         appData.windowHeight,
         appData.fullscreen ? "true" : "false",
-        appData.scriptPath);
+        "AF_EngineBehaviour");
 
     //ensure we don't have an encoding error or truncation
     if (result >= bufferSize || result < 0) {
@@ -99,16 +99,15 @@ int Application::shutdown() {
 
 // Function to initialize the application data with desired settings
 AppData Application::InitializeAppData(const char* configPathName) {
-    AppData appData = {
-        "DEFAULT", // applicationName
-        0,          // windowXPos
-        0,          // windowYPos
-        720,        // windowWidth
-        640,        // windowHeight
-        false,       // fullscreen
-        false,        // isRunning
-        "DEFAULT/Path"
-    };
+    AppData appData;
+    std::strcpy(appData.applicationName, "DEFAULT");
+    appData.windowXPos = 0;
+    appData.windowYPos = 0;
+    appData.windowWidth = 720;
+    appData.windowHeight = 640;
+    appData.fullscreen = false;
+    appData.isRunning = false;
+    appData.afEngineBehaviourPtr = nullptr;
 
     // Set the default applicationName
     std::strncpy(appData.applicationName, "DEFAULT", MAX_APP_NAME_LENGTH - 1);
@@ -142,14 +141,6 @@ AppData Application::InitializeAppData(const char* configPathName) {
             appData.windowHeight = std::stoi(configData["\"windowHeight\""]);
             appData.fullscreen = configData["\"fullscreen\""] == "true";
 
-            // Get the script path
-            std::string scriptPathName = configData["\"scriptPath\""].substr(1, configData["\"scriptPath\""].length() - 2);
-            // Copy the script path to appData.scriptPath
-            std::strncpy(appData.scriptPath, scriptPathName.c_str(), MAX_SCRIPT_NAME_LENGTH - 1);
-            appData.scriptPath[MAX_SCRIPT_NAME_LENGTH - 1] = '\0'; // Ensure null termination
-
-            
-            //appData.scriptPath[MAX_APP_NAME_LENGTH - 1] = '\0'; // Ensure null-termination
 
 
         } catch (const std::exception& e) {

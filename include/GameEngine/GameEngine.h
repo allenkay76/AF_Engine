@@ -8,7 +8,10 @@
 #include "Application/AppData.h"
 #include "SDL/SDLRenderData.h"
 
+class Game;
+
 class GameEngine : SingletonRoot { // Define the GameEngine class and inherit from SingletonRoot
+
 public:
     // Get the singleton instance of GameEngine
     static GameEngine& GetInstance();
@@ -26,6 +29,15 @@ public:
     // Shutdown the GameEngine
     int shutdown();
 
+    //Called by main() to load the game DLL:
+    void LoadGameDLL();
+
+    ImageData* m_loadedImage;
+
+private:
+    Game* game;
+
+
 protected:
     // Declare member variables
     IRenderer* engineRenderer;
@@ -33,7 +45,7 @@ protected:
     AppData* appData;
     SDLRenderData* sdlData;
 
-    ScriptManager* scriptManager;
+    
 
     // Declare the constructor for GameEngine (singleton, should not be explicitly called)
     GameEngine();

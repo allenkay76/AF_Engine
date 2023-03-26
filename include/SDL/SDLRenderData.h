@@ -1,15 +1,15 @@
 #pragma once
+#include <memory>
+#include <vector>
+
 #include <SDL2/SDL.h>
-
+#include "SDL/SDLTexSurfData.h"
+using namespace std;
+//TODO convert to constructor struct so values are initialized to 0
 struct SDLRenderData{
-        SDL_Window* sdlWindowPtr;  //pointer to sdlWindow
-        SDL_Renderer* sdlRendererPtr;  //pointer to sdlRenderer
-
-        //can only load 1 image for now. replace with method to load multiple images
-        SDL_Surface* sdlSurfacePtr;  //pointer to sdlSurface
-
-        SDL_Surface* sdlImageSurface; //pointer to sdlImageSurface
-
-        ImageData* imagePtr; //pointer to image
-
+        std::unique_ptr<SDL_Window, decltype(&SDL_DestroyWindow)> sdlWindowPtr{nullptr, &SDL_DestroyWindow}; 
+        std::unique_ptr<SDL_Renderer, decltype(&SDL_DestroyRenderer)> sdlRendererPtr{nullptr, &SDL_DestroyRenderer};
+        std::unique_ptr<SDL_Surface, decltype(&SDL_FreeSurface)> sdlSurfacePtr{nullptr, &SDL_FreeSurface};
+        std::unique_ptr<ImageData> imagePtr{nullptr};
+        std::vector<std::unique_ptr<SDLTexSurfData>> sdlTexSurfList;
     };

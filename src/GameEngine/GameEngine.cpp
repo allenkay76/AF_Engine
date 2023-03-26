@@ -4,6 +4,7 @@
 #include "SDL/SDLGameRenderer.h"
 #include "SDL/SDLGameInput.h"
 
+
 //Singleton pattern to get the instance
 GameEngine &GameEngine::GetInstance()
 {
@@ -31,10 +32,9 @@ int GameEngine::startup(AppData* applicationData)
     appData = applicationData;
 
     //This should be wrapped in if def for SDL
-    engineRenderer = new SDLGameRenderer(); //not a singleton pattern
+    engineRenderer = new SDLGameRenderer(); //not a singleton pattern also should
     engineInput = new SDLGameInput(); //not a singleton pattern
 
-    scriptManager = &ScriptManager::GetInstance();
 
     
     //Initialize the renderer
@@ -47,16 +47,27 @@ int GameEngine::startup(AppData* applicationData)
     //Initialize the input
     engineInput->Initialize();
 
-    //Initialize the script manager
-    scriptManager->LoadScripts(appData->scriptPath);
-    scriptManager->startup();
+    /*
+    m_loadedImage = new ImageData();
+    const char* filePath = "../assets/textures/atom_forge_art.png";
+    engineRenderer->loadImage(filePath, m_loadedImage);
+    */
+
+   //Start the afEngineBehaviours
+   if(appData->afEngineBehaviourPtr == nullptr){
+       LogManager::Log("GameEngine: Engine behaviour is null");
+       return -1;
+   }else{
+        LogManager::Log("GameEngine: Engine behaviour is not null");
+        appData->afEngineBehaviourPtr->awake();
+        appData->afEngineBehaviourPtr->start();
+   }
+  
     return 1;
 }
 
 int GameEngine::loop()
 {
-    
-
     //Do a frame for the input and renderer
     engineInput->BeginFrame();
     engineInput->EndFrame();
@@ -67,12 +78,32 @@ int GameEngine::loop()
     }
 
     //update the script manager.
-    scriptManager->Update();
+    if(appData->afEngineBehaviourPtr != nullptr){
+        appData->afEngineBehaviourPtr->update();
+    }
+    else{
+        LogManager::Log("GameEngine: Engine behaviour is null");
+    }
 
     //Rendering
+    if(engineRenderer == nullptr){
+        LogManager::Log("GameEngine: Renderer is null");
+        return -1;
+    }
     engineRenderer->BeginFrame();
+
+    //Loading of an image
+   
+    
+     /**/
+
+
     engineRenderer->EndFrame();
     
+
+    //free the image data
+    //delete imageToLoad->data;
+    //delete imageToLoad;
     /**/
     return 0;
 }
@@ -81,13 +112,20 @@ int GameEngine::loop()
 int GameEngine::shutdown()
 {
     LogManager::Log("GameEngine: Shutting down");
-    scriptManager->shutdown();
+    
     engineInput->Shutdown();
     engineRenderer->Shutdown();
 
+    //shutdown the game application behaviour
+    appData->afEngineBehaviourPtr->shutdown();
+
+
+    //move this later
+    delete(m_loadedImage);
     //delete(engineRenderer);
     return 0;
 }
+
 
 //Constructor and destructor
 GameEngine::GameEngine()
@@ -96,4 +134,6 @@ GameEngine::GameEngine()
 
 GameEngine::~GameEngine()
 {
+    
+   
 }

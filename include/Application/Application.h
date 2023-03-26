@@ -1,4 +1,5 @@
 #pragma once
+#define AF_ENGINE_EXPORTS
 #ifdef AF_ENGINE_EXPORTS
 #define AF_Engine_API __declspec(dllexport)
 #else
@@ -9,8 +10,7 @@
 #include "Utils/LogManager.h"
 #include "GameEngine/GameEngine.h"
 
-
-//#define SDL_MAIN_HANDLE
+#include "GameEngine/AF_EngineBehaviour.h"
 
 
 
@@ -19,6 +19,9 @@ struct AppSubSystems {
     // Pointer to LogManager subsystem
     LogManager* logManagerPtr;
     GameEngine* gameEnginePtr;
+
+    AF_EngineBehaviour* engineBehaviourPtr;
+
     // Uncomment and add the relevant headers to use the following subsystems
     // MemoryManager* memoryManagerPtr;
     // TimeManager* timeManagerPtr;
