@@ -33,7 +33,7 @@ public:
     void EndFrame() override;
 
     //Load Media from file path and take in an image data struct pointer, and return true if the image is loaded successfully
-    std::unique_ptr<ImageData> loadImage(const char *filePath);
+    std::unique_ptr<ImageData> loadImage(const char *filePath) override;
 
     // This is the constructor for the SDLGameRenderer class.
     SDLGameRenderer();

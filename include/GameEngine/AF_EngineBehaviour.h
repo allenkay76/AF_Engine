@@ -18,4 +18,6 @@ public:
 
     AF_EngineBehaviour ();
     virtual ~AF_EngineBehaviour ();
+
+private:
 };

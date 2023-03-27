@@ -1,9 +1,11 @@
 #pragma once
-#include "GameEngine/AF_EngineBehaviour.h"
 #include <cstring>
 #include <algorithm>
 #include <memory>
 
+// Forward declaration of AF_EngineBehaviour
+class AF_EngineBehaviour;
+class GameEngine;
 // Structure to hold the application data, such as window properties and settings
 const int MAX_APP_NAME_LENGTH = 128;
 
@@ -18,6 +20,7 @@ struct AppData {
     bool fullscreen;
     bool isRunning;
     AF_EngineBehaviour* afEngineBehaviourPtr;
+    std::shared_ptr<GameEngine> gameEnginePtr;
     
     // Default constructor
     AppData() :
@@ -27,7 +30,8 @@ struct AppData {
         windowHeight(640),
         fullscreen(false),
         isRunning(false),
-        afEngineBehaviourPtr(nullptr)
+        afEngineBehaviourPtr(nullptr),
+        gameEnginePtr(nullptr)
     {
         std::strncpy(applicationName, "DEFAULT", MAX_APP_NAME_LENGTH - 1);
         applicationName[MAX_APP_NAME_LENGTH - 1] = '\0';

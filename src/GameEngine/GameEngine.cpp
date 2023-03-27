@@ -3,14 +3,23 @@
 #include "GameEngine/ScriptManager.h"
 #include "SDL/SDLGameRenderer.h"
 #include "SDL/SDLGameInput.h"
+#include "GameEngine/AF_EngineBehaviour.h"
 
 
 //Singleton pattern to get the instance
+std::shared_ptr<GameEngine> GameEngine::GetInstance()
+{
+    static std::shared_ptr<GameEngine> instance = std::make_shared<GameEngine>();
+    return instance;
+}
+
+/*
 GameEngine &GameEngine::GetInstance()
 {
     static GameEngine instance;
     return instance;
 }
+*/
 
 //set the renderer
 void GameEngine::setRenderer(IRenderer *renderer)
@@ -30,6 +39,8 @@ int GameEngine::startup(AppData* applicationData)
 {
     LogManager::Log("GameEngine: Starting up");
     appData = applicationData;
+    //Set the game engine pointer in the app data
+    //appData->gameEnginePtr = this;
 
     //This should be wrapped in if def for SDL
     engineRenderer = new SDLGameRenderer(); //not a singleton pattern also should
@@ -107,6 +118,23 @@ int GameEngine::loop()
     /**/
     return 0;
 }
+
+void GameEngine::testEngineFunction(){
+    LogManager::Log("GameEngine: Test Engine Function");
+}
+
+int  GameEngine::returnTextEngineFunction(){
+    LogManager::Log("GameEngine: Return Text Engine Function");
+    return 420;
+}
+
+int  GameEngine::multTextEngineFunction(int a, int b){
+    LogManager::Log("GameEngine: Return mult Engine Function");
+
+    return a * b;
+}
+
+
 
 //Shutdown
 int GameEngine::shutdown()

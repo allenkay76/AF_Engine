@@ -18,7 +18,7 @@
 struct AppSubSystems {
     // Pointer to LogManager subsystem
     LogManager* logManagerPtr;
-    GameEngine* gameEnginePtr;
+    std::shared_ptr<GameEngine> gameEnginePtr;
 
     AF_EngineBehaviour* engineBehaviourPtr;
 
@@ -49,18 +49,20 @@ public:
 
     static AppData InitializeAppData(const char* configPathName);
 
-    
-
-private:
-    //SDL Stuff
-    
-
+    //To be defined in client.
+    Application CreateApplication();
     // Startup function for initializing subsystems and resources
     int startup();
     // Main application loop
     int loop();
     // Shutdown function for cleaning up subsystems and resources
     int shutdown();
+
+private:
+    //SDL Stuff
+    
+
+    
 };
 
 

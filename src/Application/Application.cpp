@@ -56,7 +56,10 @@ int Application::startup() {
     
     // Get a reference to the LogManager singleton instance
     appSubSystem.logManagerPtr = &LogManager::GetInstance();
-    appSubSystem.gameEnginePtr = &GameEngine::GetInstance();
+    appSubSystem.gameEnginePtr = GameEngine::GetInstance();
+
+    //save instance of teh game manager to the appData
+    appData.gameEnginePtr = appSubSystem.gameEnginePtr;
 
     // Start up the LogManager
     appSubSystem.logManagerPtr->startup();
@@ -64,6 +67,8 @@ int Application::startup() {
     if(gameEngineStartupSuccess < 1){
         LogManager::Log("GameEngine: Startup failed");
         return 0;
+    }else{
+        LogManager::Log("GameEngine: Startup success");
     }
 
     appData.isRunning = true;
@@ -108,6 +113,7 @@ AppData Application::InitializeAppData(const char* configPathName) {
     appData.fullscreen = false;
     appData.isRunning = false;
     appData.afEngineBehaviourPtr = nullptr;
+    appData.gameEnginePtr = nullptr;
 
     // Set the default applicationName
     std::strncpy(appData.applicationName, "DEFAULT", MAX_APP_NAME_LENGTH - 1);
