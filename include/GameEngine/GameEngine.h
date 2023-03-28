@@ -6,12 +6,13 @@
 #define AF_Engine_API __declspec(dllimport)
 #endif
 // Include necessary header files
-#include "GameEngine/ScriptManager.h"
+#include <memory>
 #include "GameEngine/IRenderer.h"
 #include "GameEngine/IInput.h"
 #include "Utils/SingletonRoot.h"
 #include "Application/AppData.h"
 #include "SDL/SDLRenderData.h"
+#include "GameEngine/AF_EngineBehaviour.h"
 
 class Game;
 
@@ -21,26 +22,26 @@ public:
     // Get the singleton instance of GameEngine
     //static GameEngine& GetInstance();
     AF_Engine_API static std::shared_ptr<GameEngine> GetInstance();
-
     // Set and get the renderer
     void setRenderer(IRenderer* renderer);
     AF_Engine_API IRenderer* getRenderer();
+    IRenderer* getRenderer() const;
 
     // Initialize the GameEngine
-    int startup(AppData* applicationData);
+    int startup(AppData* applicationData, const std::shared_ptr<AF_EngineBehaviour> engineBehaviour);
 
     // Run the main game loop
-    int loop();
+    int loop(const std::shared_ptr<AF_EngineBehaviour> engineBehaviour);
 
     // Shutdown the GameEngine
-    int shutdown();
+    int shutdown(const std::shared_ptr<AF_EngineBehaviour> engineBehaviour);
 
     //Called by main() to load the game DLL:
     void LoadGameDLL();
 
     ImageData* m_loadedImage;
 
-    IRenderer* getRenderer() const;
+    
 
     AF_Engine_API static void testEngineFunction();
     AF_Engine_API static int  returnTextEngineFunction();

@@ -1,6 +1,5 @@
 #include "GameEngine/GameEngine.h"
 #include "Utils/LogManager.h"
-#include "GameEngine/ScriptManager.h"
 #include "SDL/SDLGameRenderer.h"
 #include "SDL/SDLGameInput.h"
 #include "GameEngine/AF_EngineBehaviour.h"
@@ -35,7 +34,7 @@ IRenderer *GameEngine::getRenderer()
 }
 
 //Startup
-int GameEngine::startup(AppData* applicationData)
+int GameEngine::startup(AppData* applicationData, const std::shared_ptr<AF_EngineBehaviour> engineBehaviour)
 {
     LogManager::Log("GameEngine: Starting up");
     appData = applicationData;
@@ -65,19 +64,19 @@ int GameEngine::startup(AppData* applicationData)
     */
 
    //Start the afEngineBehaviours
-   if(appData->afEngineBehaviourPtr == nullptr){
+   if(engineBehaviour == nullptr){//appData->afEngineBehaviourPtr == nullptr){
        LogManager::Log("GameEngine: Engine behaviour is null");
        return -1;
    }else{
         LogManager::Log("GameEngine: Engine behaviour is not null");
-        appData->afEngineBehaviourPtr->awake();
-        appData->afEngineBehaviourPtr->start();
+        engineBehaviour->awake();
+        engineBehaviour->start();
    }
   
     return 1;
 }
 
-int GameEngine::loop()
+int GameEngine::loop(const std::shared_ptr<AF_EngineBehaviour> engineBehaviour)
 {
     //Do a frame for the input and renderer
     engineInput->BeginFrame();
@@ -89,8 +88,8 @@ int GameEngine::loop()
     }
 
     //update the script manager.
-    if(appData->afEngineBehaviourPtr != nullptr){
-        appData->afEngineBehaviourPtr->update();
+    if(engineBehaviour != nullptr){
+        engineBehaviour->update();
     }
     else{
         LogManager::Log("GameEngine: Engine behaviour is null");
@@ -102,13 +101,6 @@ int GameEngine::loop()
         return -1;
     }
     engineRenderer->BeginFrame();
-
-    //Loading of an image
-   
-    
-     /**/
-
-
     engineRenderer->EndFrame();
     
 
@@ -137,16 +129,14 @@ int  GameEngine::multTextEngineFunction(int a, int b){
 
 
 //Shutdown
-int GameEngine::shutdown()
+int GameEngine::shutdown(const std::shared_ptr<AF_EngineBehaviour> engineBehaviour)
 {
     LogManager::Log("GameEngine: Shutting down");
-    
     engineInput->Shutdown();
     engineRenderer->Shutdown();
 
     //shutdown the game application behaviour
-    appData->afEngineBehaviourPtr->shutdown();
-
+    engineBehaviour->shutdown();
 
     //move this later
     delete(m_loadedImage);

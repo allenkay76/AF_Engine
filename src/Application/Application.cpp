@@ -6,23 +6,31 @@
 #include "Utils/AF_JsonParser.h"
 
 // Constructor that initializes the application and starts its lifecycle
-Application::Application(const AppData& appDataInput) : appData(appDataInput) {
-    int applicationStartupSuccess = startup(); // Initialize the application and subsystems
+Application::Application(const AppData& appDataInput, const std::shared_ptr<AppSubSystems> subSystemsInput) : appData(appDataInput), appSubSystem(subSystemsInput) {
+
+    // Initialize the application and subsystems
+    appSubSystem = subSystemsInput;
+    if(appSubSystem == nullptr){
+        LogManager::Log("Application: Failed to create AppSubSystems");
+        return;
+    }
+
+    int applicationStartupSuccess = startup(appSubSystem); // Initialize the application and subsystems
     if(applicationStartupSuccess < 1){
         LogManager::Log("Application: Startup failed");
         return;
     }
 
-    loop();    // Run the main application loop
+    loop(appSubSystem);    // Run the main application loop
 
-    shutdown();// Perform cleanup before exiting the application
+    shutdown(appSubSystem);// Perform cleanup before exiting the application
 }
 
 // Destructor
 Application::~Application() {}
 
 // Startup function that initializes the application and subsystems
-int Application::startup() {
+int Application::startup(const std::shared_ptr<AppSubSystems> subsystems) {
     
     LogManager::Log("Application: Startup");
     // Calculate the required buffer size for the formatted string
@@ -37,15 +45,14 @@ int Application::startup() {
         "  windowYPos: %d\n"
         "  windowWidth: %d\n"
         "  windowHeight: %d\n"
-        "  fullscreen: %s\n"
-        "  engineName: %s\n",
+        "  fullscreen: %s\n",
         appData.applicationName,
         appData.windowXPos,
         appData.windowYPos,
         appData.windowWidth,
         appData.windowHeight,
-        appData.fullscreen ? "true" : "false",
-        "AF_EngineBehaviour");
+        appData.fullscreen ? "true" : "false"
+        );
 
     //ensure we don't have an encoding error or truncation
     if (result >= bufferSize || result < 0) {
@@ -55,50 +62,48 @@ int Application::startup() {
     }
     
     // Get a reference to the LogManager singleton instance
-    appSubSystem.logManagerPtr = &LogManager::GetInstance();
-    appSubSystem.gameEnginePtr = GameEngine::GetInstance();
+    appSubSystem->logManagerPtr = &LogManager::GetInstance();
+    appSubSystem->gameEnginePtr = GameEngine::GetInstance();
 
-    //save instance of teh game manager to the appData
-    appData.gameEnginePtr = appSubSystem.gameEnginePtr;
 
     // Start up the LogManager
-    appSubSystem.logManagerPtr->startup();
-    int gameEngineStartupSuccess = appSubSystem.gameEnginePtr->startup(&appData);
+    int logManagerStartupSuccess = appSubSystem->logManagerPtr->startup();
+    if(logManagerStartupSuccess < 1){
+        LogManager::Log("LogManager: Startup failed");
+    }
+
+
+    int gameEngineStartupSuccess = appSubSystem->gameEnginePtr->startup(&appData, subsystems->engineBehaviourPtr);
     if(gameEngineStartupSuccess < 1){
         LogManager::Log("GameEngine: Startup failed");
         return 0;
     }else{
         LogManager::Log("GameEngine: Startup success");
     }
-
     appData.isRunning = true;
     
     return 1;
 }
 
 // Main application loop
-int Application::loop() {
+int Application::loop(const std::shared_ptr<AppSubSystems> subsystems) {
     // TODO: Implement the main loop code
     
     LogManager::Log("Application: Loop starting");
     while(appData.isRunning){
-        appSubSystem.gameEnginePtr->loop();
+        subsystems->gameEnginePtr->loop(subsystems->engineBehaviourPtr);
     }
-    
     return 0;
 }
 
 // Shutdown function that cleans up the application and subsystems
-int Application::shutdown() {
+int Application::shutdown(const std::shared_ptr<AppSubSystems> subsystems) {
     // TODO: Implement the shutdown code
     LogManager::Log("Application: Shutdown");
     appData.isRunning = false;
     // Shutdown the LogManager
-    appSubSystem.logManagerPtr->shutdown();
-    appSubSystem.gameEnginePtr->shutdown();
-
-    
-
+    subsystems->logManagerPtr->shutdown();
+    subsystems->gameEnginePtr->shutdown(subsystems->engineBehaviourPtr);
     return 0;
 }
 
@@ -112,8 +117,6 @@ AppData Application::InitializeAppData(const char* configPathName) {
     appData.windowHeight = 640;
     appData.fullscreen = false;
     appData.isRunning = false;
-    appData.afEngineBehaviourPtr = nullptr;
-    appData.gameEnginePtr = nullptr;
 
     // Set the default applicationName
     std::strncpy(appData.applicationName, "DEFAULT", MAX_APP_NAME_LENGTH - 1);

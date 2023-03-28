@@ -6,44 +6,24 @@
 #define AF_Engine_API __declspec(dllimport)
 #endif
 
+#include <memory>
 #include "Application/AppData.h"
 #include "Utils/LogManager.h"
 #include "GameEngine/GameEngine.h"
 
 #include "GameEngine/AF_EngineBehaviour.h"
-
-
-
-// Structure to hold pointers to the various subsystems used by the Application
-struct AppSubSystems {
-    // Pointer to LogManager subsystem
-    LogManager* logManagerPtr;
-    std::shared_ptr<GameEngine> gameEnginePtr;
-
-    AF_EngineBehaviour* engineBehaviourPtr;
-
-    // Uncomment and add the relevant headers to use the following subsystems
-    // MemoryManager* memoryManagerPtr;
-    // TimeManager* timeManagerPtr;
-    // ApplicationStruct* applicationStructPtr;
-    // InputManager* inputManagerPtr;
-    // SceneManager* sceneManagerPtr;
-    // UIManager* uiManagerPtr;
-    // PhysicsManager* physicsManager;
-    // RendererManager* rendererManager;
-    // ExceptionManager* exceptionManager;
-    // SoundManager* soundManager;
-};
+#include "Application/AppSubsystems.h"
 
 
 class AF_Engine_API Application {
 public:
     // Application subsystems and data
-    AppSubSystems appSubSystem;
     AppData appData;
+    std::shared_ptr<AppSubSystems> appSubSystem;
+    
 
     // Constructor that takes a reference to an AppData object
-    Application(const AppData& appDataInput);
+    Application(const AppData& appDataInput, const std::shared_ptr<AppSubSystems> subSystemsInput);
     // Destructor
     ~Application();
 
@@ -52,16 +32,14 @@ public:
     //To be defined in client.
     Application CreateApplication();
     // Startup function for initializing subsystems and resources
-    int startup();
+    int startup(const std::shared_ptr<AppSubSystems> subsystems);
     // Main application loop
-    int loop();
+    int loop(const std::shared_ptr<AppSubSystems> subsystems);
     // Shutdown function for cleaning up subsystems and resources
-    int shutdown();
+    int shutdown(const std::shared_ptr<AppSubSystems> subsystems);
 
 private:
     //SDL Stuff
-    
-
     
 };
 
