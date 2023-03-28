@@ -175,7 +175,7 @@
                 "-I${workspaceFolder}/include", // Add the include directory to the search path
                 "-I${workspaceFolder}/../mingw_dev_lib/i686-w64-mingw32/include/SDL2", // Add the SDL2 include directory to the search path
                 "-L${workspaceFolder}/../mingw_dev_lib/i686-w64-mingw32/lib", // Add the SDL2 library directory to the search path
-                "${workspaceFolder}/src/*.cpp",  // Compile all .cpp files in the src directory
+                //"${workspaceFolder}/src/*.cpp",  // Compile all .cpp files in the src directory
                 "${workspaceFolder}/src/**/*.cpp", // Also compile all .cpp files in any subdirectories of the src directory
                 "-lmingw32",    // Link against the mingw32 library
                 "-lSDL2main",   // Link against the SDL2main library
