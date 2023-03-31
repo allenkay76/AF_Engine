@@ -28,7 +28,7 @@ bool SDLGameRenderer::Initialize(const char* windowName, const int windowWidth, 
     else
     {
         // Create a new SDL window with the specified dimensions and window name
-        std::unique_ptr<SDL_Window, void(*)(SDL_Window*)> window(SDL_CreateWindow(windowName, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, 0), SDL_DestroyWindow);
+        std::unique_ptr<SDL_Window, void(*)(SDL_Window*)> window(SDL_CreateWindow(windowName,SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowWidth, windowHeight, SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE), SDL_DestroyWindow);
         sdlRenderData.sdlWindowPtr = std::move(window);
         if(sdlRenderData.sdlWindowPtr == nullptr)
         {
@@ -56,6 +56,31 @@ bool SDLGameRenderer::Initialize(const char* windowName, const int windowWidth, 
                 LogManager::Log("SDL surface could not be created! SDL_Error: %s\n", SDL_GetError());
                 success = false;
             }
+
+            //initialise openGL
+           // Create an SDL GL context
+           sdlRenderData.sdlContextPtr = SDL_GL_CreateContext(sdlRenderData.sdlWindowPtr.get());
+            if (!sdlRenderData.sdlContextPtr) {
+                LogManager::Log("SDL_GL_CreateContext failed: %s\n", SDL_GetError());
+                success = false;
+            }
+            else
+            {
+                //Use Vsync
+                if( SDL_GL_SetSwapInterval( 1 ) < 0 )
+                {
+                    LogManager::Log( "Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError() );
+                    success = false;
+                }
+                glViewport(0, 0, windowWidth, windowHeight);
+                glMatrixMode(GL_PROJECTION);
+                glLoadIdentity();
+                gluPerspective(45.0f, (GLfloat)windowWidth / (GLfloat)windowHeight, 0.1f, 100.0f);
+                glMatrixMode(GL_MODELVIEW);
+                glLoadIdentity();
+            }
+
+            
         }
     }
 
@@ -72,11 +97,28 @@ void SDLGameRenderer::BeginFrame()
         LogManager::Log("SDL renderer is null");
         return;
     }
+    
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+    // Render triangle
+    glBegin(GL_TRIANGLES);
+    glColor3f(1.0f, 0.0f, 0.0f); // red
+    glVertex3f(0.0f, 1.0f, -6.0f); // top
+    glColor3f(0.0f, 1.0f, 0.0f); // green
+    glVertex3f(-1.0f, -1.0f, -6.0f); // bottom left
+    glColor3f(0.0f, 0.0f, 1.0f); // blue
+    glVertex3f(1.0f, -1.0f, -6.0f); // bottom right
+    glEnd();
+
+
+    SDL_GL_SwapWindow(sdlRenderData.sdlWindowPtr.get());
     // Clear the renderer
     //set the background color from the config
-    SDL_SetRenderDrawColor(sdlRenderData.sdlRendererPtr.get(), 50, 50, 100, 255);
+    //SDL_SetRenderDrawColor(sdlRenderData.sdlRendererPtr.get(), 50, 50, 100, 255);
     //clear the screen
-    SDL_RenderClear(sdlRenderData.sdlRendererPtr.get());
+    //SDL_RenderClear(sdlRenderData.sdlRendererPtr.get());
 
     //Work thrugh a list of render commands to draw things to the screen.
     // Render any sprites or other game objects here
@@ -191,6 +233,9 @@ void SDLGameRenderer::Shutdown()
     }
     sdlRenderData.sdlTexSurfList.clear();
     SDL_FreeSurface(sdlRenderData.sdlSurfacePtr.get());
+
+    SDL_GL_DeleteContext(sdlRenderData.sdlContextPtr);
+
     SDL_DestroyRenderer(sdlRenderData.sdlRendererPtr.get());
     SDL_DestroyWindow(sdlRenderData.sdlWindowPtr.get());
 

@@ -180,6 +180,8 @@
                 "-lmingw32",    // Link against the mingw32 library
                 "-lSDL2main",   // Link against the SDL2main library
                 "-lSDL2",       // Link against the SDL2 library
+                "-lopengl32",   // Link against the opengl32 library
+                "-lglu32",      // Link against the glu32 library
                 "-mwindows",    // Build a GUI application for Windows
                 //"-mconsole",    // Build a console application for Windows
                 "-Wall",        // Enable all warnings

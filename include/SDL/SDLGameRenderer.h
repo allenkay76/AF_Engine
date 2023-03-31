@@ -5,6 +5,8 @@
 
 // This header file includes SDL2 libraries.
 #include <SDL2/SDL.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
 
 // This preprocessor directive is commented out and provides instructions on how to fix a known issue with SDL2 and main function definition.
 //#define SDL_MAIN_HANDLED //https://stackoverflow.com/questions/32342285/undefined-reference-to-winmain16-c-sdl-2/32343111#32343111
