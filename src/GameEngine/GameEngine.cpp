@@ -111,22 +111,6 @@ int GameEngine::loop(const std::shared_ptr<AF_EngineBehaviour> engineBehaviour)
     return 0;
 }
 
-void GameEngine::testEngineFunction(){
-    LogManager::Log("GameEngine: Test Engine Function");
-}
-
-int  GameEngine::returnTextEngineFunction(){
-    LogManager::Log("GameEngine: Return Text Engine Function");
-    return 420;
-}
-
-int  GameEngine::multTextEngineFunction(int a, int b){
-    LogManager::Log("GameEngine: Return mult Engine Function");
-
-    return a * b;
-}
-
-
 
 //Shutdown
 int GameEngine::shutdown(const std::shared_ptr<AF_EngineBehaviour> engineBehaviour)
