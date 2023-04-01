@@ -69,6 +69,7 @@
                 "-Wshadow",     // Enable warnings for variable shadowing
                 "-fstack-protector-strong", // Enable stack protection against buffer overflow attacks
                 "-D_FORTIFY_SOURCE=2",      // Enable runtime buffer overflow protection
+                
                 "-o",           // Specify the output file name
                 "${workspaceFolder}/bin/AF_Engine"
             ],
@@ -105,6 +106,7 @@
             // Define additional arguments to use on Windows systems
             "windows": {
                 "args": [
+                    "-DSDL_GAME_RENDERER", //This is a flag to tell the engine to use the SDL renderer
                     //"-lmingw32",
                     //"-lSDL2main",
                     //"-mwindows",
@@ -146,6 +148,7 @@
                 "-Wshadow",
                 "-fstack-protector-strong",
                 "-D_FORTIFY_SOURCE=2",
+                "-DSDL_GAME_RENDERER", //This is a flag to tell the engine to use the SDL renderer
                 "-o",
                 "${workspaceFolder}/bin/AF_Engine",
             ],
@@ -198,6 +201,7 @@
                 "-Wshadow",     // Enable warnings for variable shadowing
                 "-fstack-protector-strong", // Enable stack protection against buffer overflow attacks
                 "-D_FORTIFY_SOURCE=2",      // Enable runtime buffer overflow protection
+                "-DSDL_GAME_RENDERER", //This is a flag to tell the engine to use the SDL renderer
                 "-shared",      // Build a shared library
                 //"-DAF_ENGINE_EXPORTS", // Define the AF_ENGINE_EXPORTS macro
                 "-o",           // Specify the output file name
@@ -249,6 +253,7 @@
             // Define additional arguments to use on Windows systems
             "windows": {
                 "args": [
+                    
                     //"-lmingw32",
                     //"-lSDL2main",
                     //"-mwindows",

@@ -10,7 +10,6 @@
 #include "Utils/stb_image.h"
 
 #include "SDL/SDLTexSurfData.h"
-#include "SDL/SDLGameRenderer.h"
 //#pragma GCC diagnostic pop
 
 
@@ -38,8 +37,8 @@ bool SDLGameRenderer::Initialize(const char* windowName, const int windowWidth, 
         
         // Create a new SDL window with the specified dimensions and window name
         std::unique_ptr<SDL_Window, void(*)(SDL_Window*)> window(SDL_CreateWindow(windowName,SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowWidth, windowHeight, SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE), SDL_DestroyWindow);
-        sdlRenderData.sdlWindowPtr = std::move(window);
-        if(sdlRenderData.sdlWindowPtr == nullptr)
+        sdlRenderDataPtr->sdlWindowPtr = std::move(window);
+        if(sdlRenderDataPtr->sdlWindowPtr == nullptr)
         {
             LogManager::Log("SDL window could not be created! SDL_Error: %s\n", SDL_GetError());
             success = false;
@@ -47,9 +46,9 @@ bool SDLGameRenderer::Initialize(const char* windowName, const int windowWidth, 
         else
         {
             // Create a new SDL renderer for the window
-            std::unique_ptr<SDL_Renderer, void(*)(SDL_Renderer*)> renderer(SDL_CreateRenderer(sdlRenderData.sdlWindowPtr.get(), -1, 0), SDL_DestroyRenderer);
-            sdlRenderData.sdlRendererPtr = std::move(renderer);
-            if(sdlRenderData.sdlRendererPtr == nullptr)
+            std::unique_ptr<SDL_Renderer, void(*)(SDL_Renderer*)> renderer(SDL_CreateRenderer(sdlRenderDataPtr->sdlWindowPtr.get(), -1, 0), SDL_DestroyRenderer);
+            sdlRenderDataPtr->sdlRendererPtr = std::move(renderer);
+            if(sdlRenderDataPtr->sdlRendererPtr == nullptr)
             {
                 LogManager::Log("SDL renderer could not be created! SDL_Error: %s\n", SDL_GetError());
                 success = false;
@@ -57,10 +56,10 @@ bool SDLGameRenderer::Initialize(const char* windowName, const int windowWidth, 
 
             //std::unique_ptr<SDL_Surface, void(*)(SDL_Surface*)> surface(*SDL_GetWindowSurface(sdlRenderData.sdlWindowPtr), SDL_FreeSurface);
             //sdlRenderData.sdlSurfacePtr = std::move(surface);
-            sdlRenderData.sdlSurfacePtr = std::unique_ptr<SDL_Surface, void(*)(SDL_Surface*)>(SDL_GetWindowSurface(sdlRenderData.sdlWindowPtr.get()), SDL_FreeSurface);
+            sdlRenderDataPtr->sdlSurfacePtr = std::unique_ptr<SDL_Surface, void(*)(SDL_Surface*)>(SDL_GetWindowSurface(sdlRenderDataPtr->sdlWindowPtr.get()), SDL_FreeSurface);
 
             
-            if(sdlRenderData.sdlSurfacePtr == nullptr)
+            if(sdlRenderDataPtr->sdlSurfacePtr == nullptr)
             {
                 LogManager::Log("SDL surface could not be created! SDL_Error: %s\n", SDL_GetError());
                 success = false;
@@ -68,8 +67,8 @@ bool SDLGameRenderer::Initialize(const char* windowName, const int windowWidth, 
 
             //initialise openGL
            // Create an SDL GL context
-           sdlRenderData.sdlContextPtr = SDL_GL_CreateContext(sdlRenderData.sdlWindowPtr.get());
-            if (!sdlRenderData.sdlContextPtr) {
+           sdlRenderDataPtr->sdlContextPtr = SDL_GL_CreateContext(sdlRenderDataPtr->sdlWindowPtr.get());
+            if (!sdlRenderDataPtr->sdlContextPtr) {
                 LogManager::Log("SDL_GL_CreateContext failed: %s\n", SDL_GetError());
                 success = false;
             }
@@ -261,7 +260,7 @@ bool SDLGameRenderer::initGL(){
 void SDLGameRenderer::BeginFrame()
 {
     
-   if(sdlRenderData.sdlRendererPtr == nullptr){
+   if(sdlRenderDataPtr->sdlRendererPtr == nullptr){
         LogManager::Log("SDL renderer is null");
         return;
     }
@@ -323,12 +322,12 @@ void SDLGameRenderer::EndFrame()
     SDL_Rect dstRect = { (sdlRenderData.imagePtr->width - imgWidth) / 2, (sdlRenderData.imagePtr->height - imgHeight) / 2, imgWidth, imgHeight };
     */
     //SDL_RenderCopy(sdlRenderData.sdlRendererPtr, sdlRenderData.sdlTexturePtr, nullptr, &dstRect);
-    for(size_t i = 0; i < sdlRenderData.sdlTexSurfList.size(); i++){
-        if(sdlRenderData.sdlTexSurfList[i]->texturePtr == nullptr){
+    for(size_t i = 0; i < sdlRenderDataPtr->sdlTexSurfList.size(); i++){
+        if(sdlRenderDataPtr->sdlTexSurfList[i]->texturePtr == nullptr){
             LogManager::Log("SDL texture is null");
             return;
         }
-        SDL_RenderCopy(sdlRenderData.sdlRendererPtr.get(), sdlRenderData.sdlTexSurfList[i]->texturePtr.get(), nullptr, nullptr);
+        SDL_RenderCopy(sdlRenderDataPtr->sdlRendererPtr.get(), sdlRenderDataPtr->sdlTexSurfList[i]->texturePtr.get(), nullptr, nullptr);
     }
     
     //SDL_RenderCopy(sdlRenderData.sdlRendererPtr, sdlRenderData.sdlTexturePtr, nullptr, nullptr);
@@ -337,7 +336,7 @@ void SDLGameRenderer::EndFrame()
     // Present the renderer to the window
     //SDL_RenderPresent(sdlRenderData.sdlRendererPtr.get());
     //SDL_GL_SetSwapInterval(1);
-    SDL_GL_SwapWindow(sdlRenderData.sdlWindowPtr.get());
+    SDL_GL_SwapWindow(sdlRenderDataPtr->sdlWindowPtr.get());
 }
 
 
@@ -377,7 +376,7 @@ std::unique_ptr<ImageData> SDLGameRenderer::loadImage(const char *filePath)
 
         LogManager::Log("SDLGameRenderer: Creating texture from surface");
         //Create a texture from the surface
-        newTexSurf->texturePtr.reset(SDL_CreateTextureFromSurface(sdlRenderData.sdlRendererPtr.get(), newTexSurf->surfacePtr.get()));
+        newTexSurf->texturePtr.reset(SDL_CreateTextureFromSurface(sdlRenderDataPtr->sdlRendererPtr.get(), newTexSurf->surfacePtr.get()));
         //sdlRenderData.sdlTexturePtr = SDL_CreateTextureFromSurface(sdlRenderData.sdlRendererPtr, sdlRenderData.sdlImageSurface);
         if (newTexSurf->texturePtr == nullptr) {
             LogManager::Log("SDL texture failed to create");
@@ -386,7 +385,7 @@ std::unique_ptr<ImageData> SDLGameRenderer::loadImage(const char *filePath)
 
         //Add the new texture to the list of textures
         if(success){
-            sdlRenderData.sdlTexSurfList.emplace_back(move(newTexSurf));
+            sdlRenderDataPtr->sdlTexSurfList.emplace_back(move(newTexSurf));
         }
     }
 
@@ -459,18 +458,18 @@ SDLGameRenderer::~SDLGameRenderer()
 
 void SDLGameRenderer::Shutdown()
 {
-    for (size_t i = 0; i < sdlRenderData.sdlTexSurfList.size(); i++) {
-        SDLTexSurfData* texSurfData = sdlRenderData.sdlTexSurfList[i].get();
+    for (size_t i = 0; i < sdlRenderDataPtr->sdlTexSurfList.size(); i++) {
+        SDLTexSurfData* texSurfData = sdlRenderDataPtr->sdlTexSurfList[i].get();
         SDL_FreeSurface(texSurfData->surfacePtr.get());
         SDL_DestroyTexture(texSurfData->texturePtr.get());
     }
-    sdlRenderData.sdlTexSurfList.clear();
-    SDL_FreeSurface(sdlRenderData.sdlSurfacePtr.get());
+    sdlRenderDataPtr->sdlTexSurfList.clear();
+    SDL_FreeSurface(sdlRenderDataPtr->sdlSurfacePtr.get());
 
-    SDL_GL_DeleteContext(sdlRenderData.sdlContextPtr);
+    SDL_GL_DeleteContext(sdlRenderDataPtr->sdlContextPtr);
 
-    SDL_DestroyRenderer(sdlRenderData.sdlRendererPtr.get());
-    SDL_DestroyWindow(sdlRenderData.sdlWindowPtr.get());
+    SDL_DestroyRenderer(sdlRenderDataPtr->sdlRendererPtr.get());
+    SDL_DestroyWindow(sdlRenderDataPtr->sdlWindowPtr.get());
 
     SDL_Quit();
 }

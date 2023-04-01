@@ -45,13 +45,21 @@ int Application::startup(const std::shared_ptr<AppSubSystems> subsystems) {
         "  windowYPos: %d\n"
         "  windowWidth: %d\n"
         "  windowHeight: %d\n"
-        "  fullscreen: %s\n",
+        "  mousefocus: %s\n"
+        "  keyboardfocus: %s\n"
+        "  fullscreen: %s\n"
+        "  minimized: %s\n"
+        "  isRunning: %s\n",
         appData.applicationName,
         appData.windowXPos,
         appData.windowYPos,
         appData.windowWidth,
         appData.windowHeight,
-        appData.fullscreen ? "true" : "false"
+        appData.mouseFocus ? "true" : "false",
+        appData.keyboardFocus ? "true" : "false",
+        appData.fullscreen ? "true" : "false",
+        appData.minimized ? "true" : "false",
+        appData.isRunning ? "true" : "false"
         );
 
     //ensure we don't have an encoding error or truncation
@@ -121,7 +129,10 @@ AppData Application::InitializeAppData(const char* configPathName) {
     appData.windowYPos = 0;
     appData.windowWidth = 720;
     appData.windowHeight = 640;
+    appData.mouseFocus = true;
+    appData.keyboardFocus = true;
     appData.fullscreen = false;
+    appData.minimized = false;
     appData.isRunning = false;
 
     // Set the default applicationName

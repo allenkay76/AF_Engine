@@ -14,6 +14,9 @@
 #include "SDL/SDLRenderData.h"
 #include "GameEngine/AF_EngineBehaviour.h"
 
+#include "GameEngine/IWindow.h"
+#include "SDL/SDLGameWindow.h"
+
 class Game;
 
 class GameEngine : SingletonRoot { // Define the GameEngine class and inherit from SingletonRoot
@@ -26,6 +29,8 @@ public:
     void setRenderer(IRenderer* renderer);
     AF_Engine_API IRenderer* getRenderer();
     IRenderer* getRenderer() const;
+
+   
 
     // Initialize the GameEngine
     int startup(AppData* applicationData, const std::shared_ptr<AF_EngineBehaviour> engineBehaviour);
@@ -63,7 +68,8 @@ protected:
     IRenderer* engineRenderer;
     IInput* engineInput;
     AppData* appData;
-    SDLRenderData* sdlData;
+    std::shared_ptr<SDLRenderData> sdlRenderDataPtr;
+    std::shared_ptr<SDLGameWindow> engineWindowPtr;
 
     
 

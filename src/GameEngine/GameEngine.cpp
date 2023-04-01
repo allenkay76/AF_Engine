@@ -41,14 +41,38 @@ int GameEngine::startup(AppData* applicationData, const std::shared_ptr<AF_Engin
     appData = applicationData;
     //Set the game engine pointer in the app data
     //appData->gameEnginePtr = this;
+    #ifndef SDL_GAME_RENDERER
+    #error "SDL_GAME_RENDERER flag is not defined"
+    #endif
 
-    //This should be wrapped in if def for SDL
+
+    //Set the renderer and input
+    #ifdef SDL_GAME_RENDERER
+    sdlRenderDataPtr = std::make_shared<SDLRenderData>();
+
+    //TODO: fix this so not setting the rendererdata ptr first.
+    //Initialise the window
+    engineWindowPtr = std::make_shared<SDLGameWindow>();
+    engineWindowPtr->sdlRenderDataPtr = sdlRenderDataPtr;
+
+    bool windowInitSuccess = engineWindowPtr->Initialize(appData->applicationName, appData->windowWidth, appData->windowHeight);
+    if(windowInitSuccess == false){
+        LogManager::Log("GameEngine: Window failed to initialize");
+        success = -1;
+        return success;
+    }
+
+
+    //Initilise the renderer
     engineRenderer = new SDLGameRenderer(); //not a singleton pattern also should
-    engineInput = new SDLGameInput(); //not a singleton pattern
+    SDLGameRenderer* sdlRenderer = dynamic_cast<SDLGameRenderer*>(engineRenderer);
+    if (sdlRenderer != nullptr) {
+        sdlRenderer->sdlRenderDataPtr = sdlRenderDataPtr;
+    } else {
+        // handle the case where the cast fails
+        LogManager::Log("GameEngine: Failed to cast to SDLGameRenderer");
+    }
 
-
-    
-    //Initialize the renderer
     bool rendererInitSuccess = engineRenderer->Initialize(appData->applicationName, appData->windowWidth, appData->windowHeight);
     if(rendererInitSuccess == false){
         LogManager::Log("GameEngine: Renderer failed to initialize");
@@ -57,7 +81,19 @@ int GameEngine::startup(AppData* applicationData, const std::shared_ptr<AF_Engin
     }
 
     //Initialize the input
+    engineInput = new SDLGameInput(); //not a singleton pattern
     engineInput->Initialize();
+
+    #else
+    LogManager::Log("GameEngine: No renderer defined");
+    success = -1;
+    return success;
+    #endif
+
+    
+
+
+    
 
     /*
     m_loadedImage = new ImageData();

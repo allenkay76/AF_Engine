@@ -24,7 +24,7 @@ public:
     
     
     // This struct holds the SDL2 specific render data.
-    SDLRenderData sdlRenderData;
+    std::shared_ptr<SDLRenderData> sdlRenderDataPtr;
 
     //graphics program
     GLuint gProgramID = 0;
@@ -35,6 +35,7 @@ public:
 
     // This function initializes the SDL2 window and renderer.
     bool Initialize(const char* windowName, const int windowWidth, const int windowHeight) override;
+    bool InitializeSDLRenderer(const char* windowName, const int windowWidth, const int windowHeight, const std::shared_ptr<SDLRenderData> thisSDLRenderData);
     // This function shuts down the SDL2 window and renderer.
     void Shutdown() override;
     // This function begins a new rendering frame.

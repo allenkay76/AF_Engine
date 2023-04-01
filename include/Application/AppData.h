@@ -16,7 +16,10 @@ struct AppData {
     int windowYPos;
     int windowWidth;
     int windowHeight;
+    bool mouseFocus;
+    bool keyboardFocus;
     bool fullscreen;
+    bool minimized;
     bool isRunning;
     //AF_EngineBehaviour* afEngineBehaviourPtr;
     //std::shared_ptr<GameEngine> gameEnginePtr;
@@ -27,7 +30,10 @@ struct AppData {
         windowYPos(0),
         windowWidth(720),
         windowHeight(640),
+        mouseFocus(false),
+        keyboardFocus(false),
         fullscreen(false),
+        minimized(false),
         isRunning(false)
     {
         std::strncpy(applicationName, "DEFAULT", MAX_APP_NAME_LENGTH - 1);
@@ -41,7 +47,10 @@ struct AppData {
         windowYPos = other.windowYPos;
         windowWidth = other.windowWidth;
         windowHeight = other.windowHeight;
+        mouseFocus = other.mouseFocus;
+        keyboardFocus = other.keyboardFocus;
         fullscreen = other.fullscreen;
+        minimized = other.minimized;
         isRunning = other.isRunning;
     }
 };
