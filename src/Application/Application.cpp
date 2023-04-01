@@ -31,7 +31,7 @@ Application::~Application() {}
 
 // Startup function that initializes the application and subsystems
 int Application::startup(const std::shared_ptr<AppSubSystems> subsystems) {
-    
+    int success = 1;
     LogManager::Log("Application: Startup");
     // Calculate the required buffer size for the formatted string
     constexpr int bufferSize = 256;
@@ -56,7 +56,10 @@ int Application::startup(const std::shared_ptr<AppSubSystems> subsystems) {
 
     //ensure we don't have an encoding error or truncation
     if (result >= bufferSize || result < 0) {
+        
         std::cerr << "Buffer size is not large enough to accommodate the formatted string or an encoding error occurred." << std::endl;
+        success = -1;
+        return success;
     } else {
         LogManager::Log(appDataPrintout);
     }
@@ -70,19 +73,22 @@ int Application::startup(const std::shared_ptr<AppSubSystems> subsystems) {
     int logManagerStartupSuccess = appSubSystem->logManagerPtr->startup();
     if(logManagerStartupSuccess < 1){
         LogManager::Log("LogManager: Startup failed");
+        success = -1;
+        return success;
     }
 
 
     int gameEngineStartupSuccess = appSubSystem->gameEnginePtr->startup(&appData, subsystems->engineBehaviourPtr);
     if(gameEngineStartupSuccess < 1){
         LogManager::Log("GameEngine: Startup failed");
-        return 0;
+        success = -1;
+        return success;
     }else{
         LogManager::Log("GameEngine: Startup success");
     }
     appData.isRunning = true;
     
-    return 1;
+    return success;
 }
 
 // Main application loop

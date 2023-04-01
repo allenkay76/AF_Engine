@@ -5,7 +5,8 @@
 
 // This header file includes SDL2 libraries.
 #include <SDL2/SDL.h>
-#include <GL/gl.h>
+#include <GL/glew.h>
+#include <SDL2/SDL_opengl.h>
 #include <GL/glu.h>
 
 // This preprocessor directive is commented out and provides instructions on how to fix a known issue with SDL2 and main function definition.
@@ -25,6 +26,13 @@ public:
     // This struct holds the SDL2 specific render data.
     SDLRenderData sdlRenderData;
 
+    //graphics program
+    GLuint gProgramID = 0;
+    GLuint gVertexPos2DLocation = -1;
+    GLuint gVBO = 0;
+    GLuint gIBO = 0;
+    GLuint gTexture = 0;
+
     // This function initializes the SDL2 window and renderer.
     bool Initialize(const char* windowName, const int windowWidth, const int windowHeight) override;
     // This function shuts down the SDL2 window and renderer.
@@ -34,8 +42,14 @@ public:
     // This function ends a rendering frame and presents the rendered image.
     void EndFrame() override;
 
+    bool initGL(); //Initialize OpenGL
+    
     //Load Media from file path and take in an image data struct pointer, and return true if the image is loaded successfully
     std::unique_ptr<ImageData> loadImage(const char *filePath) override;
+
+    //Shader loading utility programs
+    void printProgramLog(GLuint program);
+    void printShaderLog(GLuint shader);
 
     // This is the constructor for the SDLGameRenderer class.
     SDLGameRenderer();

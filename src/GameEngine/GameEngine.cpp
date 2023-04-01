@@ -36,6 +36,7 @@ IRenderer *GameEngine::getRenderer()
 //Startup
 int GameEngine::startup(AppData* applicationData, const std::shared_ptr<AF_EngineBehaviour> engineBehaviour)
 {
+    int success = 1;
     LogManager::Log("GameEngine: Starting up");
     appData = applicationData;
     //Set the game engine pointer in the app data
@@ -51,7 +52,8 @@ int GameEngine::startup(AppData* applicationData, const std::shared_ptr<AF_Engin
     bool rendererInitSuccess = engineRenderer->Initialize(appData->applicationName, appData->windowWidth, appData->windowHeight);
     if(rendererInitSuccess == false){
         LogManager::Log("GameEngine: Renderer failed to initialize");
-        return -1;
+        success = -1;
+        return success;
     }
 
     //Initialize the input
@@ -66,14 +68,15 @@ int GameEngine::startup(AppData* applicationData, const std::shared_ptr<AF_Engin
    //Start the afEngineBehaviours
    if(engineBehaviour == nullptr){//appData->afEngineBehaviourPtr == nullptr){
        LogManager::Log("GameEngine: Engine behaviour is null");
-       return -1;
+       success = -1;
+       return success;
    }else{
         LogManager::Log("GameEngine: Engine behaviour is not null");
         engineBehaviour->awake();
         engineBehaviour->start();
    }
   
-    return 1;
+    return success;
 }
 
 int GameEngine::loop(const std::shared_ptr<AF_EngineBehaviour> engineBehaviour)

@@ -127,8 +127,8 @@
                 "-fdiagnostics-color=always",
                 "-g",
                 "-I${workspaceFolder}/include",
-                "-I${workspaceFolder}/../mingw_dev_lib/i686-w64-mingw32/include/SDL2",
-                "-L${workspaceFolder}/../mingw_dev_lib/i686-w64-mingw32/lib",
+                "-I${workspaceFolder}/../SDK/mingw_dev_lib/i686-w64-mingw32/include/SDL2",
+                "-L${workspaceFolder}/../SDK/mingw_dev_lib/i686-w64-mingw32/lib",
                 "${workspaceFolder}/src/*.cpp",
                 "${workspaceFolder}/src/**/*.cpp", //Always ensure this comes before loading the SDL Libraries
                 "-lmingw32",
@@ -173,8 +173,10 @@
                 "-fdiagnostics-color=always",   // Enable color output for diagnostics
                 "-g",                           // Enable debugging information
                 "-I${workspaceFolder}/include", // Add the include directory to the search path
-                "-I${workspaceFolder}/../mingw_dev_lib/i686-w64-mingw32/include/SDL2", // Add the SDL2 include directory to the search path
-                "-L${workspaceFolder}/../mingw_dev_lib/i686-w64-mingw32/lib", // Add the SDL2 library directory to the search path
+                "-I${workspaceFolder}/../SDK/mingw_dev_lib/i686-w64-mingw32/include/SDL2", // Add the SDL2 include directory to the search path
+                "-L${workspaceFolder}/../SDK/mingw_dev_lib/i686-w64-mingw32/lib", // Add the SDL2 library directory to the search path
+                "-I${workspaceFolder}/../SDK/glew-2.1.0/include", // Add the GLEW library directory to the search path
+                "-L${workspaceFolder}/../SDK/glew-2.1.0/lib", // Add the GLEW library directory to the search path
                 //"${workspaceFolder}/src/*.cpp",  // Compile all .cpp files in the src directory
                 "${workspaceFolder}/src/**/*.cpp", // Also compile all .cpp files in any subdirectories of the src directory
                 "-lmingw32",    // Link against the mingw32 library
@@ -182,6 +184,7 @@
                 "-lSDL2",       // Link against the SDL2 library
                 "-lopengl32",   // Link against the opengl32 library
                 "-lglu32",      // Link against the glu32 library
+                "-lglew32",     // Link against the glew32 library
                 "-mwindows",    // Build a GUI application for Windows
                 //"-mconsole",    // Build a console application for Windows
                 "-Wall",        // Enable all warnings
