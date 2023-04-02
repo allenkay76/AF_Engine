@@ -18,14 +18,21 @@ public:
     // This function returns whether the application is running.
     bool GetIsRunning() override;
 
+    //This function returns a void pointer to the window of SDL_Window type
+    std::shared_ptr<void> getWindow() override;
+
+    
+
     // This is the constructor for the SDLWindow class.
-    SDLGameWindow(std::shared_ptr<SDLRenderData> renderDataPtr) : sdlRenderDataPtr(renderDataPtr){};
+    SDLGameWindow();
     // This is the destructor for the SDLWindow class.
     ~SDLGameWindow();
 
+    
     // This struct holds the SDL2 specific render data.
-    std::shared_ptr<SDLRenderData> sdlRenderDataPtr;
+    //std::shared_ptr<SDLRenderData> sdlRenderDataPtr;
 
 private:
-
+    // This is the SDL2 window.
+    std::shared_ptr<SDL_Window> sdlWindowPtr;
 };

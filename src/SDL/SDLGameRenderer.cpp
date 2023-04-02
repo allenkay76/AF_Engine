@@ -36,15 +36,18 @@ bool SDLGameRenderer::Initialize(const char* windowName, const int windowWidth, 
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
         
     
-        if(sdlRenderDataPtr->sdlWindowPtr == nullptr)
+        if(sdlRenderDataPtr->windowPtr->getWindow() == nullptr)
         {
             LogManager::Log("SDL window could not be created! SDL_Error: %s %s\n", SDL_GetError(), windowName);
             success = false;
         }
         else
         {
+            //set the SDL_Window as we use it all the time
+            //(static_cast<SDL_Window*>(sdlRenderDataPtr->windowPtr->getWindow().get()));
+            sdlWindowPtr = static_cast<SDL_Window*>(sdlRenderDataPtr->windowPtr->getWindow().get());
             // Create a new SDL renderer for the window
-            std::unique_ptr<SDL_Renderer, void(*)(SDL_Renderer*)> renderer(SDL_CreateRenderer(sdlRenderDataPtr->sdlWindowPtr.get(), -1, 0), SDL_DestroyRenderer);
+            std::unique_ptr<SDL_Renderer, void(*)(SDL_Renderer*)> renderer(SDL_CreateRenderer(sdlWindowPtr, -1, 0), SDL_DestroyRenderer);
             sdlRenderDataPtr->sdlRendererPtr = std::move(renderer);
             if(sdlRenderDataPtr->sdlRendererPtr == nullptr)
             {
@@ -54,7 +57,7 @@ bool SDLGameRenderer::Initialize(const char* windowName, const int windowWidth, 
 
             //std::unique_ptr<SDL_Surface, void(*)(SDL_Surface*)> surface(*SDL_GetWindowSurface(sdlRenderData.sdlWindowPtr), SDL_FreeSurface);
             //sdlRenderData.sdlSurfacePtr = std::move(surface);
-            sdlRenderDataPtr->sdlSurfacePtr = std::unique_ptr<SDL_Surface, void(*)(SDL_Surface*)>(SDL_GetWindowSurface(sdlRenderDataPtr->sdlWindowPtr.get()), SDL_FreeSurface);
+            sdlRenderDataPtr->sdlSurfacePtr = std::unique_ptr<SDL_Surface, void(*)(SDL_Surface*)>(SDL_GetWindowSurface(sdlWindowPtr), SDL_FreeSurface);
 
             
             if(sdlRenderDataPtr->sdlSurfacePtr == nullptr)
@@ -65,7 +68,7 @@ bool SDLGameRenderer::Initialize(const char* windowName, const int windowWidth, 
 
             //initialise openGL
            // Create an SDL GL context
-           sdlRenderDataPtr->sdlContextPtr = SDL_GL_CreateContext(sdlRenderDataPtr->sdlWindowPtr.get());
+           sdlRenderDataPtr->sdlContextPtr = SDL_GL_CreateContext(sdlWindowPtr);
             if (!sdlRenderDataPtr->sdlContextPtr) {
                 LogManager::Log("SDL_GL_CreateContext failed: %s\n", SDL_GetError());
                 success = false;
@@ -334,7 +337,7 @@ void SDLGameRenderer::EndFrame()
     // Present the renderer to the window
     //SDL_RenderPresent(sdlRenderData.sdlRendererPtr.get());
     //SDL_GL_SetSwapInterval(1);
-    SDL_GL_SwapWindow(sdlRenderDataPtr->sdlWindowPtr.get());
+    SDL_GL_SwapWindow(sdlWindowPtr);
 }
 
 
@@ -444,10 +447,7 @@ void SDLGameRenderer::printShaderLog(GLuint shader){
     }
 }
 
-// Define the constructor for the SDLGameRenderer class
-SDLGameRenderer::SDLGameRenderer()
-{
-}
+
 
 // Define the destructor for the SDLGameRenderer class
 SDLGameRenderer::~SDLGameRenderer()
@@ -467,7 +467,7 @@ void SDLGameRenderer::Shutdown()
     SDL_GL_DeleteContext(sdlRenderDataPtr->sdlContextPtr);
 
     SDL_DestroyRenderer(sdlRenderDataPtr->sdlRendererPtr.get());
-    SDL_DestroyWindow(sdlRenderDataPtr->sdlWindowPtr.get());
+    SDL_DestroyWindow(sdlWindowPtr);
 
     SDL_Quit();
 }

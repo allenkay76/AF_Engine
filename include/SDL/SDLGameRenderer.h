@@ -1,14 +1,16 @@
 #pragma once
 #include <memory>
-// This header file includes the interface class for rendering.
-#include "GameEngine/IRenderer.h"
+#include <SDL2/SDL.h>
+
+
 
 // This header file includes SDL2 libraries.
-#include <SDL2/SDL.h>
+
 #include <GL/glew.h>
 #include <SDL2/SDL_opengl.h>
 #include <GL/glu.h>
-
+// This header file includes the interface class for rendering.
+#include "GameEngine/IRenderer.h"
 // This preprocessor directive is commented out and provides instructions on how to fix a known issue with SDL2 and main function definition.
 //#define SDL_MAIN_HANDLED //https://stackoverflow.com/questions/32342285/undefined-reference-to-winmain16-c-sdl-2/32343111#32343111
 
@@ -25,6 +27,7 @@ public:
     
     // This struct holds the SDL2 specific render data.
     std::shared_ptr<SDLRenderData> sdlRenderDataPtr;
+    SDL_Window* sdlWindowPtr;
 
     //graphics program
     GLuint gProgramID = 0;
@@ -53,7 +56,7 @@ public:
     void printShaderLog(GLuint shader);
 
     // This is the constructor for the SDLGameRenderer class.
-    SDLGameRenderer();
+    SDLGameRenderer(std::shared_ptr<SDLRenderData> renderDataPtr) : sdlRenderDataPtr(renderDataPtr){};
     // This is the destructor for the SDLGameRenderer class.
     ~SDLGameRenderer();
 

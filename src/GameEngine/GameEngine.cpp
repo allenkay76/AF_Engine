@@ -48,14 +48,16 @@ int GameEngine::startup(AppData* applicationData, const std::shared_ptr<AF_Engin
 
     //Set the renderer and input
     #ifdef SDL_GAME_RENDERER
-    sdlRenderDataPtr = std::make_shared<SDLRenderData>();
-
+    //sdlRenderDataPtr = std::make_shared<SDLRenderData>();
+    std::shared_ptr<SDLRenderData> sdlRenderDataPtr = std::make_shared<SDLRenderData>();
+    engineRenderDataPtr = std::dynamic_pointer_cast<IRenderData>(sdlRenderDataPtr);
+   
     //TODO: fix this so not setting the rendererdata ptr first.
-    //Initialise the window
-    engineWindowPtr = std::make_shared<SDLGameWindow>(sdlRenderDataPtr);
-    //engineWindowPtr->sdlRenderDataPtr = sdlRenderDataPtr;
+    //Initialise the window, passing in the sdlrenderdata
+    std::shared_ptr<SDLGameWindow> sdlEngineWindowPtr = std::make_shared<SDLGameWindow>();
+    engineRenderDataPtr->windowPtr = std::dynamic_pointer_cast<IWindow>(sdlEngineWindowPtr);//std::make_shared<SDLGameWindow>(sdlRenderDataPtr);
 
-    bool windowInitSuccess = engineWindowPtr->Initialize(appData->applicationName, appData->windowWidth, appData->windowHeight);
+    bool windowInitSuccess = engineRenderDataPtr->windowPtr->Initialize(appData->applicationName, appData->windowWidth, appData->windowHeight);
     if(windowInitSuccess == false){
         LogManager::Log("GameEngine: Window failed to initialize");
         success = -1;
@@ -64,14 +66,15 @@ int GameEngine::startup(AppData* applicationData, const std::shared_ptr<AF_Engin
 
 
     //Initilise the renderer
-    engineRenderer = new SDLGameRenderer(); //not a singleton pattern also should
-    SDLGameRenderer* sdlRenderer = dynamic_cast<SDLGameRenderer*>(engineRenderer);
-    if (sdlRenderer != nullptr) {
-        sdlRenderer->sdlRenderDataPtr = sdlRenderDataPtr;
-    } else {
+    engineRenderer = new SDLGameRenderer(sdlRenderDataPtr); //not a singleton pattern also should
+    
+    //SDLGameRenderer* sdlRenderer = dynamic_cast<SDLGameRenderer*>(engineRenderer);
+    if (engineRenderer == nullptr) {
+        
         // handle the case where the cast fails
         LogManager::Log("GameEngine: Failed to cast to SDLGameRenderer");
     }
+
 
     bool rendererInitSuccess = engineRenderer->Initialize(appData->applicationName, appData->windowWidth, appData->windowHeight);
     if(rendererInitSuccess == false){

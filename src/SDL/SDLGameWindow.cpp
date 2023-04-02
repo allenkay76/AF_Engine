@@ -15,9 +15,10 @@ bool SDLGameWindow::Initialize(const char* windowName, const int windowWidth, co
     else
     {
         // Create a new SDL window with the specified dimensions and window name
-        std::unique_ptr<SDL_Window, void(*)(SDL_Window*)> window(SDL_CreateWindow(windowName,SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowWidth, windowHeight, SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE), SDL_DestroyWindow);
-        sdlRenderDataPtr->sdlWindowPtr = std::move(window);
-        if(sdlRenderDataPtr->sdlWindowPtr == nullptr)
+        //std::unique_ptr<SDL_Window, void(*)(SDL_Window*)> window(SDL_CreateWindow(windowName,SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowWidth, windowHeight, SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE), SDL_DestroyWindow);
+        sdlWindowPtr = std::shared_ptr<SDL_Window>(SDL_CreateWindow(windowName,SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowWidth, windowHeight, SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE), SDL_DestroyWindow);
+        //sdlRenderDataPtr->sdlWindowPtr = std::move(window);
+        if(sdlWindowPtr == nullptr)
         {
             LogManager::Log("SDL window could not be created! SDL_Error: %s\n", SDL_GetError());
             success = false;
@@ -38,11 +39,20 @@ void SDLGameWindow::EndFrame()
 {
 }
 
+//This function returns a void pointer to the window of SDL_Window type
+std::shared_ptr<void> SDLGameWindow::getWindow() {
+    return std::static_pointer_cast<void>(sdlWindowPtr); //return a void pointer to the window, we will stat
+}
+
+
 bool SDLGameWindow::GetIsRunning()
 {
     return false;
 }
 
+SDLGameWindow::SDLGameWindow()
+{
+}
 
 SDLGameWindow::~SDLGameWindow()
 {

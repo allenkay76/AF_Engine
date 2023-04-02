@@ -46,8 +46,6 @@ public:
 
     ImageData* m_loadedImage;
 
-    
-
     AF_Engine_API static void testEngineFunction();
     AF_Engine_API static int  returnTextEngineFunction();
     AF_Engine_API static int  multTextEngineFunction(int a, int b);
@@ -68,10 +66,5 @@ protected:
     IRenderer* engineRenderer;
     IInput* engineInput;
     AppData* appData;
-    std::shared_ptr<SDLRenderData> sdlRenderDataPtr;
-    std::shared_ptr<IWindow> engineWindowPtr;
-
-    
-
-    
+    std::shared_ptr<IRenderData> engineRenderDataPtr;
 };

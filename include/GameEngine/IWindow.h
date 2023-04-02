@@ -14,6 +14,6 @@ public:
     virtual void BeginFrame() = 0;
     virtual void EndFrame() = 0;
     virtual bool GetIsRunning() = 0;
-
-    
+    virtual std::shared_ptr<void> getWindow() = 0; //This function returns a void pointer to the window of what ever library is being used e.g. SDL, or DirectX etc
 };
+
