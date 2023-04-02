@@ -4,12 +4,12 @@
 
 #include <SDL2/SDL.h>
 #include "SDL/SDLTexSurfData.h"
-#include "Rendering/ImageData.h"
+#include "Rendering/IRenderdata.h"
 
 
 using namespace std;
 //TODO convert to constructor struct so values are initialized to 0
-struct SDLRenderData{
+struct SDLRenderData {
         std::unique_ptr<SDL_Window, decltype(&SDL_DestroyWindow)> sdlWindowPtr{nullptr, &SDL_DestroyWindow}; 
         SDL_GLContext sdlContextPtr;
 

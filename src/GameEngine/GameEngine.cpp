@@ -52,8 +52,8 @@ int GameEngine::startup(AppData* applicationData, const std::shared_ptr<AF_Engin
 
     //TODO: fix this so not setting the rendererdata ptr first.
     //Initialise the window
-    engineWindowPtr = std::make_shared<SDLGameWindow>();
-    engineWindowPtr->sdlRenderDataPtr = sdlRenderDataPtr;
+    engineWindowPtr = std::make_shared<SDLGameWindow>(sdlRenderDataPtr);
+    //engineWindowPtr->sdlRenderDataPtr = sdlRenderDataPtr;
 
     bool windowInitSuccess = engineWindowPtr->Initialize(appData->applicationName, appData->windowWidth, appData->windowHeight);
     if(windowInitSuccess == false){

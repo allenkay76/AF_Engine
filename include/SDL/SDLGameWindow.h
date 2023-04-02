@@ -9,7 +9,6 @@ class SDLGameWindow : public IWindow {
 
 public:
     bool Initialize(const char* windowName, const int windowWidth, const int windowHeight) override;
-    
     // This function shuts down the SDL2 window and renderer.
     void Shutdown() override;
     // This function begins a new rendering frame.
@@ -20,7 +19,7 @@ public:
     bool GetIsRunning() override;
 
     // This is the constructor for the SDLWindow class.
-    SDLGameWindow();
+    SDLGameWindow(std::shared_ptr<SDLRenderData> renderDataPtr) : sdlRenderDataPtr(renderDataPtr){};
     // This is the destructor for the SDLWindow class.
     ~SDLGameWindow();
 

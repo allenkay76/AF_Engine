@@ -2,7 +2,7 @@
 
 bool SDLGameWindow::Initialize(const char* windowName, const int windowWidth, const int windowHeight){
 
-    //Initialization flag
+   //Initialization flag
     bool success = true;
 
     //Initialize SDL
@@ -43,9 +43,6 @@ bool SDLGameWindow::GetIsRunning()
     return false;
 }
 
-SDLGameWindow::SDLGameWindow()
-{
-}
 
 SDLGameWindow::~SDLGameWindow()
 {

@@ -35,12 +35,10 @@ bool SDLGameRenderer::Initialize(const char* windowName, const int windowWidth, 
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
         
-        // Create a new SDL window with the specified dimensions and window name
-        std::unique_ptr<SDL_Window, void(*)(SDL_Window*)> window(SDL_CreateWindow(windowName,SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowWidth, windowHeight, SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE), SDL_DestroyWindow);
-        sdlRenderDataPtr->sdlWindowPtr = std::move(window);
+    
         if(sdlRenderDataPtr->sdlWindowPtr == nullptr)
         {
-            LogManager::Log("SDL window could not be created! SDL_Error: %s\n", SDL_GetError());
+            LogManager::Log("SDL window could not be created! SDL_Error: %s %s\n", SDL_GetError(), windowName);
             success = false;
         }
         else

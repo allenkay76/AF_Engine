@@ -69,7 +69,7 @@ protected:
     IInput* engineInput;
     AppData* appData;
     std::shared_ptr<SDLRenderData> sdlRenderDataPtr;
-    std::shared_ptr<SDLGameWindow> engineWindowPtr;
+    std::shared_ptr<IWindow> engineWindowPtr;
 
     
 
