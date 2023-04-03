@@ -11,11 +11,11 @@
 #include "GameEngine/IInput.h"
 #include "Utils/SingletonRoot.h"
 #include "Application/AppData.h"
-#include "SDL/SDLRenderData.h"
 #include "GameEngine/AF_EngineBehaviour.h"
-
+#include "Rendering/IRenderData.h"
 #include "GameEngine/IWindow.h"
-#include "SDL/SDLGameWindow.h"
+#include "GameEngine/IEventHandler.h"
+
 
 class Game;
 
@@ -67,4 +67,5 @@ protected:
     IInput* engineInput;
     AppData* appData;
     std::shared_ptr<IRenderData> engineRenderDataPtr;
+    std::shared_ptr<IEventHandler> engineEventHandlerPtr;
 };

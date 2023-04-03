@@ -4,6 +4,7 @@
 #include "Application/AppData.h"
 #include "Utils/LogManager.h"
 #include "SDL/SDLRenderData.h"
+#include "SDL/SDLEventData.h"    // include the SDLEventData header file
 
 class SDLGameWindow : public IWindow {
 
@@ -21,7 +22,7 @@ public:
     //This function returns a void pointer to the window of SDL_Window type
     std::shared_ptr<void> getWindow() override;
 
-    
+    void HandleEvents(const SDL_Event* sdlEvent);
 
     // This is the constructor for the SDLWindow class.
     SDLGameWindow();
@@ -35,4 +36,6 @@ public:
 private:
     // This is the SDL2 window.
     std::shared_ptr<SDL_Window> sdlWindowPtr;
+
+    SDLEventData sdlEventData;        // declare an instance of the SDLEventData struct
 };

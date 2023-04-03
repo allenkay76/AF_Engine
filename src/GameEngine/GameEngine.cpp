@@ -1,7 +1,9 @@
 #include "GameEngine/GameEngine.h"
 #include "Utils/LogManager.h"
+#include "SDL/SDLGameWindow.h"
 #include "SDL/SDLGameRenderer.h"
 #include "SDL/SDLGameInput.h"
+#include "SDL/SDLEventHandler.h"
 #include "GameEngine/AF_EngineBehaviour.h"
 
 
@@ -39,8 +41,9 @@ int GameEngine::startup(AppData* applicationData, const std::shared_ptr<AF_Engin
     int success = 1;
     LogManager::Log("GameEngine: Starting up");
     appData = applicationData;
-    //Set the game engine pointer in the app data
-    //appData->gameEnginePtr = this;
+
+
+    //--------------SDL--------------------------------
     #ifndef SDL_GAME_RENDERER
     #error "SDL_GAME_RENDERER flag is not defined"
     #endif
@@ -48,7 +51,12 @@ int GameEngine::startup(AppData* applicationData, const std::shared_ptr<AF_Engin
 
     //Set the renderer and input
     #ifdef SDL_GAME_RENDERER
-    //sdlRenderDataPtr = std::make_shared<SDLRenderData>();
+    //Create the Event Handler
+    std::shared_ptr<SDLEventHandler> sdlEventHandlerPtr = std::make_shared<SDLEventHandler>();
+    engineEventHandlerPtr = std::dynamic_pointer_cast<IEventHandler>(sdlEventHandlerPtr);
+    engineEventHandlerPtr->Initialize();
+
+    //Create the renderer
     std::shared_ptr<SDLRenderData> sdlRenderDataPtr = std::make_shared<SDLRenderData>();
     engineRenderDataPtr = std::dynamic_pointer_cast<IRenderData>(sdlRenderDataPtr);
    
@@ -88,6 +96,7 @@ int GameEngine::startup(AppData* applicationData, const std::shared_ptr<AF_Engin
     engineInput->Initialize();
 
     #else
+    
     LogManager::Log("GameEngine: No renderer defined");
     success = -1;
     return success;
@@ -114,6 +123,8 @@ int GameEngine::startup(AppData* applicationData, const std::shared_ptr<AF_Engin
         engineBehaviour->awake();
         engineBehaviour->start();
    }
+
+   
   
     return success;
 }
@@ -128,6 +139,16 @@ int GameEngine::loop(const std::shared_ptr<AF_EngineBehaviour> engineBehaviour)
     if(engineInput->GetIsRunning() == false){
         appData->isRunning = false;
     }
+
+
+
+    if(engineRenderDataPtr->windowPtr == nullptr){
+       LogManager::Log("GameEngine: Window is null");
+    }else{
+        engineRenderDataPtr->windowPtr->BeginFrame();
+        engineRenderDataPtr->windowPtr->EndFrame();
+    }
+
 
     //update the script manager.
     if(engineBehaviour != nullptr){
@@ -144,7 +165,16 @@ int GameEngine::loop(const std::shared_ptr<AF_EngineBehaviour> engineBehaviour)
     }
     engineRenderer->BeginFrame();
     engineRenderer->EndFrame();
-    
+
+
+    if(engineEventHandlerPtr != nullptr){
+        engineEventHandlerPtr->BeginFrame();
+        engineEventHandlerPtr->PollEvents(engineRenderDataPtr->windowPtr.get(), engineInput);
+        engineEventHandlerPtr->EndFrame();
+    }
+    else{
+        LogManager::Log("GameEngine: Event handler is null");
+    }
 
     //free the image data
     //delete imageToLoad->data;
@@ -159,10 +189,15 @@ int GameEngine::shutdown(const std::shared_ptr<AF_EngineBehaviour> engineBehavio
 {
     LogManager::Log("GameEngine: Shutting down");
     engineInput->Shutdown();
+    
+    engineRenderDataPtr->windowPtr->Shutdown();
+    
     engineRenderer->Shutdown();
 
     //shutdown the game application behaviour
     engineBehaviour->shutdown();
+
+    engineEventHandlerPtr->Shutdown();
 
     //move this later
     delete(m_loadedImage);

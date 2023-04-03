@@ -7,6 +7,9 @@
 // Define a struct to store SDL event data
 struct SDLEventData
 {
-    SDL_Event sdlEvent; // The SDL event
     bool sdlEventIsRunning; // Flag indicating if the event is still running
+    bool sdlEventKeyDown; // Flag indicating if a key is down
+    bool sdlEventMouseButtonDown; // Flag indicating if a mouse button is down
+    SDL_Point sdlEventMousePosition; // The mouse position
+
 };

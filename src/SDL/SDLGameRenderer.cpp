@@ -44,8 +44,10 @@ bool SDLGameRenderer::Initialize(const char* windowName, const int windowWidth, 
         else
         {
             //set the SDL_Window as we use it all the time
-            //(static_cast<SDL_Window*>(sdlRenderDataPtr->windowPtr->getWindow().get()));
-            sdlWindowPtr = static_cast<SDL_Window*>(sdlRenderDataPtr->windowPtr->getWindow().get());
+            
+            //Save a copy of the window pointer as we will access it a lot. TODO: consider cache coherency as we will be accessing this a lot
+            sdlWindowPtr = static_cast<SDL_Window*>(sdlRenderDataPtr->windowPtr->getWindow().get()); //this is the window we will use for the renderer
+
             // Create a new SDL renderer for the window
             std::unique_ptr<SDL_Renderer, void(*)(SDL_Renderer*)> renderer(SDL_CreateRenderer(sdlWindowPtr, -1, 0), SDL_DestroyRenderer);
             sdlRenderDataPtr->sdlRendererPtr = std::move(renderer);
