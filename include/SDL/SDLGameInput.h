@@ -8,7 +8,7 @@ class SDLGameInput: public IInput {   // define the SDLGameInput class and inher
 public:
     SDLEventData sdlEventData;        // declare an instance of the SDLEventData struct
 
-    void Initialize() override;       // declare the Initialize function, which is a pure virtual function in IInput
+    bool Initialize() override;       // declare the Initialize function, which is a pure virtual function in IInput
     void Shutdown() override;         // declare the Shutdown function, which is a pure virtual function in IInput
     void BeginFrame() override;       // declare the BeginFrame function, which is a pure virtual function in IInput
     void EndFrame() override;         // declare the EndFrame function, which is a pure virtual function in IInput

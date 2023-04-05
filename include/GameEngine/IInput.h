@@ -7,7 +7,7 @@ including functions for initialization, shutdown, beginning and ending a frame, 
 */
 class IInput {
 public:
-    virtual void Initialize() = 0;
+    virtual bool Initialize() = 0;
     virtual void Shutdown() = 0;
     virtual void BeginFrame() = 0;
     virtual void EndFrame() = 0;

@@ -52,66 +52,66 @@ void SDLGameWindow::HandleEvents(const SDL_Event *event)
 {
     switch (event->window.event) {
         case SDL_WINDOWEVENT_SIZE_CHANGED:
-            LogManager::Log("Window size changed to %d x %d", event->window.data1, event->window.data2);
+            //LogManager::Log("Window size changed to %d x %d", event->window.data1, event->window.data2);
         break;
         
         case SDL_WINDOWEVENT_MINIMIZED:
-            LogManager::Log("Window minimized");
+            //LogManager::Log("Window minimized");
         
         case SDL_WINDOWEVENT_MAXIMIZED:
-            LogManager::Log("Window maximized");
+            //LogManager::Log("Window maximized");
         break;
         
         case SDL_WINDOWEVENT_RESTORED:
-            LogManager::Log("Window restored");
+            //LogManager::Log("Window restored");
         break;
         
         case SDL_WINDOWEVENT_ENTER:
-            LogManager::Log("Mouse entered window");
+            //LogManager::Log("Mouse entered window");
         break;
         
         case SDL_WINDOWEVENT_LEAVE:
-            LogManager::Log("Mouse left window");
+            //LogManager::Log("Mouse left window");
         break;
         
         case SDL_WINDOWEVENT_FOCUS_GAINED:
-            LogManager::Log("Window gained keyboard focus");
+            //LogManager::Log("Window gained keyboard focus");
         break;
         
         case SDL_WINDOWEVENT_FOCUS_LOST:
-            LogManager::Log("Window lost keyboard focus");
+            //LogManager::Log("Window lost keyboard focus");
         break;
         
         case SDL_WINDOWEVENT_SHOWN:
-            LogManager::Log("Window shown");
+            //LogManager::Log("Window shown");
         break;
         
         case SDL_WINDOWEVENT_HIDDEN:
-            LogManager::Log("Window hidden");
+            //LogManager::Log("Window hidden");
         break;
         
         case SDL_WINDOWEVENT_EXPOSED:
-            LogManager::Log("Window exposed");
+            //LogManager::Log("Window exposed");
         break;
         
         case SDL_WINDOWEVENT_MOVED:
-            LogManager::Log("Window moved to %d, %d", event->window.data1, event->window.data2);
+            //LogManager::Log("Window moved to %d, %d", event->window.data1, event->window.data2);
         break;
         
         case SDL_WINDOWEVENT_RESIZED:
-            LogManager::Log("Window resized to %d x %d", event->window.data1, event->window.data2);
+            //LogManager::Log("Window resized to %d x %d", event->window.data1, event->window.data2);
         break;
         
         case SDL_WINDOWEVENT_CLOSE:
-            LogManager::Log("Window close requested");
+            //LogManager::Log("Window close requested");
         break;
         
         case SDL_WINDOWEVENT_TAKE_FOCUS:
-            LogManager::Log("Window is offered a focus");
+            //LogManager::Log("Window is offered a focus");
         break;
         
         case SDL_WINDOWEVENT_HIT_TEST:
-            LogManager::Log("Window has a special hit test");
+            //LogManager::Log("Window has a special hit test");
         break;
         
         default:

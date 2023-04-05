@@ -4,7 +4,11 @@
 #include "SDL/SDLGameRenderer.h"
 #include "SDL/SDLGameInput.h"
 #include "SDL/SDLEventHandler.h"
+#include "SDL/SDLFontRenderer.h"
+#include "SDL/SDLGameTimer.h"
 #include "GameEngine/AF_EngineBehaviour.h"
+
+#include <iostream>
 
 
 //Singleton pattern to get the instance
@@ -54,17 +58,28 @@ int GameEngine::startup(AppData* applicationData, const std::shared_ptr<AF_Engin
     //Create the Event Handler
     std::shared_ptr<SDLEventHandler> sdlEventHandlerPtr = std::make_shared<SDLEventHandler>();
     engineEventHandlerPtr = std::dynamic_pointer_cast<IEventHandler>(sdlEventHandlerPtr);
-    engineEventHandlerPtr->Initialize();
+    if(engineEventHandlerPtr == nullptr){
+        LogManager::Log("GameEngine: Failed to cast to IEventHandler");
+        success = -1;
+        return success;
+    }else{
+        engineEventHandlerPtr->Initialize();
+    }
+    
 
     //Create the renderer
     std::shared_ptr<SDLRenderData> sdlRenderDataPtr = std::make_shared<SDLRenderData>();
     engineRenderDataPtr = std::dynamic_pointer_cast<IRenderData>(sdlRenderDataPtr);
+    if(engineRenderDataPtr == nullptr){
+        LogManager::Log("GameEngine: Failed to cast to IRenderData");
+        success = -1;
+        return success;
+    }
    
     //TODO: fix this so not setting the rendererdata ptr first.
     //Initialise the window, passing in the sdlrenderdata
     std::shared_ptr<SDLGameWindow> sdlEngineWindowPtr = std::make_shared<SDLGameWindow>();
     engineRenderDataPtr->windowPtr = std::dynamic_pointer_cast<IWindow>(sdlEngineWindowPtr);//std::make_shared<SDLGameWindow>(sdlRenderDataPtr);
-
     bool windowInitSuccess = engineRenderDataPtr->windowPtr->Initialize(appData->applicationName, appData->windowWidth, appData->windowHeight);
     if(windowInitSuccess == false){
         LogManager::Log("GameEngine: Window failed to initialize");
@@ -75,12 +90,13 @@ int GameEngine::startup(AppData* applicationData, const std::shared_ptr<AF_Engin
 
     //Initilise the renderer
     engineRenderer = new SDLGameRenderer(sdlRenderDataPtr); //not a singleton pattern also should
-    
     //SDLGameRenderer* sdlRenderer = dynamic_cast<SDLGameRenderer*>(engineRenderer);
     if (engineRenderer == nullptr) {
         
         // handle the case where the cast fails
         LogManager::Log("GameEngine: Failed to cast to SDLGameRenderer");
+        success = -1;
+        return success;
     }
 
 
@@ -93,13 +109,52 @@ int GameEngine::startup(AppData* applicationData, const std::shared_ptr<AF_Engin
 
     //Initialize the input
     engineInput = new SDLGameInput(); //not a singleton pattern
-    engineInput->Initialize();
+    if (engineInput == nullptr) {
+        // handle the case where the cast fails
+        LogManager::Log("GameEngine: Failed to cast to SDLGameInput");
+        success = -1;
+        return success;
+    }else{
+        bool inputStartSuccess = engineInput->Initialize();
+        if(inputStartSuccess == false){
+            LogManager::Log("GameEngine: Failed to initialize SDLGameInput");
+            success = -1;
+            return success;
+        }
+    }
 
+
+    //Initialise the Font Renderer
+    std::shared_ptr<SDLFontRenderer> sdlFontRendererPtr = std::make_shared<SDLFontRenderer>();
+    engineFontRendererPtr = std::dynamic_pointer_cast<IFontRenderer>(sdlFontRendererPtr);
+    if(engineFontRendererPtr == nullptr){
+        LogManager::Log("GameEngine: Failed to cast to SDLFontRenderer");
+        success = -1;
+        return success;
+    }else{
+        bool statupSuccess = engineFontRendererPtr->Initialize();
+        if(statupSuccess == false){
+            LogManager::Log("GameEngine: Failed to initialize SDLFontRenderer");
+            success = -1;
+            return success;
+        }
+    }
+
+    std::shared_ptr<SDLGameTimer> sdlEngineTimer = std::make_shared<SDLGameTimer>();
+    engineTimer = std::dynamic_pointer_cast<ITimer>(sdlEngineTimer);
+    if(!engineTimer){
+        LogManager::Log("GameEngine: Failed to cast to ITimer");
+        success = -1;
+        return success;
+    }
+    
+
+    
     #else
     
-    LogManager::Log("GameEngine: No renderer defined");
-    success = -1;
-    return success;
+        LogManager::Log("GameEngine: No renderer defined");
+        success = -1;
+        return success;
     #endif
 
     
@@ -131,6 +186,10 @@ int GameEngine::startup(AppData* applicationData, const std::shared_ptr<AF_Engin
 
 int GameEngine::loop(const std::shared_ptr<AF_EngineBehaviour> engineBehaviour)
 {
+    //Update the timer
+    engineTimer->start();
+
+
     //Do a frame for the input and renderer
     engineInput->BeginFrame();
     engineInput->EndFrame();
@@ -148,6 +207,10 @@ int GameEngine::loop(const std::shared_ptr<AF_EngineBehaviour> engineBehaviour)
         engineRenderDataPtr->windowPtr->BeginFrame();
         engineRenderDataPtr->windowPtr->EndFrame();
     }
+
+    //Render the Font Renderer
+    engineFontRendererPtr->BeginFrame();
+    engineFontRendererPtr->EndFrame();
 
 
     //update the script manager.
@@ -176,6 +239,15 @@ int GameEngine::loop(const std::shared_ptr<AF_EngineBehaviour> engineBehaviour)
         LogManager::Log("GameEngine: Event handler is null");
     }
 
+    //
+    std::string text = "GameEngine: Frame time: "  + std::to_string((engineTimer->getTicks()));
+    std::cout << '\r' << std::string(text.length(), ' ') << '\r' << text << std::flush;
+
+    //std::cout << "GameEngine: Frame time: " << (engineTimer->getTicks()) << std::endl;
+    engineTimer->stop();
+
+
+    //LogManager::Log("GameEngine: Frame time: %s" , (engineTimer->getTicks() / 1000.f));
     //free the image data
     //delete imageToLoad->data;
     //delete imageToLoad;
@@ -191,6 +263,8 @@ int GameEngine::shutdown(const std::shared_ptr<AF_EngineBehaviour> engineBehavio
     engineInput->Shutdown();
     
     engineRenderDataPtr->windowPtr->Shutdown();
+
+    engineFontRendererPtr->Shutdown();
     
     engineRenderer->Shutdown();
 
@@ -201,6 +275,8 @@ int GameEngine::shutdown(const std::shared_ptr<AF_EngineBehaviour> engineBehavio
 
     //move this later
     delete(m_loadedImage);
+
+    
     //delete(engineRenderer);
     return 0;
 }

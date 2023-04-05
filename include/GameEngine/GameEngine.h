@@ -15,6 +15,8 @@
 #include "Rendering/IRenderData.h"
 #include "GameEngine/IWindow.h"
 #include "GameEngine/IEventHandler.h"
+#include "GameEngine/IFontRenderer.h"
+#include "GameEngine/ITimer.h"
 
 
 class Game;
@@ -68,4 +70,8 @@ protected:
     AppData* appData;
     std::shared_ptr<IRenderData> engineRenderDataPtr;
     std::shared_ptr<IEventHandler> engineEventHandlerPtr;
+
+    std::shared_ptr<IFontRenderer> engineFontRendererPtr;
+
+    std::shared_ptr<ITimer> engineTimer;
 };

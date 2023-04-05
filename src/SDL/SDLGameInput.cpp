@@ -2,10 +2,11 @@
 #include "SDL/SDLEventData.h"
 
 // Initialize function implementation
-void SDLGameInput::Initialize()
+bool SDLGameInput::Initialize()
 {
     // Set the sdlEventIsRunning flag to true
     sdlEventData.sdlEventIsRunning = true;
+    return true;
 }
 
 // Shutdown function implementation
@@ -58,7 +59,7 @@ void SDLGameInput::HandleEvents(const SDL_Event *sdlEvent)
             break;
         case SDL_KEYDOWN:
             // Set the key down flag to true.
-            LogManager::Log("Key down");
+            //LogManager::Log("Key down");
             sdlEventData.sdlEventKeyDown = true;
             if (sdlEvent->key.keysym.sym == SDLK_ESCAPE)
                 {
@@ -70,23 +71,23 @@ void SDLGameInput::HandleEvents(const SDL_Event *sdlEvent)
         case SDL_KEYUP:
             // Set the key down flag to false.
             sdlEventData.sdlEventKeyDown = false;
-            LogManager::Log("Key up");
+            //LogManager::Log("Key up");
             break;
         case SDL_MOUSEBUTTONDOWN:
             // Set the mouse button down flag to true.
             sdlEventData.sdlEventMouseButtonDown = true;
-            LogManager::Log("Mouse down");
+            //LogManager::Log("Mouse down");
             break;
         case SDL_MOUSEBUTTONUP:
             // Set the mouse button down flag to false.
             sdlEventData.sdlEventMouseButtonDown = false;
-            LogManager::Log("Mouse up");
+            //LogManager::Log("Mouse up");
             break;
         case SDL_MOUSEMOTION:
             // Set the mouse position.
             //sdlEventDataPtr->mousePosition.x = sdlEvent.motion.x;
             //sdlEventDataPtr->mousePosition.y = sdlEvent.motion.y;
-            LogManager::Log("Mouse motion %d %d", sdlEvent->motion.x, sdlEvent->motion.y);  
+            //LogManager::Log("Mouse motion %d %d", sdlEvent->motion.x, sdlEvent->motion.y);  
             break;
         case SDL_MOUSEWHEEL:
             // Set the mouse wheel position.

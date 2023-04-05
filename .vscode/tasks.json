@@ -178,6 +178,10 @@
                 "-I${workspaceFolder}/include", // Add the include directory to the search path
                 "-I${workspaceFolder}/../SDK/mingw_dev_lib/i686-w64-mingw32/include/SDL2", // Add the SDL2 include directory to the search path
                 "-L${workspaceFolder}/../SDK/mingw_dev_lib/i686-w64-mingw32/lib", // Add the SDL2 library directory to the search path
+                "-I${workspaceFolder}/../SDK/SDL2_ttf-devel-2.20.2-mingw/SDL2_ttf-2.20.2/i686-w64-mingw32/include", // Add the SDL2_ttf include directory to the search path
+                "-L${workspaceFolder}/../SDK/SDL2_ttf-devel-2.20.2-mingw/SDL2_ttf-2.20.2/i686-w64-mingw32/lib", // Add the SDL2_ttf library directory to the search path
+                "-I${workspaceFolder}/../SDK/SDL2_image-devel-2.6.3-mingw/SDL2_image-2.6.3/i686-w64-mingw32/include", // Add the SDL2_ttf include directory to the search path
+                "-L${workspaceFolder}/../SDK/SDL2_image-devel-2.6.3-mingw/SDL2_image-2.6.3/i686-w64-mingw32/lib", // Add the SDL2_ttf library directory to the search path
                 "-I${workspaceFolder}/../SDK/glew-2.1.0/include", // Add the GLEW library directory to the search path
                 "-L${workspaceFolder}/../SDK/glew-2.1.0/lib", // Add the GLEW library directory to the search path
                 //"${workspaceFolder}/src/*.cpp",  // Compile all .cpp files in the src directory
@@ -185,6 +189,8 @@
                 "-lmingw32",    // Link against the mingw32 library
                 "-lSDL2main",   // Link against the SDL2main library
                 "-lSDL2",       // Link against the SDL2 library
+                "-lSDL2_ttf",   // Link against the SDL2_ttf library
+                "-lSDL2_image", // Link against the SDL2_image library
                 "-lopengl32",   // Link against the opengl32 library
                 "-lglu32",      // Link against the glu32 library
                 "-lglew32",     // Link against the glew32 library
