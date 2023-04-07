@@ -11,7 +11,6 @@
 Application::Application(const AppData& appDataInput, const std::shared_ptr<AppSubSystems> subSystemsInput) : appData(appDataInput), appSubSystem(subSystemsInput) {
 
     // Initialize the application and subsystems
-    appSubSystem = subSystemsInput;
     if(appSubSystem == nullptr){
         LogManager::Log("Application: Failed to create AppSubSystems");
         return;
@@ -88,7 +87,7 @@ int Application::startup(const std::shared_ptr<AppSubSystems> subsystems) {
     }
 
 
-    int gameEngineStartupSuccess = appSubSystem->gameEnginePtr->startup(&appData, subsystems->engineBehaviourPtr);
+    int gameEngineStartupSuccess = appSubSystem->gameEnginePtr->startup(&appData, subsystems->engineBehaviourPtr, dependencyAppSubsystems);
     if(gameEngineStartupSuccess < 1){
         LogManager::Log("GameEngine: Startup failed");
         success = -1;
@@ -107,7 +106,7 @@ int Application::loop(const std::shared_ptr<AppSubSystems> subsystems) {
     
     LogManager::Log("Application: Loop starting");
     while(appData.isRunning){
-        subsystems->gameEnginePtr->loop(subsystems->engineBehaviourPtr);
+        subsystems->gameEnginePtr->loop(subsystems->engineBehaviourPtr, dependencyAppSubsystems);
     }
     return 0;
 }

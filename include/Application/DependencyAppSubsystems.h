@@ -1,16 +1,12 @@
 #pragma once
-#include "Utils/LogManager.h"
-#include "GameEngine/GameEngine.h"
-#include "GameEngine/AF_EngineBehaviour.h"
 
-// Structure to hold pointers to the various subsystems used by the Application
-struct AppSubSystems {
+//If we are using the SDL systems then create a struct containing the relevant subsystems
+#ifdef SDL_GAME_RENDERER
+#include "SDL/SDLGameTimer.h"
+
+struct DependencyAppSubsystems{
     // Pointer to LogManager subsystem
-    LogManager* logManagerPtr;
-    std::shared_ptr<GameEngine> gameEnginePtr;
-
-    std::shared_ptr<AF_EngineBehaviour> engineBehaviourPtr;
-    
+    SDLGameTimer gameTimer;
     // Uncomment and add the relevant headers to use the following subsystems
     // MemoryManager* memoryManagerPtr;
     // TimeManager* timeManagerPtr;
@@ -23,3 +19,9 @@ struct AppSubSystems {
     // ExceptionManager* exceptionManager;
     // SoundManager* soundManager;
 };
+
+#else
+struct DependencyAppSubsystems{
+};
+#error "SDL_GAME_RENDERER flag is not defined"
+#endif

@@ -9,7 +9,7 @@ void SDLGameTimer::Shutdown()
 {
 }
 
-void SDLGameTimer::start()
+void SDLGameTimer::start() 
 {
     started = true;
     paused = false;
@@ -17,7 +17,7 @@ void SDLGameTimer::start()
     pausedTicks = 0;
 }
 
-void SDLGameTimer::stop()
+void SDLGameTimer::stop()  
 {
     started = false;
     paused = false;
@@ -45,7 +45,7 @@ void SDLGameTimer::unpause()
     }
 }
 
-int SDLGameTimer::getTicks()
+int SDLGameTimer::getTicks() const
 {
     int time = 0;
     if(started)
@@ -72,12 +72,8 @@ bool SDLGameTimer::isPaused()
     return paused && started;
 }
 
-SDLGameTimer::SDLGameTimer() 
+SDLGameTimer::SDLGameTimer() : startTicks(0), pausedTicks(0), paused(false), started(false)
 {
-    startTicks = 0;
-    pausedTicks = 0;
-    paused = false;
-    started = false;
 
 }
 

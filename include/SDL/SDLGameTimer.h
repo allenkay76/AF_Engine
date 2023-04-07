@@ -13,7 +13,7 @@ public:
     void pause() override;
     void unpause() override;
 
-    int getTicks() override;
+    int getTicks()  const override;
 
     bool isStarted() override;
     bool isPaused() override;
@@ -22,4 +22,12 @@ public:
     // implement other rendering functions using SDL2 API
     SDLGameTimer();                   // declare the constructor for the SDLGameInput class
     ~SDLGameTimer();                  // declare the destructor for the SDLGameInput class
+
+    //The clock time when the timer started
+    unsigned int startTicks;
+    unsigned int pausedTicks;
+
+    //The timer status
+    bool paused;
+    bool started;
 };

@@ -14,6 +14,8 @@
 #include "GameEngine/AF_EngineBehaviour.h"
 #include "Application/AppSubsystems.h"
 
+#include "Application/DependencyAppSubsystems.h"
+
 
 class AF_Engine_API Application {
 public:
@@ -40,6 +42,7 @@ public:
 
 private:
     //SDL Stuff
+    DependencyAppSubsystems dependencyAppSubsystems;
     
 };
 

@@ -27,22 +27,25 @@ GameEngine &GameEngine::GetInstance()
 */
 
 //set the renderer
-void GameEngine::setRenderer(IRenderer *renderer)
+
+
+void GameEngine::setRenderer(IRenderer* renderer)
 {
     LogManager::Log("GameEngine: Setting renderer");
     engineRenderer = renderer;
 }
 
 //Get the renderer
-IRenderer *GameEngine::getRenderer()
+IRenderer* GameEngine::getRenderer() const
 {
     return engineRenderer;
 }
 
 //Startup
-int GameEngine::startup(AppData* applicationData, const std::shared_ptr<AF_EngineBehaviour> engineBehaviour)
+int GameEngine::startup(AppData* applicationData, const std::shared_ptr<AF_EngineBehaviour> engineBehaviour, const DependencyAppSubsystems& dependencyAppSubSystems)
 {
     int success = 1;
+    LogManager::Log("Dependencies: Starting up: %i", dependencyAppSubSystems.gameTimer.getTicks());
     LogManager::Log("GameEngine: Starting up");
     appData = applicationData;
 
@@ -184,10 +187,11 @@ int GameEngine::startup(AppData* applicationData, const std::shared_ptr<AF_Engin
     return success;
 }
 
-int GameEngine::loop(const std::shared_ptr<AF_EngineBehaviour> engineBehaviour)
+int GameEngine::loop(const std::shared_ptr<AF_EngineBehaviour> engineBehaviour, DependencyAppSubsystems& dependencyAppSubSystems)
 {
     //Update the timer
-    engineTimer->start();
+    dependencyAppSubSystems.gameTimer.start();
+    //engineTimer->start();
 
 
     //Do a frame for the input and renderer
@@ -240,12 +244,12 @@ int GameEngine::loop(const std::shared_ptr<AF_EngineBehaviour> engineBehaviour)
     }
 
     //
-    std::string text = "GameEngine: Frame time: "  + std::to_string((engineTimer->getTicks()));
+    std::string text = "GameEngine: Frame time: "  + std::to_string((dependencyAppSubSystems.gameTimer.getTicks()));
     std::cout << '\r' << std::string(text.length(), ' ') << '\r' << text << std::flush;
 
     //std::cout << "GameEngine: Frame time: " << (engineTimer->getTicks()) << std::endl;
-    engineTimer->stop();
-
+    //engineTimer->stop();
+    dependencyAppSubSystems.gameTimer.stop();
 
     //LogManager::Log("GameEngine: Frame time: %s" , (engineTimer->getTicks() / 1000.f));
     //free the image data

@@ -18,8 +18,11 @@
 #include "GameEngine/IFontRenderer.h"
 #include "GameEngine/ITimer.h"
 
+#include "Application/DependencyAppSubsystems.h"
+
 
 class Game;
+struct DependencyAppSubSystem;
 
 class GameEngine : SingletonRoot { // Define the GameEngine class and inherit from SingletonRoot
 
@@ -28,17 +31,17 @@ public:
     //static GameEngine& GetInstance();
     AF_Engine_API static std::shared_ptr<GameEngine> GetInstance();
     // Set and get the renderer
-    void setRenderer(IRenderer* renderer);
+    void setRenderer( IRenderer* renderer);
     AF_Engine_API IRenderer* getRenderer();
     IRenderer* getRenderer() const;
 
    
 
     // Initialize the GameEngine
-    int startup(AppData* applicationData, const std::shared_ptr<AF_EngineBehaviour> engineBehaviour);
+    int startup(AppData* applicationData, const std::shared_ptr<AF_EngineBehaviour> engineBehaviour, const DependencyAppSubsystems& dependencyAppSubSystems);
 
     // Run the main game loop
-    int loop(const std::shared_ptr<AF_EngineBehaviour> engineBehaviour);
+    int loop(const std::shared_ptr<AF_EngineBehaviour> engineBehaviour, DependencyAppSubsystems& dependencyAppSubSystems);
 
     // Shutdown the GameEngine
     int shutdown(const std::shared_ptr<AF_EngineBehaviour> engineBehaviour);
