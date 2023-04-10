@@ -1,6 +1,6 @@
 #include "GameEngine/GameEngine.h"
 #include "Utils/LogManager.h"
-#include "SDL/SDLGameWindow.h"
+//#include "SDL/SDLGameWindow.h"
 #include "SDL/SDLGameRenderer.h"
 //#include "SDL/SDLGameInput.h"
 //#include "SDL/SDLEventHandler.h"
@@ -80,9 +80,9 @@ int GameEngine::startup(AppData* applicationData, const std::shared_ptr<AF_Engin
    
     //TODO: fix this so not setting the rendererdata ptr first.
     //Initialise the window, passing in the sdlrenderdata
-    std::shared_ptr<SDLGameWindow> sdlEngineWindowPtr = std::make_shared<SDLGameWindow>();
-    engineRenderDataPtr->windowPtr = std::dynamic_pointer_cast<IWindow>(sdlEngineWindowPtr);//std::make_shared<SDLGameWindow>(sdlRenderDataPtr);
-    bool windowInitSuccess = engineRenderDataPtr->windowPtr->Initialize(appData->applicationName, appData->windowWidth, appData->windowHeight);
+    //std::shared_ptr<SDLGameWindow> sdlEngineWindowPtr = std::make_shared<SDLGameWindow>();
+    //engineRenderDataPtr->windowPtr = std::dynamic_pointer_cast<IWindow>(sdlEngineWindowPtr);//std::make_shared<SDLGameWindow>(sdlRenderDataPtr);
+    bool windowInitSuccess = dependencyAppSubSystems.gameWindow.Initialize(appData->applicationName, appData->windowWidth, appData->windowHeight);
     if(windowInitSuccess == false){
         LogManager::Log("GameEngine: Window failed to initialize");
         success = -1;
@@ -102,7 +102,7 @@ int GameEngine::startup(AppData* applicationData, const std::shared_ptr<AF_Engin
     }
 
 
-    bool rendererInitSuccess = engineRenderer->Initialize(appData->applicationName, appData->windowWidth, appData->windowHeight);
+    bool rendererInitSuccess = engineRenderer->Initialize(appData->applicationName, appData->windowWidth, appData->windowHeight, &dependencyAppSubSystems.gameWindow);
     if(rendererInitSuccess == false){
         LogManager::Log("GameEngine: Renderer failed to initialize");
         success = -1;
@@ -191,12 +191,9 @@ int GameEngine::loop(const std::shared_ptr<AF_EngineBehaviour> engineBehaviour, 
 
 
 
-    if(engineRenderDataPtr->windowPtr == nullptr){
-       LogManager::Log("GameEngine: Window is null");
-    }else{
-        engineRenderDataPtr->windowPtr->BeginFrame();
-        engineRenderDataPtr->windowPtr->EndFrame();
-    }
+    
+    dependencyAppSubSystems.gameWindow.BeginFrame();
+    dependencyAppSubSystems.gameWindow.EndFrame();
 
     //Render the Font Renderer
     dependencyAppSubSystems.fontRenderer.BeginFrame();
@@ -221,7 +218,7 @@ int GameEngine::loop(const std::shared_ptr<AF_EngineBehaviour> engineBehaviour, 
 
 
     dependencyAppSubSystems.eventHandler.BeginFrame();
-    dependencyAppSubSystems.eventHandler.PollEvents(engineRenderDataPtr->windowPtr.get(), &dependencyAppSubSystems.gameInput);
+    dependencyAppSubSystems.eventHandler.PollEvents(&dependencyAppSubSystems.gameWindow, &dependencyAppSubSystems.gameInput);
     dependencyAppSubSystems.eventHandler.EndFrame();
    
 
@@ -248,7 +245,7 @@ int GameEngine::shutdown(const std::shared_ptr<AF_EngineBehaviour> engineBehavio
     LogManager::Log("GameEngine: Shutting down");
     dependencyAppSubSystems.gameInput.Shutdown();
     
-    engineRenderDataPtr->windowPtr->Shutdown();
+    dependencyAppSubSystems.gameWindow.Shutdown();
 
     dependencyAppSubSystems.fontRenderer.Shutdown();
     

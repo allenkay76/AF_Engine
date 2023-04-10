@@ -3,6 +3,7 @@
 #include "Utils/LogManager.h"
 #include "Rendering/imageData.h"
 
+
 //need to do this as we trust the stb_image.h library but our compiler settings treat warnings as errors.
 //#pragma GCC diagnostic push
 //#pragma GCC diagnostic ignored "-Wconversion"
@@ -10,12 +11,14 @@
 #include "Utils/stb_image.h"
 
 #include "SDL/SDLTexSurfData.h"
+
+#include "Application/DependencyAppSubsystems.h"
 //#pragma GCC diagnostic pop
 
 
 
 // Define the function to initialize the SDLGameRenderer with a given window name and dimensions
-bool SDLGameRenderer::Initialize(const char* windowName, const int windowWidth, const int windowHeight)
+bool SDLGameRenderer::Initialize(const char* windowName, const int windowWidth, const int windowHeight, IWindow* windowPtr)
 {
     //Initialization flag
     bool success = true;
@@ -36,7 +39,7 @@ bool SDLGameRenderer::Initialize(const char* windowName, const int windowWidth, 
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
         
     
-        if(sdlRenderDataPtr->windowPtr->getWindow() == nullptr)
+        if(windowPtr->getWindow() == nullptr)
         {
             LogManager::Log("SDL window could not be created! SDL_Error: %s %s\n", SDL_GetError(), windowName);
             success = false;
@@ -46,7 +49,7 @@ bool SDLGameRenderer::Initialize(const char* windowName, const int windowWidth, 
             //set the SDL_Window as we use it all the time
             
             //Save a copy of the window pointer as we will access it a lot. TODO: consider cache coherency as we will be accessing this a lot
-            sdlWindowPtr = static_cast<SDL_Window*>(sdlRenderDataPtr->windowPtr->getWindow().get()); //this is the window we will use for the renderer
+            sdlWindowPtr = static_cast<SDL_Window*>(windowPtr->getWindow().get()); //this is the window we will use for the renderer
 
             // Create a new SDL renderer for the window
             std::unique_ptr<SDL_Renderer, void(*)(SDL_Renderer*)> renderer(SDL_CreateRenderer(sdlWindowPtr, -1, 0), SDL_DestroyRenderer);

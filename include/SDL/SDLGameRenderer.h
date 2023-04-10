@@ -37,7 +37,7 @@ public:
     GLuint gTexture = 0;
 
     // This function initializes the SDL2 window and renderer.
-    bool Initialize(const char* windowName, const int windowWidth, const int windowHeight) override;
+    bool Initialize(const char* windowName, const int windowWidth, const int windowHeight, IWindow* windowPtr) override;
     bool InitializeSDLRenderer(const char* windowName, const int windowWidth, const int windowHeight, const std::shared_ptr<SDLRenderData> thisSDLRenderData);
     // This function shuts down the SDL2 window and renderer.
     void Shutdown() override;

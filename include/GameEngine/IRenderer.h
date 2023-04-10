@@ -1,6 +1,7 @@
 #pragma once
 #include "Rendering/imageData.h"
 #include <memory>
+#include "GameEngine/IWindow.h"
 /*
 This is an interface class for a rendering engine. 
 It provides a set of pure virtual functions that define the basic operations that a renderer must support. 
@@ -13,7 +14,7 @@ and implementing the desired functions.
 */
 class IRenderer {
 public:
-    virtual bool Initialize(const char* windowName, const int windowWidth, const int windowHeight) = 0;
+    virtual bool Initialize(const char* windowName, const int windowWidth, const int windowHeight, IWindow* windowPtr) = 0;
     virtual void Shutdown() = 0;
     virtual void BeginFrame() = 0;
     virtual void EndFrame() = 0;
