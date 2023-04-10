@@ -13,6 +13,7 @@
 #include "SDL/SDLTexSurfData.h"
 
 #include "Application/DependencyAppSubsystems.h"
+//#include "SDLGameRenderer.h"
 //#pragma GCC diagnostic pop
 
 
@@ -455,6 +456,9 @@ void SDLGameRenderer::printShaderLog(GLuint shader){
 
 
 // Define the destructor for the SDLGameRenderer class
+SDLGameRenderer::SDLGameRenderer()
+{
+}
 SDLGameRenderer::~SDLGameRenderer()
 {
 }

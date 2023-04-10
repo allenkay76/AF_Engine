@@ -13,3 +13,9 @@ struct SDLEventData
     SDL_Point sdlEventMousePosition; // The mouse position
 
 };
+// Total memory used:
+// 1 byte for sdlEventIsRunning (bool)
+// 1 byte for sdlEventKeyDown (bool)
+// 1 byte for sdlEventMouseButtonDown (bool)
+// 8 bytes for sdlEventMousePosition (SDL_Point struct with 2 int members)
+// Total: 11 bytes

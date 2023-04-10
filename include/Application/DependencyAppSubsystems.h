@@ -7,6 +7,7 @@
 #include "SDL/SDLFontRenderer.h"
 #include "SDL/SDLGameInput.h"
 #include "SDL/SDLGameWindow.h"
+#include "SDL/SDLGameRenderer.h"
 
 struct DependencyAppSubsystems{
     // Pointer to LogManager subsystem
@@ -15,6 +16,7 @@ struct DependencyAppSubsystems{
     SDLFontRenderer fontRenderer;
     SDLGameInput gameInput;
     SDLGameWindow gameWindow;
+    SDLGameRenderer gameRenderer;
     // Uncomment and add the relevant headers to use the following subsystems
     // MemoryManager* memoryManagerPtr;
     // TimeManager* timeManagerPtr;

@@ -56,7 +56,7 @@ public:
     void printShaderLog(GLuint shader);
 
     // This is the constructor for the SDLGameRenderer class.
-    SDLGameRenderer(std::shared_ptr<SDLRenderData> renderDataPtr) : sdlRenderDataPtr(renderDataPtr){};
+    SDLGameRenderer();
     // This is the destructor for the SDLGameRenderer class.
     ~SDLGameRenderer();
 

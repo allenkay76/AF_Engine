@@ -91,18 +91,10 @@ int GameEngine::startup(AppData* applicationData, const std::shared_ptr<AF_Engin
 
 
     //Initilise the renderer
-    engineRenderer = new SDLGameRenderer(sdlRenderDataPtr); //not a singleton pattern also should
-    //SDLGameRenderer* sdlRenderer = dynamic_cast<SDLGameRenderer*>(engineRenderer);
-    if (engineRenderer == nullptr) {
-        
-        // handle the case where the cast fails
-        LogManager::Log("GameEngine: Failed to cast to SDLGameRenderer");
-        success = -1;
-        return success;
-    }
+    dependencyAppSubSystems.gameRenderer.sdlRenderDataPtr = sdlRenderDataPtr; //not a singleton pattern also should
+    
 
-
-    bool rendererInitSuccess = engineRenderer->Initialize(appData->applicationName, appData->windowWidth, appData->windowHeight, &dependencyAppSubSystems.gameWindow);
+    bool rendererInitSuccess =  dependencyAppSubSystems.gameRenderer.Initialize(appData->applicationName, appData->windowWidth, appData->windowHeight, &dependencyAppSubSystems.gameWindow);
     if(rendererInitSuccess == false){
         LogManager::Log("GameEngine: Renderer failed to initialize");
         success = -1;
@@ -208,13 +200,9 @@ int GameEngine::loop(const std::shared_ptr<AF_EngineBehaviour> engineBehaviour, 
         LogManager::Log("GameEngine: Engine behaviour is null");
     }
 
-    //Rendering
-    if(engineRenderer == nullptr){
-        LogManager::Log("GameEngine: Renderer is null");
-        return -1;
-    }
-    engineRenderer->BeginFrame();
-    engineRenderer->EndFrame();
+    //Render the renderer
+    dependencyAppSubSystems.gameRenderer.BeginFrame();
+    dependencyAppSubSystems.gameRenderer.EndFrame();
 
 
     dependencyAppSubSystems.eventHandler.BeginFrame();
@@ -249,7 +237,7 @@ int GameEngine::shutdown(const std::shared_ptr<AF_EngineBehaviour> engineBehavio
 
     dependencyAppSubSystems.fontRenderer.Shutdown();
     
-    engineRenderer->Shutdown();
+    dependencyAppSubSystems.gameRenderer.Shutdown();
 
     //shutdown the game application behaviour
     engineBehaviour->shutdown();
