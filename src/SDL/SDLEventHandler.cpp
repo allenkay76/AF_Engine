@@ -1,8 +1,12 @@
 #include "SDL/SDLEventHandler.h"
+#include <SDL2/SDL.h>
+#include "SDL/SDLGameInput.h"
+#include "SDL/SDLGameWindow.h"
 
-void SDLEventHandler::Initialize()
+bool SDLEventHandler::Initialize()
 {
     LogManager::Log("SDLEventHandler::Initialize() called.");
+    return true;
 }
 void SDLEventHandler::Shutdown()
 {

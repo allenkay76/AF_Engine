@@ -3,10 +3,16 @@
 //If we are using the SDL systems then create a struct containing the relevant subsystems
 #ifdef SDL_GAME_RENDERER
 #include "SDL/SDLGameTimer.h"
+#include "SDL/SDLEventHandler.h"
+#include "SDL/SDLFontRenderer.h"
+#include "SDL/SDLGameInput.h"
 
 struct DependencyAppSubsystems{
     // Pointer to LogManager subsystem
     SDLGameTimer gameTimer;
+    SDLEventHandler eventHandler;
+    SDLFontRenderer fontRenderer;
+    SDLGameInput gameInput;
     // Uncomment and add the relevant headers to use the following subsystems
     // MemoryManager* memoryManagerPtr;
     // TimeManager* timeManagerPtr;

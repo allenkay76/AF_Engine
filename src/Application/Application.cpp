@@ -118,7 +118,7 @@ int Application::shutdown(const std::shared_ptr<AppSubSystems> subsystems) {
     appData.isRunning = false;
     // Shutdown the LogManager
     subsystems->logManagerPtr->shutdown();
-    subsystems->gameEnginePtr->shutdown(subsystems->engineBehaviourPtr);
+    subsystems->gameEnginePtr->shutdown(subsystems->engineBehaviourPtr, dependencyAppSubsystems);
     return 0;
 }
 

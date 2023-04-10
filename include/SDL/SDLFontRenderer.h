@@ -1,8 +1,8 @@
 #pragma once
 #include "GameEngine/IFontRenderer.h"          // include the IInput header file
 #include "Utils/LogManager.h"
-#include <SDL2/SDL_ttf.h>
-#include <SDL2/SDL_image.h>
+//#include <SDL2/SDL_ttf.h>
+//#include <SDL2/SDL_image.h>
 
 class SDLFontRenderer: public IFontRenderer {   // define the SDLGameInput class and inherit from IInput
 public:

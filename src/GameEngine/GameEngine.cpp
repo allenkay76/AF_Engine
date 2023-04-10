@@ -2,9 +2,9 @@
 #include "Utils/LogManager.h"
 #include "SDL/SDLGameWindow.h"
 #include "SDL/SDLGameRenderer.h"
-#include "SDL/SDLGameInput.h"
-#include "SDL/SDLEventHandler.h"
-#include "SDL/SDLFontRenderer.h"
+//#include "SDL/SDLGameInput.h"
+//#include "SDL/SDLEventHandler.h"
+//#include "SDL/SDLFontRenderer.h"
 #include "SDL/SDLGameTimer.h"
 #include "GameEngine/AF_EngineBehaviour.h"
 
@@ -42,7 +42,7 @@ IRenderer* GameEngine::getRenderer() const
 }
 
 //Startup
-int GameEngine::startup(AppData* applicationData, const std::shared_ptr<AF_EngineBehaviour> engineBehaviour, const DependencyAppSubsystems& dependencyAppSubSystems)
+int GameEngine::startup(AppData* applicationData, const std::shared_ptr<AF_EngineBehaviour> engineBehaviour, DependencyAppSubsystems& dependencyAppSubSystems)
 {
     int success = 1;
     LogManager::Log("Dependencies: Starting up: %i", dependencyAppSubSystems.gameTimer.getTicks());
@@ -59,14 +59,13 @@ int GameEngine::startup(AppData* applicationData, const std::shared_ptr<AF_Engin
     //Set the renderer and input
     #ifdef SDL_GAME_RENDERER
     //Create the Event Handler
-    std::shared_ptr<SDLEventHandler> sdlEventHandlerPtr = std::make_shared<SDLEventHandler>();
-    engineEventHandlerPtr = std::dynamic_pointer_cast<IEventHandler>(sdlEventHandlerPtr);
-    if(engineEventHandlerPtr == nullptr){
-        LogManager::Log("GameEngine: Failed to cast to IEventHandler");
+    //std::shared_ptr<SDLEventHandler> sdlEventHandlerPtr = std::make_shared<SDLEventHandler>();
+    //engineEventHandlerPtr = std::dynamic_pointer_cast<IEventHandler>(sdlEventHandlerPtr);
+    bool enventHandlerSuccess = dependencyAppSubSystems.eventHandler.Initialize();
+    if(enventHandlerSuccess == false){
+        LogManager::Log("GameEngine: Failed to initialize event handler");
         success = -1;
         return success;
-    }else{
-        engineEventHandlerPtr->Initialize();
     }
     
 
@@ -111,37 +110,24 @@ int GameEngine::startup(AppData* applicationData, const std::shared_ptr<AF_Engin
     }
 
     //Initialize the input
-    engineInput = new SDLGameInput(); //not a singleton pattern
-    if (engineInput == nullptr) {
-        // handle the case where the cast fails
-        LogManager::Log("GameEngine: Failed to cast to SDLGameInput");
+    //engineInput = new SDLGameInput(); //not a singleton pattern
+    
+    bool inputStartSuccess = dependencyAppSubSystems.gameInput.Initialize();
+    if(inputStartSuccess == false){
+        LogManager::Log("GameEngine: Failed to initialize SDLGameInput");
         success = -1;
         return success;
-    }else{
-        bool inputStartSuccess = engineInput->Initialize();
-        if(inputStartSuccess == false){
-            LogManager::Log("GameEngine: Failed to initialize SDLGameInput");
-            success = -1;
-            return success;
-        }
     }
 
 
     //Initialise the Font Renderer
-    std::shared_ptr<SDLFontRenderer> sdlFontRendererPtr = std::make_shared<SDLFontRenderer>();
-    engineFontRendererPtr = std::dynamic_pointer_cast<IFontRenderer>(sdlFontRendererPtr);
-    if(engineFontRendererPtr == nullptr){
-        LogManager::Log("GameEngine: Failed to cast to SDLFontRenderer");
+    bool statupSuccess = dependencyAppSubSystems.fontRenderer.Initialize();
+    if(statupSuccess == false){
+        LogManager::Log("GameEngine: Failed to initialize SDLFontRenderer");
         success = -1;
         return success;
-    }else{
-        bool statupSuccess = engineFontRendererPtr->Initialize();
-        if(statupSuccess == false){
-            LogManager::Log("GameEngine: Failed to initialize SDLFontRenderer");
-            success = -1;
-            return success;
-        }
     }
+
 
     std::shared_ptr<SDLGameTimer> sdlEngineTimer = std::make_shared<SDLGameTimer>();
     engineTimer = std::dynamic_pointer_cast<ITimer>(sdlEngineTimer);
@@ -195,11 +181,11 @@ int GameEngine::loop(const std::shared_ptr<AF_EngineBehaviour> engineBehaviour, 
 
 
     //Do a frame for the input and renderer
-    engineInput->BeginFrame();
-    engineInput->EndFrame();
+    dependencyAppSubSystems.gameInput.BeginFrame();
+    dependencyAppSubSystems.gameInput.EndFrame();
 
     //Application will trigger a shutdown once it sees the isRunning flag is false
-    if(engineInput->GetIsRunning() == false){
+    if(dependencyAppSubSystems.gameInput.GetIsRunning() == false){
         appData->isRunning = false;
     }
 
@@ -213,8 +199,8 @@ int GameEngine::loop(const std::shared_ptr<AF_EngineBehaviour> engineBehaviour, 
     }
 
     //Render the Font Renderer
-    engineFontRendererPtr->BeginFrame();
-    engineFontRendererPtr->EndFrame();
+    dependencyAppSubSystems.fontRenderer.BeginFrame();
+    dependencyAppSubSystems.fontRenderer.EndFrame();
 
 
     //update the script manager.
@@ -234,14 +220,10 @@ int GameEngine::loop(const std::shared_ptr<AF_EngineBehaviour> engineBehaviour, 
     engineRenderer->EndFrame();
 
 
-    if(engineEventHandlerPtr != nullptr){
-        engineEventHandlerPtr->BeginFrame();
-        engineEventHandlerPtr->PollEvents(engineRenderDataPtr->windowPtr.get(), engineInput);
-        engineEventHandlerPtr->EndFrame();
-    }
-    else{
-        LogManager::Log("GameEngine: Event handler is null");
-    }
+    dependencyAppSubSystems.eventHandler.BeginFrame();
+    dependencyAppSubSystems.eventHandler.PollEvents(engineRenderDataPtr->windowPtr.get(), &dependencyAppSubSystems.gameInput);
+    dependencyAppSubSystems.eventHandler.EndFrame();
+   
 
     //
     std::string text = "GameEngine: Frame time: "  + std::to_string((dependencyAppSubSystems.gameTimer.getTicks()));
@@ -261,21 +243,21 @@ int GameEngine::loop(const std::shared_ptr<AF_EngineBehaviour> engineBehaviour, 
 
 
 //Shutdown
-int GameEngine::shutdown(const std::shared_ptr<AF_EngineBehaviour> engineBehaviour)
+int GameEngine::shutdown(const std::shared_ptr<AF_EngineBehaviour> engineBehaviour, DependencyAppSubsystems& dependencyAppSubSystems)
 {
     LogManager::Log("GameEngine: Shutting down");
-    engineInput->Shutdown();
+    dependencyAppSubSystems.gameInput.Shutdown();
     
     engineRenderDataPtr->windowPtr->Shutdown();
 
-    engineFontRendererPtr->Shutdown();
+    dependencyAppSubSystems.fontRenderer.Shutdown();
     
     engineRenderer->Shutdown();
 
     //shutdown the game application behaviour
     engineBehaviour->shutdown();
 
-    engineEventHandlerPtr->Shutdown();
+    dependencyAppSubSystems.eventHandler.Shutdown();
 
     //move this later
     delete(m_loadedImage);

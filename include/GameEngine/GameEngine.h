@@ -38,13 +38,13 @@ public:
    
 
     // Initialize the GameEngine
-    int startup(AppData* applicationData, const std::shared_ptr<AF_EngineBehaviour> engineBehaviour, const DependencyAppSubsystems& dependencyAppSubSystems);
+    int startup(AppData* applicationData, const std::shared_ptr<AF_EngineBehaviour> engineBehaviour,  DependencyAppSubsystems& dependencyAppSubSystems);
 
     // Run the main game loop
     int loop(const std::shared_ptr<AF_EngineBehaviour> engineBehaviour, DependencyAppSubsystems& dependencyAppSubSystems);
 
     // Shutdown the GameEngine
-    int shutdown(const std::shared_ptr<AF_EngineBehaviour> engineBehaviour);
+    int shutdown(const std::shared_ptr<AF_EngineBehaviour> engineBehaviour,DependencyAppSubsystems& dependencyAppSubSystems);
 
     //Called by main() to load the game DLL:
     void LoadGameDLL();
