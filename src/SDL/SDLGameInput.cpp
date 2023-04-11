@@ -104,6 +104,7 @@ void SDLGameInput::EndFrame()
 {
 }
 
+
 // Default constructor implementation
 SDLGameInput::SDLGameInput()
 {

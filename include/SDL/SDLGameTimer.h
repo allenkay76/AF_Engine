@@ -25,7 +25,7 @@ public:
 
     SDLGameTimer();                   // Declare the constructor for the SDLGameTimer class
     ~SDLGameTimer();                  // Declare the destructor for the SDLGameTimer class
-
+private:
     // The clock time when the timer started
     unsigned int startTicks;          // This is an unsigned int, which is 4 bytes on most systems
 

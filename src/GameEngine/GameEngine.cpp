@@ -18,28 +18,6 @@ std::shared_ptr<GameEngine> GameEngine::GetInstance()
     return instance;
 }
 
-/*
-GameEngine &GameEngine::GetInstance()
-{
-    static GameEngine instance;
-    return instance;
-}
-*/
-
-//set the renderer
-
-
-void GameEngine::setRenderer(IRenderer* renderer)
-{
-    LogManager::Log("GameEngine: Setting renderer");
-    engineRenderer = renderer;
-}
-
-//Get the renderer
-IRenderer* GameEngine::getRenderer() const
-{
-    return engineRenderer;
-}
 
 //Startup
 int GameEngine::startup(AppData* applicationData, const std::shared_ptr<AF_EngineBehaviour> engineBehaviour, DependencyAppSubsystems& dependencyAppSubSystems)
@@ -69,15 +47,6 @@ int GameEngine::startup(AppData* applicationData, const std::shared_ptr<AF_Engin
     }
     
 
-    //Create the renderer
-    /*
-    std::shared_ptr<SDLRenderData> sdlRenderDataPtr = std::make_shared<SDLRenderData>();
-    engineRenderDataPtr = std::dynamic_pointer_cast<IRenderData>(sdlRenderDataPtr);
-    if(engineRenderDataPtr == nullptr){
-        LogManager::Log("GameEngine: Failed to cast to IRenderData");
-        success = -1;
-        return success;
-    }*/
    
     //TODO: fix this so not setting the rendererdata ptr first.
     //Initialise the window, passing in the sdlrenderdata
@@ -91,9 +60,6 @@ int GameEngine::startup(AppData* applicationData, const std::shared_ptr<AF_Engin
     }
 
 
-    //Initilise the renderer
-    //dependencyAppSubSystems.gameRenderer.sdlRenderDataPtr = sdlRenderDataPtr; //not a singleton pattern also should
-    
 
     bool rendererInitSuccess =  dependencyAppSubSystems.gameRenderer.Initialize(appData->applicationName, appData->windowWidth, appData->windowHeight, &dependencyAppSubSystems.gameWindow);
     if(rendererInitSuccess == false){
@@ -102,8 +68,6 @@ int GameEngine::startup(AppData* applicationData, const std::shared_ptr<AF_Engin
         return success;
     }
 
-    //Initialize the input
-    //engineInput = new SDLGameInput(); //not a singleton pattern
     
     bool inputStartSuccess = dependencyAppSubSystems.gameInput.Initialize();
     if(inputStartSuccess == false){
@@ -122,14 +86,6 @@ int GameEngine::startup(AppData* applicationData, const std::shared_ptr<AF_Engin
     }
 
 
-    std::shared_ptr<SDLGameTimer> sdlEngineTimer = std::make_shared<SDLGameTimer>();
-    engineTimer = std::dynamic_pointer_cast<ITimer>(sdlEngineTimer);
-    if(!engineTimer){
-        LogManager::Log("GameEngine: Failed to cast to ITimer");
-        success = -1;
-        return success;
-    }
-    
 
     
     #else
@@ -142,15 +98,7 @@ int GameEngine::startup(AppData* applicationData, const std::shared_ptr<AF_Engin
     
 
 
-    
-
-    /*
-    m_loadedImage = new ImageData();
-    const char* filePath = "../assets/textures/atom_forge_art.png";
-    engineRenderer->loadImage(filePath, m_loadedImage);
-    */
-
-   //Start the afEngineBehaviours
+      //Start the afEngineBehaviours
    if(engineBehaviour == nullptr){//appData->afEngineBehaviourPtr == nullptr){
        LogManager::Log("GameEngine: Engine behaviour is null");
        success = -1;
@@ -219,11 +167,6 @@ int GameEngine::loop(const std::shared_ptr<AF_EngineBehaviour> engineBehaviour, 
     //engineTimer->stop();
     dependencyAppSubSystems.gameTimer.stop();
 
-    //LogManager::Log("GameEngine: Frame time: %s" , (engineTimer->getTicks() / 1000.f));
-    //free the image data
-    //delete imageToLoad->data;
-    //delete imageToLoad;
-    /**/
     return 0;
 }
 
@@ -245,11 +188,6 @@ int GameEngine::shutdown(const std::shared_ptr<AF_EngineBehaviour> engineBehavio
 
     dependencyAppSubSystems.eventHandler.Shutdown();
 
-    //move this later
-    delete(m_loadedImage);
-
-    
-    //delete(engineRenderer);
     return 0;
 }
 

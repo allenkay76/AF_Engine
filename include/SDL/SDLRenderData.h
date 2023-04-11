@@ -10,8 +10,6 @@
 using namespace std;
 //TODO convert to constructor struct so values are initialized to 0
 struct SDLRenderData : public IRenderData {
-        //std::unique_ptr<SDL_Window, decltype(&SDL_DestroyWindow)> sdlWindowPtr{nullptr, &SDL_DestroyWindow}; 
-        //std::shared_ptr<SDLGameWindow> sdlWindowPtr;
         SDL_GLContext sdlContextPtr;
 
         SDL_Renderer sdlRendererPtr;

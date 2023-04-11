@@ -20,8 +20,7 @@
 class AF_Engine_API Application {
 public:
     // Application subsystems and data
-    AppData appData;
-    std::shared_ptr<AppSubSystems> appSubSystem;
+    
     
 
     // Constructor that takes a reference to an AppData object
@@ -41,6 +40,8 @@ public:
     int shutdown(const std::shared_ptr<AppSubSystems> subsystems);
 
 private:
+    AppData appData;
+    std::shared_ptr<AppSubSystems> appSubSystem;
     //SDL Stuff
     DependencyAppSubsystems dependencyAppSubsystems;
     

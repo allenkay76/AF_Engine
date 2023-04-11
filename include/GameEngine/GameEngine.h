@@ -49,7 +49,7 @@ public:
     //Called by main() to load the game DLL:
     void LoadGameDLL();
 
-    ImageData* m_loadedImage;
+    
 
     AF_Engine_API static void testEngineFunction();
     AF_Engine_API static int  returnTextEngineFunction();
@@ -64,17 +64,5 @@ public:
     ~GameEngine();
 private:
     Game* game;
-
-
-protected:
-    // Declare member variables
-    IRenderer* engineRenderer;
-    IInput* engineInput;
     AppData* appData;
-    //std::shared_ptr<IRenderData> engineRenderDataPtr;
-    std::shared_ptr<IEventHandler> engineEventHandlerPtr;
-
-    std::shared_ptr<IFontRenderer> engineFontRendererPtr;
-
-    std::shared_ptr<ITimer> engineTimer;
 };
