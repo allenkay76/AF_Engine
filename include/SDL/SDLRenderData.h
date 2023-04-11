@@ -14,8 +14,8 @@ struct SDLRenderData : public IRenderData {
         //std::shared_ptr<SDLGameWindow> sdlWindowPtr;
         SDL_GLContext sdlContextPtr;
 
-        std::unique_ptr<SDL_Renderer, decltype(&SDL_DestroyRenderer)> sdlRendererPtr{nullptr, &SDL_DestroyRenderer};
-        std::unique_ptr<SDL_Surface, decltype(&SDL_FreeSurface)> sdlSurfacePtr{nullptr, &SDL_FreeSurface};
+        SDL_Renderer sdlRendererPtr;
+        SDL_Surface sdlSurfacePtr;
         // This is a pointer to the SDL2 event.
         std::vector<std::unique_ptr<SDLTexSurfData>> sdlTexSurfList;
 

@@ -9,8 +9,8 @@
 #include "SDL/SDLGameWindow.h"
 #include "SDL/SDLGameRenderer.h"
 
+// Structure to hold pointers to the various SDL subsystems used by the Application
 struct DependencyAppSubsystems{
-    // Pointer to LogManager subsystem
     SDLGameTimer gameTimer;
     SDLEventHandler eventHandler;
     SDLFontRenderer fontRenderer;

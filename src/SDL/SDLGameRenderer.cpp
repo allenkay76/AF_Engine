@@ -1,7 +1,7 @@
 // Include the header file for the SDLGameRenderer class
 #include "SDL/SDLGameRenderer.h"
 #include "Utils/LogManager.h"
-#include "Rendering/imageData.h"
+//#include "Rendering/imageData.h"
 
 
 //need to do this as we trust the stb_image.h library but our compiler settings treat warnings as errors.
@@ -10,9 +10,9 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "Utils/stb_image.h"
 
-#include "SDL/SDLTexSurfData.h"
+//#include "SDL/SDLTexSurfData.h"
 
-#include "Application/DependencyAppSubsystems.h"
+//#include "Application/DependencyAppSubsystems.h"
 //#include "SDLGameRenderer.h"
 //#pragma GCC diagnostic pop
 
@@ -50,32 +50,37 @@ bool SDLGameRenderer::Initialize(const char* windowName, const int windowWidth, 
             //set the SDL_Window as we use it all the time
             
             //Save a copy of the window pointer as we will access it a lot. TODO: consider cache coherency as we will be accessing this a lot
-            sdlWindowPtr = static_cast<SDL_Window*>(windowPtr->getWindow().get()); //this is the window we will use for the renderer
+            sdlGameWindowPtr = static_cast<SDL_Window*>(windowPtr->getWindow().get()); //this is the window we will use for the renderer
 
             // Create a new SDL renderer for the window
-            std::unique_ptr<SDL_Renderer, void(*)(SDL_Renderer*)> renderer(SDL_CreateRenderer(sdlWindowPtr, -1, 0), SDL_DestroyRenderer);
-            sdlRenderDataPtr->sdlRendererPtr = std::move(renderer);
-            if(sdlRenderDataPtr->sdlRendererPtr == nullptr)
+            //std::unique_ptr<SDL_Renderer, void(*)(SDL_Renderer*)> renderer(SDL_CreateRenderer(sdlWindowPtr, -1, 0), SDL_DestroyRenderer);
+           
+           /*
+            sdlGameRenderer = SDL_CreateRenderer(sdlGameWindowPtr, -1, 0);
+            //sdlRenderDataPtr->sdlRendererPtr = std::move(renderer);
+            if(sdlGameRenderer == NULL)
             {
                 LogManager::Log("SDL renderer could not be created! SDL_Error: %s\n", SDL_GetError());
                 success = false;
             }
-
+            */
             //std::unique_ptr<SDL_Surface, void(*)(SDL_Surface*)> surface(*SDL_GetWindowSurface(sdlRenderData.sdlWindowPtr), SDL_FreeSurface);
             //sdlRenderData.sdlSurfacePtr = std::move(surface);
-            sdlRenderDataPtr->sdlSurfacePtr = std::unique_ptr<SDL_Surface, void(*)(SDL_Surface*)>(SDL_GetWindowSurface(sdlWindowPtr), SDL_FreeSurface);
-
+            //sdlRenderDataPtr->sdlSurfacePtr = std::unique_ptr<SDL_Surface, void(*)(SDL_Surface*)>(SDL_GetWindowSurface(sdlWindowPtr), SDL_FreeSurface);
+            /*
+            sdlGameSurface = SDL_GetWindowSurface(sdlGameWindowPtr);
             
-            if(sdlRenderDataPtr->sdlSurfacePtr == nullptr)
+            if(sdlGameSurface == NULL)
             {
                 LogManager::Log("SDL surface could not be created! SDL_Error: %s\n", SDL_GetError());
                 success = false;
-            }
+            }*/
 
             //initialise openGL
            // Create an SDL GL context
-           sdlRenderDataPtr->sdlContextPtr = SDL_GL_CreateContext(sdlWindowPtr);
-            if (!sdlRenderDataPtr->sdlContextPtr) {
+           //sdlRenderDataPtr->sdlContextPtr = SDL_GL_CreateContext(sdlWindowPtr);
+            sdlGameGLContext  = SDL_GL_CreateContext(sdlGameWindowPtr);
+            if (sdlGameGLContext == NULL) {
                 LogManager::Log("SDL_GL_CreateContext failed: %s\n", SDL_GetError());
                 success = false;
             }
@@ -267,10 +272,6 @@ bool SDLGameRenderer::initGL(){
 void SDLGameRenderer::BeginFrame()
 {
     
-   if(sdlRenderDataPtr->sdlRendererPtr == nullptr){
-        LogManager::Log("SDL renderer is null");
-        return;
-    }
     
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -329,13 +330,14 @@ void SDLGameRenderer::EndFrame()
     SDL_Rect dstRect = { (sdlRenderData.imagePtr->width - imgWidth) / 2, (sdlRenderData.imagePtr->height - imgHeight) / 2, imgWidth, imgHeight };
     */
     //SDL_RenderCopy(sdlRenderData.sdlRendererPtr, sdlRenderData.sdlTexturePtr, nullptr, &dstRect);
-    for(size_t i = 0; i < sdlRenderDataPtr->sdlTexSurfList.size(); i++){
-        if(sdlRenderDataPtr->sdlTexSurfList[i]->texturePtr == nullptr){
+    /*
+    for(size_t i = 0; i < sdlRenderData.sdlTexSurfList.size(); i++){
+        if(sdlRenderData.dlTexSurfList[i]->texturePtr == nullptr){
             LogManager::Log("SDL texture is null");
             return;
         }
-        SDL_RenderCopy(sdlRenderDataPtr->sdlRendererPtr.get(), sdlRenderDataPtr->sdlTexSurfList[i]->texturePtr.get(), nullptr, nullptr);
-    }
+        SDL_RenderCopy(&sdlRenderData.sdlRendererPtr, sdlRenderData.sdlTexSurfList[i]->texturePtr.get(), nullptr, nullptr);
+    }*/
     
     //SDL_RenderCopy(sdlRenderData.sdlRendererPtr, sdlRenderData.sdlTexturePtr, nullptr, nullptr);
     
@@ -343,11 +345,11 @@ void SDLGameRenderer::EndFrame()
     // Present the renderer to the window
     //SDL_RenderPresent(sdlRenderData.sdlRendererPtr.get());
     //SDL_GL_SetSwapInterval(1);
-    SDL_GL_SwapWindow(sdlWindowPtr);
+    SDL_GL_SwapWindow(sdlGameWindowPtr);
 }
 
 
-
+/*
 std::unique_ptr<ImageData> SDLGameRenderer::loadImage(const char *filePath)
 {
     std::unique_ptr<ImageData> imageData (new ImageData());
@@ -399,6 +401,7 @@ std::unique_ptr<ImageData> SDLGameRenderer::loadImage(const char *filePath)
     return imageData;
 }
 
+*/
 void SDLGameRenderer::printProgramLog(GLuint program){
     //Make sure the name is shader
     if(glIsProgram(program)){
@@ -458,6 +461,8 @@ void SDLGameRenderer::printShaderLog(GLuint shader){
 // Define the destructor for the SDLGameRenderer class
 SDLGameRenderer::SDLGameRenderer()
 {
+    //just init the pointers to null
+    sdlGameWindowPtr = nullptr;
 }
 SDLGameRenderer::~SDLGameRenderer()
 {
@@ -465,18 +470,23 @@ SDLGameRenderer::~SDLGameRenderer()
 
 void SDLGameRenderer::Shutdown()
 {
-    for (size_t i = 0; i < sdlRenderDataPtr->sdlTexSurfList.size(); i++) {
-        SDLTexSurfData* texSurfData = sdlRenderDataPtr->sdlTexSurfList[i].get();
+    /*
+    for (size_t i = 0; i < sdlRenderData.sdlTexSurfList.size(); i++) {
+        SDLTexSurfData* texSurfData = sdlRenderData.sdlTexSurfList[i].get();
         SDL_FreeSurface(texSurfData->surfacePtr.get());
         SDL_DestroyTexture(texSurfData->texturePtr.get());
     }
-    sdlRenderDataPtr->sdlTexSurfList.clear();
-    SDL_FreeSurface(sdlRenderDataPtr->sdlSurfacePtr.get());
+    */
+    //sdlRenderData.dlTexSurfList.clear();
+    //SDL_FreeSurface(&sdlGameSurface);
 
-    SDL_GL_DeleteContext(sdlRenderDataPtr->sdlContextPtr);
+    SDL_GL_DeleteContext(sdlGameGLContext);
 
-    SDL_DestroyRenderer(sdlRenderDataPtr->sdlRendererPtr.get());
-    SDL_DestroyWindow(sdlWindowPtr);
+    //SDL_DestroyRenderer(sdlGameRenderer);
+    //SDL_DestroyWindow(sdlRenderData.windowPtr.get());
+    //Deallocate program
+	glDeleteProgram( gProgramID );
+
 
     SDL_Quit();
 }

@@ -70,13 +70,14 @@ int GameEngine::startup(AppData* applicationData, const std::shared_ptr<AF_Engin
     
 
     //Create the renderer
+    /*
     std::shared_ptr<SDLRenderData> sdlRenderDataPtr = std::make_shared<SDLRenderData>();
     engineRenderDataPtr = std::dynamic_pointer_cast<IRenderData>(sdlRenderDataPtr);
     if(engineRenderDataPtr == nullptr){
         LogManager::Log("GameEngine: Failed to cast to IRenderData");
         success = -1;
         return success;
-    }
+    }*/
    
     //TODO: fix this so not setting the rendererdata ptr first.
     //Initialise the window, passing in the sdlrenderdata
@@ -91,7 +92,7 @@ int GameEngine::startup(AppData* applicationData, const std::shared_ptr<AF_Engin
 
 
     //Initilise the renderer
-    dependencyAppSubSystems.gameRenderer.sdlRenderDataPtr = sdlRenderDataPtr; //not a singleton pattern also should
+    //dependencyAppSubSystems.gameRenderer.sdlRenderDataPtr = sdlRenderDataPtr; //not a singleton pattern also should
     
 
     bool rendererInitSuccess =  dependencyAppSubSystems.gameRenderer.Initialize(appData->applicationName, appData->windowWidth, appData->windowHeight, &dependencyAppSubSystems.gameWindow);

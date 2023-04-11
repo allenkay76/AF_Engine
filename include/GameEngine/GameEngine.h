@@ -12,7 +12,7 @@
 #include "Utils/SingletonRoot.h"
 #include "Application/AppData.h"
 #include "GameEngine/AF_EngineBehaviour.h"
-#include "Rendering/IRenderData.h"
+//#include "Rendering/IRenderData.h"
 #include "GameEngine/IWindow.h"
 #include "GameEngine/IEventHandler.h"
 #include "GameEngine/IFontRenderer.h"
@@ -71,7 +71,7 @@ protected:
     IRenderer* engineRenderer;
     IInput* engineInput;
     AppData* appData;
-    std::shared_ptr<IRenderData> engineRenderDataPtr;
+    //std::shared_ptr<IRenderData> engineRenderDataPtr;
     std::shared_ptr<IEventHandler> engineEventHandlerPtr;
 
     std::shared_ptr<IFontRenderer> engineFontRendererPtr;

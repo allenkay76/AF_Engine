@@ -7,7 +7,7 @@
 struct IRenderData {
     virtual ~IRenderData() {}
 
-    std::shared_ptr<IWindow> windowPtr;
-    std::unique_ptr<IRenderer> rendererPtr;
-    std::unique_ptr<ImageData> imagePtr;
+    IWindow windowPtr;
+    IRenderer rendererPtr;
+    ImageData imagePtr;
 };

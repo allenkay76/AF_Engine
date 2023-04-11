@@ -1,6 +1,6 @@
 #pragma once
-#include "Rendering/imageData.h"
 #include <memory>
+#include "Rendering/imageData.h"
 #include "GameEngine/IWindow.h"
 /*
 This is an interface class for a rendering engine. 
@@ -20,7 +20,7 @@ public:
     virtual void EndFrame() = 0;
 
     //Load Media from file path and take in an image data struct pointer, and return true if the image is loaded successfully
-    virtual std::unique_ptr<ImageData> loadImage(const char *filePath) = 0;
+    //virtual std::unique_ptr<ImageData> loadImage(const char *filePath) = 0;
     //Load Media from file path
     //virtual bool loadImage(const char* filePath, ImageData* imageData) = 0;
     // add more rendering functions as needed

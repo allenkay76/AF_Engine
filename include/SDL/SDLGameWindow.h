@@ -3,7 +3,7 @@
 #include <SDL2/SDL.h>
 #include "Application/AppData.h"
 #include "Utils/LogManager.h"
-#include "SDL/SDLRenderData.h"
+//#include "SDL/SDLRenderData.h"
 #include "SDL/SDLEventData.h"    // include the SDLEventData header file
 
 class SDLGameWindow : public IWindow {

@@ -15,8 +15,9 @@
 //#define SDL_MAIN_HANDLED //https://stackoverflow.com/questions/32342285/undefined-reference-to-winmain16-c-sdl-2/32343111#32343111
 
 // This header file includes the struct to hold render data specific to SDL2 rendering.
-#include "SDL/SDLRenderData.h"
-#include "Rendering/imageData.h"
+//#include "SDL/SDLRenderData.h"
+//#include "Rendering/imageData.h"
+
 
 // This class inherits from the IRenderer interface class and implements SDL2 rendering functions.
 class SDLGameRenderer : public IRenderer {
@@ -26,8 +27,8 @@ public:
     
     
     // This struct holds the SDL2 specific render data.
-    std::shared_ptr<SDLRenderData> sdlRenderDataPtr;
-    SDL_Window* sdlWindowPtr;
+    //SDLRenderData sdlRenderData;
+    //SDL_Window* sdlWindowPtr;
 
     //graphics program
     GLuint gProgramID = 0;
@@ -36,9 +37,14 @@ public:
     GLuint gIBO = 0;
     GLuint gTexture = 0;
 
+    SDL_Window* sdlGameWindowPtr;
+    //SDL_Renderer sdlGameRenderer;
+    //SDL_Surface sdlGameSurface;
+    SDL_GLContext sdlGameGLContext;
+
     // This function initializes the SDL2 window and renderer.
     bool Initialize(const char* windowName, const int windowWidth, const int windowHeight, IWindow* windowPtr) override;
-    bool InitializeSDLRenderer(const char* windowName, const int windowWidth, const int windowHeight, const std::shared_ptr<SDLRenderData> thisSDLRenderData);
+    bool InitializeSDLRenderer(const char* windowName, const int windowWidth, const int windowHeight);
     // This function shuts down the SDL2 window and renderer.
     void Shutdown() override;
     // This function begins a new rendering frame.
@@ -49,7 +55,7 @@ public:
     bool initGL(); //Initialize OpenGL
     
     //Load Media from file path and take in an image data struct pointer, and return true if the image is loaded successfully
-    std::unique_ptr<ImageData> loadImage(const char *filePath) override;
+    //std::unique_ptr<ImageData> loadImage(const char *filePath) override;
 
     //Shader loading utility programs
     void printProgramLog(GLuint program);
