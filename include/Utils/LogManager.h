@@ -1,5 +1,5 @@
 #pragma once
-#include "SingletonRoot.h"
+#include "Utils/SingletonRoot.h"
 #include <stdio.h>
 
 // LogManager is a singleton class responsible for logging messages
@@ -9,7 +9,7 @@ public:
     static LogManager& GetInstance();
 
     // Log a message to the console
-    static void Log(const char* message);
+    static void Log(const char* message, ...);
 
     // Initialize the LogManager
     int startup();

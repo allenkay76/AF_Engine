@@ -1,11 +1,11 @@
 {
     "configurations": [
         {
-            "name": "C/C++: g++.exe DEBUG",
+            "name": "RUN_AF_Engine_Win32_DEBUG",
             "type": "cppdbg",
             "request": "launch",
             // Path to the executable to debug
-            "program": "${workspaceFolder}\\bin\\AF_Engine.exe",
+            "program": "${workspaceFolder}/bin/AF_Engine.exe",
             // Command line arguments to the executable
             "args": ["config/AF_Engine.json"],
             // Whether or not to stop at the entry point of the program
@@ -20,7 +20,7 @@
             // Which debugger to use
             "MIMode": "gdb",
             // Path to the debugger executable
-            "miDebuggerPath": "C:\\MinGW\\bin\\gdb.exe",
+            "miDebuggerPath": "C:/MinGW/bin/gdb.exe",
             // Commands to send to the debugger before the program starts
             "setupCommands": [
                 {
@@ -35,20 +35,26 @@
                 }
             ],
             // Task to run before launching the program
-            "preLaunchTask": "C/C++: g++.exe build linux DEBUG"
+            "preLaunchTask": "BUILD_AF_Engine_Win32_DEBUG"
         },
         {
-            "name": "C/C++: g++.exe RELEASE",
+            "name": "RUN_AF_Engine_Win32_RELEASE",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}\\bin\\AF_Engine.exe",
+            "program": "${workspaceFolder}/bin/AF_Engine.exe",
+            "logging": {
+                "trace": true,
+                "traceResponse": false,
+                "engineLogging": false,
+                "moduleLoad": false
+              },
             "args": ["config/AF_Engine.json"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
-            "console": "internalConsole",
+            "console": "externalConsole",
             "MIMode": "gdb",
-            "miDebuggerPath": "C:\\MinGW\\bin\\gdb.exe",
+            "miDebuggerPath": "C:/MinGW/bin/gdb.exe",
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",
@@ -61,42 +67,7 @@
                     "ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "C/C++: g++.exe build linux RELEASE"
-        },
-        {
-            // Name of the launch configuration
-            "name": "C/C++: MSVC DEBUG",
-            // Type of debugger to use
-            "type": "cppvsdbg",
-            // Request to launch the debugger
-            "request": "launch",
-            // Path to the executable file to debug
-            "program": "${workspaceFolder}\\bin\\AF_Engine.exe",
-            // Arguments to pass to the program
-            "args": ["config/AF_Engine.json"],
-            // Whether to stop at the entry point of the program
-            "stopAtEntry": false,
-            // Current working directory for the program
-            "cwd": "${workspaceFolder}",
-            // Environment variables to set for the program
-            "environment": [],
-            // Type of console to use for output
-            "console": "internalConsole",
-            // Task to run before launching the debugger
-            "preLaunchTask": "C/C++: cl.exe Windows DEBUG"
-        },
-        {
-            "name": "C/C++: MSVC RELEASE",
-            "type": "cppvsdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}\\bin\\AF_Engine.exe",
-            "args": ["config/AF_Engine.json"],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
-            "environment": [],
-            "console": "internalConsole",
-            "preLaunchTask": "C/C++: cl.exe Windows RELEASE",
-            "debugging": false
+            "preLaunchTask": "BUILD_AF_Engine_Win32_RELEASE"
         }
     ],
     "version": "2.0.0"

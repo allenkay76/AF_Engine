@@ -1,27 +1,38 @@
-#include "Application.h"
+#include "Application/Application.h"
 #include <cstring>
 #include <fstream>
 #include <iterator>
 #include <iostream>
-#include "AF_JsonParser.h"
+#include "Utils/AF_JsonParser.h"
 
 
 
 // Constructor that initializes the application and starts its lifecycle
-Application::Application(const AppData& appDataInput) : appData(appDataInput) {
-    startup(); // Initialize the application and subsystems
+Application::Application(const AppData& appDataInput, const std::shared_ptr<AppSubSystems> subSystemsInput) : appData(appDataInput), appSubSystem(subSystemsInput) {
 
-    loop();    // Run the main application loop
+    // Initialize the application and subsystems
+    if(appSubSystem == nullptr){
+        LogManager::Log("Application: Failed to create AppSubSystems");
+        return;
+    }
 
-    shutdown();// Perform cleanup before exiting the application
+    int applicationStartupSuccess = startup(appSubSystem); // Initialize the application and subsystems
+    if(applicationStartupSuccess < 1){
+        LogManager::Log("Application: Startup failed");
+        return;
+    }
+
+    loop(appSubSystem);    // Run the main application loop
+
+    shutdown(appSubSystem);// Perform cleanup before exiting the application
 }
 
 // Destructor
 Application::~Application() {}
 
 // Startup function that initializes the application and subsystems
-int Application::startup() {
-    
+int Application::startup(const std::shared_ptr<AppSubSystems> subsystems) {
+    int success = 1;
     LogManager::Log("Application: Startup");
     // Calculate the required buffer size for the formatted string
     constexpr int bufferSize = 256;
@@ -35,93 +46,95 @@ int Application::startup() {
         "  windowYPos: %d\n"
         "  windowWidth: %d\n"
         "  windowHeight: %d\n"
-        "  fullscreen: %s\n",
+        "  mousefocus: %s\n"
+        "  keyboardfocus: %s\n"
+        "  fullscreen: %s\n"
+        "  minimized: %s\n"
+        "  isRunning: %s\n",
         appData.applicationName,
         appData.windowXPos,
         appData.windowYPos,
         appData.windowWidth,
         appData.windowHeight,
-        appData.fullscreen ? "true" : "false");
+        appData.mouseFocus ? "true" : "false",
+        appData.keyboardFocus ? "true" : "false",
+        appData.fullscreen ? "true" : "false",
+        appData.minimized ? "true" : "false",
+        appData.isRunning ? "true" : "false"
+        );
 
     //ensure we don't have an encoding error or truncation
     if (result >= bufferSize || result < 0) {
+        
         std::cerr << "Buffer size is not large enough to accommodate the formatted string or an encoding error occurred." << std::endl;
+        success = -1;
+        return success;
     } else {
         LogManager::Log(appDataPrintout);
     }
     
     // Get a reference to the LogManager singleton instance
-    appSubSystem.logManagerPtr = &LogManager::GetInstance();
+    appSubSystem->logManagerPtr = &LogManager::GetInstance();
+    appSubSystem->gameEnginePtr = GameEngine::GetInstance();
+
 
     // Start up the LogManager
-    appSubSystem.logManagerPtr->startup();
+    int logManagerStartupSuccess = appSubSystem->logManagerPtr->startup();
+    if(logManagerStartupSuccess < 1){
+        LogManager::Log("LogManager: Startup failed");
+        success = -1;
+        return success;
+    }
 
-    SDL_Init(SDL_INIT_EVERYTHING);
 
-    window = SDL_CreateWindow("AF_Engine", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, appData.windowWidth, appData.windowHeight, 0);
-    renderer = SDL_CreateRenderer(window, -1, 0);
-
-    isRunning = true;
+    int gameEngineStartupSuccess = appSubSystem->gameEnginePtr->startup(&appData, subsystems->engineBehaviourPtr, dependencyAppSubsystems);
+    if(gameEngineStartupSuccess < 1){
+        LogManager::Log("GameEngine: Startup failed");
+        success = -1;
+        return success;
+    }else{
+        LogManager::Log("GameEngine: Startup success");
+    }
+    appData.isRunning = true;
     
-    return 0;
+    return success;
 }
 
 // Main application loop
-int Application::loop() {
+int Application::loop(const std::shared_ptr<AppSubSystems> subsystems) {
     // TODO: Implement the main loop code
-    LogManager::Log("Application: Loop");
-
-    while (isRunning)
-    {
-        while (SDL_PollEvent(&event))
-        {
-            switch (event.type)
-            {
-            case SDL_QUIT:
-                isRunning = false;
-                break;
-
-            case SDL_KEYDOWN:
-                if (event.key.keysym.sym == SDLK_ESCAPE)
-                {
-                    isRunning = false;
-                }
-            }
-        }
-
-        SDL_RenderClear(renderer);
-        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-
-        SDL_RenderPresent(renderer);
+    
+    LogManager::Log("Application: Loop starting");
+    while(appData.isRunning){
+        subsystems->gameEnginePtr->loop(subsystems->engineBehaviourPtr, dependencyAppSubsystems);
     }
     return 0;
 }
 
 // Shutdown function that cleans up the application and subsystems
-int Application::shutdown() {
+int Application::shutdown(const std::shared_ptr<AppSubSystems> subsystems) {
     // TODO: Implement the shutdown code
     LogManager::Log("Application: Shutdown");
-
+    appData.isRunning = false;
     // Shutdown the LogManager
-    appSubSystem.logManagerPtr->shutdown();
-
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
-
+    subsystems->logManagerPtr->shutdown();
+    subsystems->gameEnginePtr->shutdown(subsystems->engineBehaviourPtr, dependencyAppSubsystems);
     return 0;
 }
 
 // Function to initialize the application data with desired settings
 AppData Application::InitializeAppData(const char* configPathName) {
-    AppData appData = {
-        "DEFAULT", // applicationName
-        0,          // windowXPos
-        0,          // windowYPos
-        720,        // windowWidth
-        640,        // windowHeight
-        false       // fullscreen
-    };
+    AppData appData;
+    std::strcpy(appData.applicationName, "DEFAULT");
+    appData.windowXPos = 0;
+    appData.windowYPos = 0;
+    appData.windowWidth = 720;
+    appData.windowHeight = 640;
+    appData.mouseFocus = true;
+    appData.keyboardFocus = true;
+    appData.fullscreen = false;
+    appData.minimized = false;
+    appData.isRunning = false;
 
     // Set the default applicationName
     std::strncpy(appData.applicationName, "DEFAULT", MAX_APP_NAME_LENGTH - 1);
@@ -142,15 +155,21 @@ AppData Application::InitializeAppData(const char* configPathName) {
 
             // Parse the key-value pairs and overwrite the default values
             std::map<std::string, std::string> configData = parseKeyValuePairs(content);
+
+            // Get the application name
             std::string appName = configData["\"applicationName\""].substr(1, configData["\"applicationName\""].length() - 2);
             std::strncpy(appData.applicationName, appName.c_str(), MAX_APP_NAME_LENGTH - 1);
             appData.applicationName[MAX_APP_NAME_LENGTH - 1] = '\0'; // Ensure null-termination
             
+            // Get the window position and size
             appData.windowXPos = std::stoi(configData["\"windowXPos\""]);
             appData.windowYPos = std::stoi(configData["\"windowYPos\""]);
             appData.windowWidth = std::stoi(configData["\"windowWidth\""]);
             appData.windowHeight = std::stoi(configData["\"windowHeight\""]);
             appData.fullscreen = configData["\"fullscreen\""] == "true";
+
+
+
         } catch (const std::exception& e) {
             std::cerr << "Error while parsing JSON configuration file: " << e.what() << std::endl;
             std::cerr << "Using default application settings" << std::endl;
