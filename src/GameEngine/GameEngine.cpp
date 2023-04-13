@@ -20,7 +20,7 @@ std::shared_ptr<GameEngine> GameEngine::GetInstance()
 
 
 //Startup
-int GameEngine::startup(AppData* applicationData, const std::shared_ptr<AF_EngineBehaviour> engineBehaviour, DependencyAppSubsystems& dependencyAppSubSystems)
+int GameEngine::startup(AppData* applicationData, const std::shared_ptr<AF_EngineBehaviour> engineBehaviour, DependencyAppSubsystems& dependencyAppSubSystems) 
 {
     int success = 1;
     LogManager::Log("Dependencies: Starting up: %i", dependencyAppSubSystems.gameTimer.getTicks());
@@ -33,9 +33,7 @@ int GameEngine::startup(AppData* applicationData, const std::shared_ptr<AF_Engin
     #error "SDL_GAME_RENDERER flag is not defined"
     #endif
 
-
-    //Set the renderer and input
-    #ifdef SDL_GAME_RENDERER
+    
     //Create the Event Handler
     //std::shared_ptr<SDLEventHandler> sdlEventHandlerPtr = std::make_shared<SDLEventHandler>();
     //engineEventHandlerPtr = std::dynamic_pointer_cast<IEventHandler>(sdlEventHandlerPtr);
@@ -85,18 +83,7 @@ int GameEngine::startup(AppData* applicationData, const std::shared_ptr<AF_Engin
         return success;
     }
 
-
-
-    
-    #else
-    
-        LogManager::Log("GameEngine: No renderer defined");
-        success = -1;
-        return success;
-    #endif
-
-    
-
+   
 
       //Start the afEngineBehaviours
    if(engineBehaviour == nullptr){//appData->afEngineBehaviourPtr == nullptr){
@@ -109,8 +96,6 @@ int GameEngine::startup(AppData* applicationData, const std::shared_ptr<AF_Engin
         engineBehaviour->start();
    }
 
-   
-  
     return success;
 }
 
@@ -129,8 +114,6 @@ int GameEngine::loop(const std::shared_ptr<AF_EngineBehaviour> engineBehaviour, 
     if(dependencyAppSubSystems.gameInput.GetIsRunning() == false){
         appData->isRunning = false;
     }
-
-
 
     
     dependencyAppSubSystems.gameWindow.BeginFrame();
@@ -191,10 +174,14 @@ int GameEngine::shutdown(const std::shared_ptr<AF_EngineBehaviour> engineBehavio
     return 0;
 }
 
+AF_Engine_API bool GameEngine::getTestPressed()
+{
+    return false;
+}
 
-//Constructor and destructor
 GameEngine::GameEngine()
 {
+
 }
 
 GameEngine::~GameEngine()

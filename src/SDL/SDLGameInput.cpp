@@ -98,6 +98,14 @@ void SDLGameInput::HandleEvents(const SDL_Event *sdlEvent)
             break;
     }
 }
+bool SDLGameInput::getKeyPressed()
+{
+    return sdlEventData.sdlEventKeyDown;//gameEngine.dependencyAppSubsystemsPtr.gameInput.sdlEventData.sdlEventKeyDown;
+}
+bool SDLGameInput::getTestPressed()
+{
+    return false;
+}
 
 // EndFrame function implementation
 void SDLGameInput::EndFrame()
@@ -108,6 +116,8 @@ void SDLGameInput::EndFrame()
 // Default constructor implementation
 SDLGameInput::SDLGameInput()
 {
+    //Register the service
+    IInputLocator::provide(this);
 }
 
 // Destructor implementation

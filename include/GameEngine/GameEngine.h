@@ -54,8 +54,9 @@ public:
     AF_Engine_API static void testEngineFunction();
     AF_Engine_API static int  returnTextEngineFunction();
     AF_Engine_API static int  multTextEngineFunction(int a, int b);
-    
 
+
+    AF_Engine_API static bool getTestPressed();
 
     // Declare the constructor for GameEngine (singleton, should not be explicitly called)
     GameEngine();
