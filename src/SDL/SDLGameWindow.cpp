@@ -1,10 +1,10 @@
 #include "SDL/SDLGameWindow.h"
-
+#include "GameEngine/GameEngine.h"
 bool SDLGameWindow::Initialize(const char* windowName, const int windowWidth, const int windowHeight){
 
    //Initialization flag
     bool success = true;
-    LogManager::Log("Initializing SDL window...");
+    
     //Initialize SDL
     if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
     {
@@ -50,16 +50,18 @@ std::shared_ptr<void> SDLGameWindow::getWindow() {
 
 void SDLGameWindow::HandleEvents(const SDL_Event *event)
 {
+    std::shared_ptr<GameEngine> gameEngine;
+    
     switch (event->window.event) {
         case SDL_WINDOWEVENT_SIZE_CHANGED:
             //LogManager::Log("Window size changed to %d x %d", event->window.data1, event->window.data2);
         break;
         
         case SDL_WINDOWEVENT_MINIMIZED:
-            //LogManager::Log("Window minimized");
+            LogManager::Log("\nWindow minimized\n");
         
         case SDL_WINDOWEVENT_MAXIMIZED:
-            //LogManager::Log("Window maximized");
+            LogManager::Log("\nWindow maximized\n");
         break;
         
         case SDL_WINDOWEVENT_RESTORED:
@@ -103,7 +105,10 @@ void SDLGameWindow::HandleEvents(const SDL_Event *event)
         break;
         
         case SDL_WINDOWEVENT_CLOSE:
-            //LogManager::Log("Window close requested");
+            LogManager::Log("\nWindow close requested\n");
+            gameEngine = GameEngine::GetInstance();
+            gameEngine->getAppData()->isRunning = false;
+            //sdlEventData.sdlEventIsRunning = false;
         break;
         
         case SDL_WINDOWEVENT_TAKE_FOCUS:

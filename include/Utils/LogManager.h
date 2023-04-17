@@ -1,4 +1,10 @@
 #pragma once
+#define AF_ENGINE_EXPORTS
+#ifdef AF_ENGINE_EXPORTS
+#define AF_Engine_API __declspec(dllexport)
+#else
+#define AF_Engine_API __declspec(dllimport)
+#endif
 #include "Utils/SingletonRoot.h"
 #include <stdio.h>
 
@@ -9,7 +15,7 @@ public:
     static LogManager& GetInstance();
 
     // Log a message to the console
-    static void Log(const char* message, ...);
+    AF_Engine_API static void Log(const char* message, ...);
 
     // Initialize the LogManager
     int startup();

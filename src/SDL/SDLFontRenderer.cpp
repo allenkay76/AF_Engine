@@ -2,12 +2,12 @@
 
 bool SDLFontRenderer::Initialize()
 {
-    LogManager::Log("SDLFontRenderer::Initialize()");
+    
     return true;
 }
 void SDLFontRenderer::Shutdown()
 {
-    LogManager::Log("SDLFontRenderer::Shutdown()");
+    
 }
 
 void SDLFontRenderer::BeginFrame()
@@ -27,10 +27,10 @@ std::unique_ptr<FontData> SDLFontRenderer::loadFont(const char *filePath)
 
 SDLFontRenderer::SDLFontRenderer()
 {
-    LogManager::Log("SDLFontRenderer::SDLFontRenderer()");
+    
 }
 
 SDLFontRenderer::~SDLFontRenderer()
 {
-    LogManager::Log("SDLFontRenderer::~SDLFontRenderer()");
+    
 }

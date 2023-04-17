@@ -88,6 +88,19 @@ unsigned int SDLGameTimer::getCountedFrames()
     return m_countedFrames;
 }
 
+void SDLGameTimer::printFrameRate()
+{
+    //LogManager::Log("Frame_Time: %d ms | AVG_FPS: %f fps", getFrameTicks(), getAvgFrameRate());
+    std::string frameTimeText = "Frame_Time: " + std::to_string(getFrameTicks()) + " ms | AVG_FPS: ";
+    // format the average FPS to 2 decimal places
+    std::ostringstream stream;
+    stream << std::fixed << std::setprecision(2) << getAvgFrameRate();;
+    frameTimeText += stream.str() + " fps"; // add the fps unit at the end
+
+    //std::cout << '\r' << std::string(frameTimeText.length(), ' ') << '\r' << frameTimeText << std::flush;
+    LogManager::Log( frameTimeText.c_str());
+}
+
 bool SDLGameTimer::isStarted()
 {
     return m_started;

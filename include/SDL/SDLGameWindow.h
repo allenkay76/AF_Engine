@@ -1,7 +1,7 @@
 #pragma once
 #include "GameEngine/IWindow.h"
 #include <SDL2/SDL.h>
-#include "Application/AppData.h"
+//#include "Application/AppData.h"
 #include "Utils/LogManager.h"
 //#include "SDL/SDLRenderData.h"
 #include "SDL/SDLEventData.h"    // include the SDLEventData header file
@@ -37,5 +37,5 @@ private:
     // This is the SDL2 window.
     std::shared_ptr<SDL_Window> sdlWindowPtr;
 
-    SDLEventData sdlEventData;        // declare an instance of the SDLEventData struct
+    //SDLEventData sdlEventData;        // declare an instance of the SDLEventData struct
 };

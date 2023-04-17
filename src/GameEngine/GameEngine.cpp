@@ -23,8 +23,6 @@ std::shared_ptr<GameEngine> GameEngine::GetInstance()
 int GameEngine::startup(AppData* applicationData, const std::shared_ptr<AF_EngineBehaviour> engineBehaviour, DependencyAppSubsystems& dependencyAppSubSystems) 
 {
     int success = 1;
-    LogManager::Log("Dependencies: Starting up: %i", dependencyAppSubSystems.gameTimer.getFrameTicks());
-    LogManager::Log("GameEngine: Starting up");
     appData = applicationData;
 
 
@@ -98,7 +96,6 @@ int GameEngine::startup(AppData* applicationData, const std::shared_ptr<AF_Engin
        success = -1;
        return success;
    }else{
-        LogManager::Log("GameEngine: Engine behaviour is not null");
         engineBehaviour->awake();
         engineBehaviour->start();
    }
@@ -166,7 +163,6 @@ int GameEngine::loop(const std::shared_ptr<AF_EngineBehaviour> engineBehaviour, 
 //Shutdown
 int GameEngine::shutdown(const std::shared_ptr<AF_EngineBehaviour> engineBehaviour, DependencyAppSubsystems& dependencyAppSubSystems)
 {
-    LogManager::Log("GameEngine: Shutting down");
     dependencyAppSubSystems.gameInput.Shutdown();
     
     dependencyAppSubSystems.gameWindow.Shutdown();
@@ -183,11 +179,11 @@ int GameEngine::shutdown(const std::shared_ptr<AF_EngineBehaviour> engineBehavio
     return 0;
 }
 
-AF_Engine_API bool GameEngine::getTestPressed()
-{
-    return false;
-}
 
+AppData *GameEngine::getAppData() 
+{
+    return appData;
+}
 GameEngine::GameEngine()
 {
 

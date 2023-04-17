@@ -7,7 +7,8 @@
 #endif
 
 #include <memory>
-
+#include <iomanip>
+#include "Utils/LogManager.h"
 
 class ITimer {
 public:
@@ -24,6 +25,7 @@ public:
     virtual unsigned int getFrameTicks() = 0;
     virtual unsigned int getCountedFrames() = 0;
     virtual float getAvgFrameRate() = 0;
+    virtual void printFrameRate() = 0;
 
     virtual bool isStarted() = 0;
     virtual bool isPaused() = 0;
@@ -46,6 +48,7 @@ public:
     virtual unsigned int getFrameTicks() {return 0;}
     unsigned int getCountedFrames() {return 0;}
     virtual float getAvgFrameRate() {return 0;}
+    virtual void printFrameRate() {}
 
     virtual bool isStarted() {return false;}
     virtual bool isPaused() {return false;}

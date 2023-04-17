@@ -26,6 +26,7 @@ public:
     unsigned int getFrameTicks() override;    // Declare the getTicks function, which is implemented in this class and returns an int
     float getAvgFrameRate() override;      // Declare the getFrameRate function, which is implemented in this class and returns an int
     unsigned int getCountedFrames() override; //  
+    void printFrameRate() override;     // Declare the printFrameRate function, which is implemented in this class
 
     bool isStarted() override;        // Declare the isStarted function, which is implemented in this class and returns a bool
     bool isPaused() override;         // Declare the isPaused function, which is implemented in this class and returns a bool

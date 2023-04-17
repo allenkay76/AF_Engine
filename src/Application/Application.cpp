@@ -33,12 +33,13 @@ Application::~Application() {}
 // Startup function that initializes the application and subsystems
 int Application::startup(const std::shared_ptr<AppSubSystems> subsystems) {
     int success = 1;
-    LogManager::Log("Application: Startup");
+    
+    
+    /*
+    // Use snprintf to format the string and check for truncation
     // Calculate the required buffer size for the formatted string
     constexpr int bufferSize = 256;
     char appDataPrintout[bufferSize];
-
-    // Use snprintf to format the string and check for truncation
     int result = snprintf(appDataPrintout, bufferSize,
         "AppData:\n"
         "  applicationName: %s\n"
@@ -72,7 +73,7 @@ int Application::startup(const std::shared_ptr<AppSubSystems> subsystems) {
     } else {
         LogManager::Log(appDataPrintout);
     }
-    
+    */
     // Get a reference to the LogManager singleton instance
     appSubSystem->logManagerPtr = &LogManager::GetInstance();
     appSubSystem->gameEnginePtr = GameEngine::GetInstance();
@@ -92,9 +93,8 @@ int Application::startup(const std::shared_ptr<AppSubSystems> subsystems) {
         LogManager::Log("GameEngine: Startup failed");
         success = -1;
         return success;
-    }else{
-        LogManager::Log("GameEngine: Startup success");
     }
+    
     appData.isRunning = true;
     
     return success;
@@ -104,7 +104,7 @@ int Application::startup(const std::shared_ptr<AppSubSystems> subsystems) {
 int Application::loop(const std::shared_ptr<AppSubSystems> subsystems) {
     // TODO: Implement the main loop code
     
-    LogManager::Log("Application: Loop starting");
+    
     while(appData.isRunning){
         subsystems->gameEnginePtr->loop(subsystems->engineBehaviourPtr, dependencyAppSubsystems);
     }
@@ -114,7 +114,7 @@ int Application::loop(const std::shared_ptr<AppSubSystems> subsystems) {
 // Shutdown function that cleans up the application and subsystems
 int Application::shutdown(const std::shared_ptr<AppSubSystems> subsystems) {
     // TODO: Implement the shutdown code
-    LogManager::Log("Application: Shutdown");
+    
     appData.isRunning = false;
     // Shutdown the LogManager
     subsystems->logManagerPtr->shutdown();

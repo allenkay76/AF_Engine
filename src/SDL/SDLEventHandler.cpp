@@ -5,12 +5,12 @@
 
 bool SDLEventHandler::Initialize()
 {
-    LogManager::Log("SDLEventHandler::Initialize() called.");
+    
     return true;
 }
 void SDLEventHandler::Shutdown()
 {
-    LogManager::Log("SDLEventHandler::Shutdown() called.");
+    
 }
 
 void SDLEventHandler::BeginFrame()

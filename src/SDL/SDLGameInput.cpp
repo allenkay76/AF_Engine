@@ -63,7 +63,7 @@ void SDLGameInput::HandleEvents(const SDL_Event *sdlEvent)
             sdlEventData.sdlEventKeyDown = true;
             if (sdlEvent->key.keysym.sym == SDLK_ESCAPE)
                 {
-                    LogManager::Log("Escape key pressed");
+                    LogManager::Log("Escape key pressed: Exiting Application");
                     sdlEventData.sdlEventIsRunning = false;
                 }
             break;
