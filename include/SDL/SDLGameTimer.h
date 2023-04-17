@@ -1,4 +1,11 @@
 #pragma once
+#define AF_ENGINE_EXPORTS
+#ifdef AF_ENGINE_EXPORTS
+#define AF_Engine_API __declspec(dllexport)
+#else
+#define AF_Engine_API __declspec(dllimport)
+#endif
+
 #include <SDL2/SDL.h>
 #include "GameEngine/ITimer.h"
 
@@ -15,7 +22,10 @@ public:
     void pause() override;            // Declare the pause function, which is implemented in this class
     void unpause() override;          // Declare the unpause function, which is implemented in this class
 
-    int getTicks() const override;    // Declare the getTicks function, which is implemented in this class and returns an int
+    void countFrameTick() override;   // Declare the countFrameTick function, which is implemented in this class
+    unsigned int getFrameTicks() override;    // Declare the getTicks function, which is implemented in this class and returns an int
+    float getAvgFrameRate() override;      // Declare the getFrameRate function, which is implemented in this class and returns an int
+    unsigned int getCountedFrames() override; //  
 
     bool isStarted() override;        // Declare the isStarted function, which is implemented in this class and returns a bool
     bool isPaused() override;         // Declare the isPaused function, which is implemented in this class and returns a bool
@@ -27,14 +37,19 @@ public:
     ~SDLGameTimer();                  // Declare the destructor for the SDLGameTimer class
 private:
     // The clock time when the timer started
-    unsigned int startTicks;          // This is an unsigned int, which is 4 bytes on most systems
+    unsigned int m_startTicks;          // This is an unsigned int, which is 4 bytes on most systems
 
     // The clock time when the timer was paused
-    unsigned int pausedTicks;         // This is an unsigned int, which is 4 bytes on most systems
+    unsigned int m_pausedTicks;         // This is an unsigned int, which is 4 bytes on most systems
+
+    unsigned int m_countedFrames;
+    unsigned int m_frameTicks;
+    float m_frameRate;
 
     // The timer status
-    bool paused;                      // This is a bool, which is 1 byte on most systems
-    bool started;                     // This is a bool, which is 1 byte on most systems
+    bool m_paused;                      // This is a bool, which is 1 byte on most systems
+    bool m_started;                     // This is a bool, which is 1 byte on most systems
+
 
 };
 

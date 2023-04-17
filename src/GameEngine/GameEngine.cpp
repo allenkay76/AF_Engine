@@ -23,7 +23,7 @@ std::shared_ptr<GameEngine> GameEngine::GetInstance()
 int GameEngine::startup(AppData* applicationData, const std::shared_ptr<AF_EngineBehaviour> engineBehaviour, DependencyAppSubsystems& dependencyAppSubSystems) 
 {
     int success = 1;
-    LogManager::Log("Dependencies: Starting up: %i", dependencyAppSubSystems.gameTimer.getTicks());
+    LogManager::Log("Dependencies: Starting up: %i", dependencyAppSubSystems.gameTimer.getFrameTicks());
     LogManager::Log("GameEngine: Starting up");
     appData = applicationData;
 
@@ -79,6 +79,13 @@ int GameEngine::startup(AppData* applicationData, const std::shared_ptr<AF_Engin
     bool statupSuccess = dependencyAppSubSystems.fontRenderer.Initialize();
     if(statupSuccess == false){
         LogManager::Log("GameEngine: Failed to initialize SDLFontRenderer");
+        success = -1;
+        return success;
+    }
+
+    bool timerStartSuccess = dependencyAppSubSystems.gameTimer.Initialize();
+    if(timerStartSuccess == false){
+        LogManager::Log("GameEngine: Failed to initialize SDLGameTimer");
         success = -1;
         return success;
     }
@@ -143,11 +150,13 @@ int GameEngine::loop(const std::shared_ptr<AF_EngineBehaviour> engineBehaviour, 
    
 
     //
-    std::string text = "GameEngine: Frame time: "  + std::to_string((dependencyAppSubSystems.gameTimer.getTicks()));
-    std::cout << '\r' << std::string(text.length(), ' ') << '\r' << text << std::flush;
+    
 
     //std::cout << "GameEngine: Frame time: " << (engineTimer->getTicks()) << std::endl;
     //engineTimer->stop();
+
+    //update the games internal frame counter
+    dependencyAppSubSystems.gameTimer.countFrameTick();
     dependencyAppSubSystems.gameTimer.stop();
 
     return 0;

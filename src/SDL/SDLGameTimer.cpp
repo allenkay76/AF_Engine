@@ -2,8 +2,9 @@
 
 bool SDLGameTimer::Initialize()
 {
-    return false;
+    return true;
 }
+
 
 void SDLGameTimer::Shutdown()
 {
@@ -11,70 +12,95 @@ void SDLGameTimer::Shutdown()
 
 void SDLGameTimer::start() 
 {
-    started = true;
-    paused = false;
-    startTicks = SDL_GetTicks();
-    pausedTicks = 0;
+    m_started = true;
+    m_paused = false;
+    m_startTicks = SDL_GetTicks();
+    m_pausedTicks = 0;
 }
 
 void SDLGameTimer::stop()  
 {
-    started = false;
-    paused = false;
-    startTicks = 0;
-    pausedTicks = 0;
+    m_started = false;
+    m_paused = false;
+    m_startTicks = 0;
+    m_pausedTicks = 0;
 }
 
 void SDLGameTimer::pause()
 {
-    if(started && !paused)
+    if(m_started && !m_paused)
     {
-        paused = true;
-        pausedTicks = SDL_GetTicks() - startTicks;
-        startTicks = 0;
+        m_paused = true;
+        m_pausedTicks = SDL_GetTicks() - m_startTicks;
+        m_startTicks = 0;
     }
 }
 
 void SDLGameTimer::unpause()
 {
-    if(paused)
+    if(m_paused)
     {
-        paused = false;
-        startTicks = SDL_GetTicks() - pausedTicks;
-        pausedTicks = 0;
+        m_paused = false;
+        m_startTicks = SDL_GetTicks() - m_pausedTicks;
+        m_pausedTicks = 0;
     }
 }
 
-int SDLGameTimer::getTicks() const
+unsigned int SDLGameTimer::getFrameTicks()
+{
+   
+    return m_frameTicks;
+}
+
+/*--------------------------------------------------------------------------------
+This function is called every frame
+It calculates the average frame rate
+It also calculates the number of frames per second
+It also calculates the number of ticks (ms) for each frame
+---------------------------------------------------------------------------------*/
+void SDLGameTimer::countFrameTick()
 {
     int time = 0;
-    if(started)
+    if(m_started)
     {
-        if(paused)
+        if(m_paused)
         {
-            time = pausedTicks;
+            time = m_pausedTicks;
         }
         else
         {
-            time = SDL_GetTicks() - startTicks;
+            time = SDL_GetTicks() - m_startTicks;
         }
     }
-    return time;
+
+    m_countedFrames++;
+    m_frameTicks = time;
+    m_frameRate = 1000.0f / time;//m_countedFrames / (m_frameTicks / 1000.f);
+}
+
+float SDLGameTimer::getAvgFrameRate()
+{
+    return m_frameRate;
+}
+
+unsigned int SDLGameTimer::getCountedFrames()
+{
+    return m_countedFrames;
 }
 
 bool SDLGameTimer::isStarted()
 {
-    return started;
+    return m_started;
 }
 
 bool SDLGameTimer::isPaused()
 {
-    return paused && started;
+    return m_paused && m_started;
 }
 
-SDLGameTimer::SDLGameTimer() : startTicks(0), pausedTicks(0), paused(false), started(false)
+SDLGameTimer::SDLGameTimer() : m_startTicks(0), m_pausedTicks(0), m_countedFrames(0), m_frameTicks(0), m_frameRate(0),m_paused(false), m_started(false)
 {
-
+    ITimerLocator::provide(this);
 }
 
 SDLGameTimer::~SDLGameTimer()

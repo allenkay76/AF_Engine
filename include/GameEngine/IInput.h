@@ -33,7 +33,7 @@ public:
     virtual void EndFrame() {}
     virtual bool GetIsRunning() {return false;}
 
-    virtual bool getKeyPressed() {return false;};
+    virtual bool getKeyPressed() {return false;}
 };
 
 //Service Locator Pattern
