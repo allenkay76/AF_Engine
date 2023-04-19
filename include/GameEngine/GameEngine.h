@@ -32,8 +32,8 @@ public:
     AF_Engine_API static std::shared_ptr<GameEngine> GetInstance();
     // Set and get the renderer
     void setRenderer( IRenderer* renderer);
-    AF_Engine_API IRenderer* getRenderer();
-    IRenderer* getRenderer() const;
+    //AF_Engine_API IRenderer* getRenderer();
+    IRenderer* getRenderer();
 
    
 

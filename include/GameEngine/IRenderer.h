@@ -1,4 +1,10 @@
 #pragma once
+#define AF_ENGINE_EXPORTS
+#ifdef AF_ENGINE_EXPORTS
+#define AF_Engine_API __declspec(dllexport)
+#else
+#define AF_Engine_API __declspec(dllimport)
+#endif
 #include <memory>
 #include "Rendering/imageData.h"
 #include "GameEngine/IWindow.h"
@@ -35,3 +41,44 @@ but can serve as a base class for other classes.
 The idea is that the derived classes must provide their own implementation for the pure virtual functions, 
 which allows for polymorphism and dynamic dispatch.
 */
+
+
+//Null service pattern, initialised in the constructor of inputLocator
+class NullIRenderer: public IRenderer {
+public:
+    virtual bool Initialize(const char* windowName, const int windowWidth, const int windowHeight, IWindow* windowPtr) {
+        (void)windowName;
+        (void)windowWidth;
+        (void)windowHeight;
+        (void)windowPtr;
+        return false;
+        return false;
+    }
+    virtual void Shutdown() {}
+    virtual void BeginFrame() {}
+    virtual void EndFrame() {}
+};
+
+//Service Locator Pattern
+//https://gameprogrammingpatterns.com/service-locator.html
+class IRendererLocator {
+private: 
+    static IRenderer* m_service;
+    static NullIRenderer m_nullService;
+    
+public:
+    static void initialize(); 
+
+    AF_Engine_API static IRenderer* getRenderer(); 
+
+    static void provide(IRenderer* service){
+        if(service == nullptr){
+            //revert to null service
+            m_service = &m_nullService;
+        }else{
+            m_service = service;
+        }
+        m_service = service;
+    }
+
+};

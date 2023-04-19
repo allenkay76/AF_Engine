@@ -18,6 +18,10 @@ std::shared_ptr<GameEngine> GameEngine::GetInstance()
     return instance;
 }
 
+IRenderer *GameEngine::getRenderer()
+{
+    return nullptr;
+}
 
 //Startup
 int GameEngine::startup(AppData* applicationData, const std::shared_ptr<AF_EngineBehaviour> engineBehaviour, DependencyAppSubsystems& dependencyAppSubSystems) 
