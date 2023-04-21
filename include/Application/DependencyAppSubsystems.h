@@ -14,6 +14,7 @@ struct DependencyAppSubsystems{
     SDLGameTimer gameTimer;
     SDLEventHandler eventHandler;
     SDLFontRenderer fontRenderer;
+    
     SDLGameInput gameInput;
     SDLGameWindow gameWindow;
     SDLGameRenderer gameRenderer;

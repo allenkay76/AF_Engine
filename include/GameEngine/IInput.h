@@ -5,6 +5,10 @@
 #else
 #define AF_Engine_API __declspec(dllimport)
 #endif
+
+#include "GameEngine/AF_KeyEvent.h"          // include the AF_KeyEvent header file
+#include <vector>        // include the vector library
+#include <memory>        // include the memory library
 /*
 This code defines an interface class IInput, 
 which is intended to provide an abstracted interface for handling input for a game engine. 
@@ -20,6 +24,14 @@ public:
     virtual bool GetIsRunning() = 0;
 
     virtual bool getKeyPressed() = 0;
+    virtual int32_t getKeyCode() = 0;
+
+    virtual void clearKeyEvents() = 0;
+    virtual std::unique_ptr<AF_KeyEvent> createKeyEvent() = 0;
+    virtual void addKeyEvent(std::unique_ptr<AF_KeyEvent> keyEvent) = 0;
+    virtual std::vector<std::unique_ptr<AF_KeyEvent>>& getKeyEvents() = 0;
+private:
+    std::vector<std::unique_ptr<AF_KeyEvent>> m_keyEvents;
 };
 
 
@@ -34,6 +46,18 @@ public:
     virtual bool GetIsRunning() {return false;}
 
     virtual bool getKeyPressed() {return false;}
+    virtual int32_t getKeyCode() {return 0;}
+
+    virtual void clearKeyEvents() {}
+    virtual std::unique_ptr<AF_KeyEvent> createKeyEvent() {return std::unique_ptr<AF_KeyEvent>();}
+    virtual void addKeyEvent(std::unique_ptr<AF_KeyEvent> keyEvent) {
+        (void) keyEvent;
+    }
+    virtual std::vector<std::unique_ptr<AF_KeyEvent>>& getKeyEvents() {
+        return m_keyEvents;
+    }
+private:
+    std::vector<std::unique_ptr<AF_KeyEvent>> m_keyEvents;
 };
 
 //Service Locator Pattern

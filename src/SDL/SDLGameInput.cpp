@@ -102,10 +102,11 @@ bool SDLGameInput::getKeyPressed()
 {
     return sdlEventData.sdlEventKeyDown;//gameEngine.dependencyAppSubsystemsPtr.gameInput.sdlEventData.sdlEventKeyDown;
 }
-bool SDLGameInput::getTestPressed()
-{
-    return false;
+
+int32_t SDLGameInput::getKeyCode(){
+    return 666;//sdlEventData.sdlEvent.key.keysym.sym;
 }
+
 
 // EndFrame function implementation
 void SDLGameInput::EndFrame()
@@ -123,4 +124,31 @@ SDLGameInput::SDLGameInput()
 // Destructor implementation
 SDLGameInput::~SDLGameInput()
 {
+    
+}
+
+void SDLGameInput::clearKeyEvents()
+{
+    m_keyEvents.clear();
+}
+
+std::unique_ptr<AF_KeyEvent> SDLGameInput::createKeyEvent()
+{
+    std::unique_ptr<AF_KeyEvent> keyEvent = std::make_unique<AF_KeyEvent>();
+    //keyEvent->key = sdlEvent.key.keysym.sym;
+    //keyEvent.type = sdlEvent.type;
+    addKeyEvent(std::move(keyEvent));
+    return keyEvent;
+}
+
+void SDLGameInput::addKeyEvent(std::unique_ptr<AF_KeyEvent> keyEvent)
+{
+    //m_keyEvents.push_back(keyEvent);
+    m_keyEvents.emplace_back(std::move(keyEvent));
+}
+
+
+std::vector<std::unique_ptr<AF_KeyEvent>>& SDLGameInput::getKeyEvents()
+{
+    return m_keyEvents;
 }

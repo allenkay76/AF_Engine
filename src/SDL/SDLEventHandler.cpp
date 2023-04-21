@@ -32,6 +32,8 @@ void SDLEventHandler::PollEvents(IWindow* windowPtr, IInput* inputPtr)
     // Poll the SDL2 event queue.
     SDL_Event sdlEvent;
     while (SDL_PollEvent(&sdlEvent)) {
+        //Get the frame events and push them back into the event queue, then loop through the event queue and handle the events
+        //GetFrameevents().push_back(sdlEvent);
         // Handle the SDL2 event.
         switch (sdlEvent.type) {
         case SDL_QUIT:
@@ -79,5 +81,8 @@ void SDLEventHandler::PollEvents(IWindow* windowPtr, IInput* inputPtr)
             break;
         }
     }
+
+    //Clear the event queue
+    //GetFrameevents().clear();
 }
 
