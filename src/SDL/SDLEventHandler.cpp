@@ -25,6 +25,8 @@ void SDLEventHandler::PollEvents(IWindow* windowPtr, IInput* inputPtr)
 {
     // Cast the input pointer to the SDLGameInput implementation
     SDLGameInput* sdlGameInputPtr = static_cast<SDLGameInput*>(inputPtr);
+    //Clear the event queue at the start of the frame
+    //sdlGameInputPtr->clearKeyEvents();
 
     // Cast the window pointer to the SDLGameWindow implementation and get the SDL2 window
     SDLGameWindow* sdlWindowPtr = static_cast<SDLGameWindow*>(windowPtr);
@@ -82,7 +84,11 @@ void SDLEventHandler::PollEvents(IWindow* windowPtr, IInput* inputPtr)
         }
     }
 
-    //Clear the event queue
+    //Print the key events
+    //sdlGameInputPtr->printAllKeyEvents();
+    
+    
     //GetFrameevents().clear();
 }
+
 

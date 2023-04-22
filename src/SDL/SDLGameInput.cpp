@@ -61,6 +61,9 @@ void SDLGameInput::HandleEvents(const SDL_Event *sdlEvent)
             // Set the key down flag to true.
             //LogManager::Log("Key down");
             sdlEventData.sdlEventKeyDown = true;
+
+            // Add the key event to the key event vector.
+            addKeyEvent(createKeyEvent(sdlEvent->key.keysym.sym, true));
             if (sdlEvent->key.keysym.sym == SDLK_ESCAPE)
                 {
                     LogManager::Log("Escape key pressed: Exiting Application");
@@ -71,6 +74,8 @@ void SDLGameInput::HandleEvents(const SDL_Event *sdlEvent)
         case SDL_KEYUP:
             // Set the key down flag to false.
             sdlEventData.sdlEventKeyDown = false;
+            // Remove the key event from the key event vector.
+            removeKeyEvent(sdlEvent->key.keysym.sym);
             //LogManager::Log("Key up");
             break;
         case SDL_MOUSEBUTTONDOWN:
@@ -98,13 +103,16 @@ void SDLGameInput::HandleEvents(const SDL_Event *sdlEvent)
             break;
     }
 }
+
+// Get if a key is pressed
 bool SDLGameInput::getKeyPressed()
 {
-    return sdlEventData.sdlEventKeyDown;//gameEngine.dependencyAppSubsystemsPtr.gameInput.sdlEventData.sdlEventKeyDown;
+    return sdlEventData.sdlEventKeyDown;
 }
 
-int32_t SDLGameInput::getKeyCode(){
-    return 666;//sdlEventData.sdlEvent.key.keysym.sym;
+// Get the key codes down
+const std::vector<std::unique_ptr<AF_KeyEvent>>& SDLGameInput::getKeyEvents() const{
+    return *m_keyEvents;
 }
 
 
@@ -114,8 +122,70 @@ void SDLGameInput::EndFrame()
 }
 
 
-// Default constructor implementation
-SDLGameInput::SDLGameInput()
+//clear the vector of keyEvents
+void SDLGameInput::clearKeyEvents()
+{
+    m_keyEvents->clear();
+}
+
+//create a new keyEvent on the heap
+std::unique_ptr<AF_KeyEvent> SDLGameInput::createKeyEvent(int32_t keyCode, bool pressed)
+{
+    //create a new keyEvent on the heap
+    std::unique_ptr<AF_KeyEvent> keyEvent = std::make_unique<AF_KeyEvent>(keyCode, pressed);
+
+    //transfer ownership of the keyEvent to the caller
+    return std::move(keyEvent);
+}
+
+//add a keyEvent to the vector
+void SDLGameInput::addKeyEvent(std::unique_ptr<AF_KeyEvent> keyEvent)
+{
+    //use emplace_back to avoid copying the keyEvent
+    m_keyEvents->emplace_back(std::move(keyEvent));
+}
+
+// Remove a key event from the vector
+void SDLGameInput::removeKeyEvent(int32_t keyCode)
+{
+    auto& keyEvents = *m_keyEvents;
+    auto it = keyEvents.begin();
+
+    while (it != keyEvents.end()) {
+        if ((*it)->keyCode == keyCode) {
+            it = keyEvents.erase(it);
+        }
+        else {
+            ++it;
+        }
+    }
+}
+
+
+
+//print all keyEvents to the log
+void SDLGameInput::printAllKeyEvents(){
+    auto& keyEvents = getKeyEvents();
+    LogManager::Log("\n events in keyEvents: %d \n", keyEvents.size());
+    for (const auto& keyEvent : keyEvents) {
+        
+        LogManager::Log("\n Key event: %d %d \n", keyEvent->keyCode, keyEvent->keyDown);
+    }
+}
+
+
+
+// Constructor implementation 
+/*
+Each derived class has its own copy of m_keyEvents, which is separate from the one defined in the abstract base class. 
+The derived class can provide its own implementation for the virtual functions that manipulate m_keyEvents, 
+which will operate on the copy of m_keyEvents in the derived class.
+
+However, you can initialize the m_keyEvents member in the derived class's constructor by calling the constructor 
+of the base class and passing it the initial values of m_keyEvents. 
+This will allow the derived class to use the same initial value for m_keyEvents as the base class. For example:
+*/
+SDLGameInput::SDLGameInput() : IInput(), m_keyEvents(std::make_unique<std::vector<std::unique_ptr<AF_KeyEvent>>>())
 {
     //Register the service
     IInputLocator::provide(this);
@@ -125,30 +195,4 @@ SDLGameInput::SDLGameInput()
 SDLGameInput::~SDLGameInput()
 {
     
-}
-
-void SDLGameInput::clearKeyEvents()
-{
-    m_keyEvents.clear();
-}
-
-std::unique_ptr<AF_KeyEvent> SDLGameInput::createKeyEvent()
-{
-    std::unique_ptr<AF_KeyEvent> keyEvent = std::make_unique<AF_KeyEvent>();
-    //keyEvent->key = sdlEvent.key.keysym.sym;
-    //keyEvent.type = sdlEvent.type;
-    addKeyEvent(std::move(keyEvent));
-    return keyEvent;
-}
-
-void SDLGameInput::addKeyEvent(std::unique_ptr<AF_KeyEvent> keyEvent)
-{
-    //m_keyEvents.push_back(keyEvent);
-    m_keyEvents.emplace_back(std::move(keyEvent));
-}
-
-
-std::vector<std::unique_ptr<AF_KeyEvent>>& SDLGameInput::getKeyEvents()
-{
-    return m_keyEvents;
 }

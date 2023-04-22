@@ -25,18 +25,21 @@ public:
 
     void HandleEvents(const SDL_Event* sdlEvent);  // declare the HandleEvents function, which is used to handle SDL2 events
 
-    bool getKeyPressed() override;             // declare the GetKeyPressed function, which is used to get whether a key is pressed
-    int32_t getKeyCode() override;  // declare the GetKeyCode function, which is used to get the key code of the key that is pressed
     // implement other rendering functions using SDL2 API
     SDLGameInput();                   // declare the constructor for the SDLGameInput class
     ~SDLGameInput();                  // declare the destructor for the SDLGameInput class
     
-    void clearKeyEvents() override;
-    std::unique_ptr<AF_KeyEvent> createKeyEvent() override;
+    bool getKeyPressed() override;
+    
+    std::unique_ptr<AF_KeyEvent> createKeyEvent(int32_t keyCode, bool pressed) override;
     void addKeyEvent(std::unique_ptr<AF_KeyEvent> keyEvent) override;
-    std::vector<std::unique_ptr<AF_KeyEvent>>& getKeyEvents() override;
+    const std::vector<std::unique_ptr<AF_KeyEvent>>& getKeyEvents() const override;
+    void clearKeyEvents() override;
+    void removeKeyEvent(int32_t keyCode) override;
+
+    void printAllKeyEvents() override;
 
 private:
-    std::vector<std::unique_ptr<AF_KeyEvent>> m_keyEvents;   // declare a vector of AF_KeyEvent structs
+    std::unique_ptr<std::vector<std::unique_ptr<AF_KeyEvent>>> m_keyEvents;   // declare a vector of AF_KeyEvent structs
     SDLEventData sdlEventData;        // declare an instance of the SDLEventData struct
 };

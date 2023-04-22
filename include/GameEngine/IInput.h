@@ -24,14 +24,16 @@ public:
     virtual bool GetIsRunning() = 0;
 
     virtual bool getKeyPressed() = 0;
-    virtual int32_t getKeyCode() = 0;
 
-    virtual void clearKeyEvents() = 0;
-    virtual std::unique_ptr<AF_KeyEvent> createKeyEvent() = 0;
+    virtual std::unique_ptr<AF_KeyEvent> createKeyEvent(int32_t keyCode, bool pressed) = 0;
     virtual void addKeyEvent(std::unique_ptr<AF_KeyEvent> keyEvent) = 0;
-    virtual std::vector<std::unique_ptr<AF_KeyEvent>>& getKeyEvents() = 0;
+    virtual const std::vector<std::unique_ptr<AF_KeyEvent>>& getKeyEvents() const = 0;
+    virtual void clearKeyEvents() = 0;
+    virtual void removeKeyEvent(int32_t keyCode) = 0;
+    //little helper to debug and understand whats in the key events vector
+    virtual void printAllKeyEvents() = 0;
 private:
-    std::vector<std::unique_ptr<AF_KeyEvent>> m_keyEvents;
+    //std::unique_ptr<std::vector<std::unique_ptr<AF_KeyEvent>>> m_keyEvents;
 };
 
 
@@ -44,20 +46,41 @@ public:
     virtual void BeginFrame() {}
     virtual void EndFrame() {}
     virtual bool GetIsRunning() {return false;}
-
     virtual bool getKeyPressed() {return false;}
-    virtual int32_t getKeyCode() {return 0;}
 
-    virtual void clearKeyEvents() {}
-    virtual std::unique_ptr<AF_KeyEvent> createKeyEvent() {return std::unique_ptr<AF_KeyEvent>();}
+  
+
+    //Null object pattern for key events
+    virtual void clearKeyEvents() {
+    }
+    virtual void removeKeyEvent(int32_t keyCode) {
+        (void) keyCode;
+    }
+
+    //Null object pattern for create key events
+    virtual std::unique_ptr<AF_KeyEvent> createKeyEvent(int32_t keyCode, bool pressed) {
+        (void) keyCode;
+        (void) pressed;
+        return std::unique_ptr<AF_KeyEvent>();
+    }
+
+    //Null object pattern for add key events
     virtual void addKeyEvent(std::unique_ptr<AF_KeyEvent> keyEvent) {
         (void) keyEvent;
     }
-    virtual std::vector<std::unique_ptr<AF_KeyEvent>>& getKeyEvents() {
-        return m_keyEvents;
+
+    //Null object pattern for get key events
+    virtual const std::vector<std::unique_ptr<AF_KeyEvent>>&  getKeyEvents() const {
+        static std::vector<std::unique_ptr<AF_KeyEvent>> emptyVector;
+        return emptyVector;
     }
+
+    //Null object pattern for print key events
+    virtual void printAllKeyEvents() {}
+
 private:
-    std::vector<std::unique_ptr<AF_KeyEvent>> m_keyEvents;
+    //Null object pattern for key events vector
+    //std::unique_ptr<std::vector<std::unique_ptr<AF_KeyEvent>>> m_keyEvents;
 };
 
 //Service Locator Pattern
@@ -69,9 +92,10 @@ private:
     
 public:
     static void initialize(); 
-
+    //get the service and make accessible to the rest of the program / dll 
     AF_Engine_API static IInput* getInput(); 
 
+    //provide a service
     static void provide(IInput* service){
         if(service == nullptr){
             //revert to null service

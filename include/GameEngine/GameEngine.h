@@ -35,8 +35,6 @@ public:
     //AF_Engine_API IRenderer* getRenderer();
     IRenderer* getRenderer();
 
-   
-
     // Initialize the GameEngine
     int startup(AppData* applicationData, const std::shared_ptr<AF_EngineBehaviour> engineBehaviour,  DependencyAppSubsystems& dependencyAppSubSystems);
 
