@@ -23,7 +23,11 @@ public:
     virtual void EndFrame() = 0;
     virtual bool GetIsRunning() = 0;
 
+    // return true if any key is pressed
     virtual bool getKeyPressed() = 0;
+
+    // return true if the key matching the keyCode is pressed
+    virtual bool getKeyCodePressed(int32_t keyCode) = 0;
 
     virtual std::unique_ptr<AF_KeyEvent> createKeyEvent(int32_t keyCode, bool pressed) = 0;
     virtual void addKeyEvent(std::unique_ptr<AF_KeyEvent> keyEvent) = 0;
@@ -73,6 +77,11 @@ public:
     virtual const std::vector<std::unique_ptr<AF_KeyEvent>>&  getKeyEvents() const {
         static std::vector<std::unique_ptr<AF_KeyEvent>> emptyVector;
         return emptyVector;
+    }
+
+    virtual bool getKeyCodePressed(int32_t keyCode) {
+        (void) keyCode;
+        return false;
     }
 
     //Null object pattern for print key events

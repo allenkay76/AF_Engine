@@ -30,12 +30,14 @@ public:
     ~SDLGameInput();                  // declare the destructor for the SDLGameInput class
     
     bool getKeyPressed() override;
+    bool getKeyCodePressed(int32_t keyCode) override;
     
     std::unique_ptr<AF_KeyEvent> createKeyEvent(int32_t keyCode, bool pressed) override;
     void addKeyEvent(std::unique_ptr<AF_KeyEvent> keyEvent) override;
     const std::vector<std::unique_ptr<AF_KeyEvent>>& getKeyEvents() const override;
     void clearKeyEvents() override;
     void removeKeyEvent(int32_t keyCode) override;
+
 
     void printAllKeyEvents() override;
 

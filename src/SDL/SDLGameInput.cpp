@@ -64,11 +64,13 @@ void SDLGameInput::HandleEvents(const SDL_Event *sdlEvent)
 
             // Add the key event to the key event vector.
             addKeyEvent(createKeyEvent(sdlEvent->key.keysym.sym, true));
+            /*
             if (sdlEvent->key.keysym.sym == SDLK_ESCAPE)
                 {
                     LogManager::Log("Escape key pressed: Exiting Application");
                     sdlEventData.sdlEventIsRunning = false;
                 }
+            */
             break;
             
         case SDL_KEYUP:
@@ -108,6 +110,19 @@ void SDLGameInput::HandleEvents(const SDL_Event *sdlEvent)
 bool SDLGameInput::getKeyPressed()
 {
     return sdlEventData.sdlEventKeyDown;
+}
+
+// Return true if the keyCode matches a key that is down
+bool SDLGameInput::getKeyCodePressed(int32_t keyCode){
+    bool returnVal = false;
+    for(size_t i = 0; i < m_keyEvents->size(); i++){
+        if(m_keyEvents->at(i)->keyCode == keyCode){
+            if(m_keyEvents->at(i)->keyDown == true){
+                returnVal = true;
+            }
+        }
+    }
+    return returnVal;
 }
 
 // Get the key codes down

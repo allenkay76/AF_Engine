@@ -183,6 +183,9 @@ int GameEngine::shutdown(const std::shared_ptr<AF_EngineBehaviour> engineBehavio
     return 0;
 }
 
+void GameEngine::requestGameExit(){
+    GameEngine::GetInstance()->getAppData()->isRunning = false;
+}
 
 AppData *GameEngine::getAppData() 
 {

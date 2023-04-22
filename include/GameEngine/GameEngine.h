@@ -49,6 +49,8 @@ public:
 
     AppData* getAppData();
 
+    AF_Engine_API void requestGameExit();
+
     // Declare the constructor for GameEngine (singleton, should not be explicitly called)
     GameEngine();
 
