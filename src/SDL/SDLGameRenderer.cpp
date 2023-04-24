@@ -1,6 +1,9 @@
 // Include the header file for the SDLGameRenderer class
 #include "SDL/SDLGameRenderer.h"
 #include "Utils/LogManager.h"
+
+#include "Rendering/AF_Mesh.h"
+#include "Rendering/AF_MeshType.h"  
 //#include "Rendering/imageData.h"
 
 
@@ -17,12 +20,17 @@
 //#pragma GCC diagnostic pop
 
 
+std::unique_ptr<AF_Mesh> testMesh;
+std::unique_ptr<AF_BaseMesh> quadMesh;
 
 // Define the function to initialize the SDLGameRenderer with a given window name and dimensions
 bool SDLGameRenderer::Initialize(const char* windowName, const int windowWidth, const int windowHeight, IWindow* windowPtr)
 {
     //Initialization flag
     bool success = true;
+
+    quadMesh = std::make_unique<AF_Quad>();
+    testMesh = std::make_unique<AF_Mesh>(std::move(quadMesh));
 
     //Initialize SDL
     if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
@@ -119,6 +127,8 @@ bool SDLGameRenderer::Initialize(const char* windowName, const int windowWidth, 
         }
     }
 
+    
+
     return success;
 }
 
@@ -202,27 +212,18 @@ bool SDLGameRenderer::initGL(){
                     //Initialize clear color
                     glClearColor(0.f, 0.f, 0.f, 1.f);
 
-                    //VBO data
-                    GLfloat vertexData[] = {
-                        -0.5f, -0.5f,
-                        0.5f, -0.5f,
-                        0.5f, 0.5f,
-                        -0.5f, 0.5f
-                    };
-
-                    //IBO data
-                    GLuint indexData[] = { 0, 1, 2, 3 };
-
                     //create VBO
                     glGenBuffers(1, &gVBO);
                     glBindBuffer(GL_ARRAY_BUFFER, gVBO);
-                    glBufferData(GL_ARRAY_BUFFER, 2 * 4 *sizeof(GLfloat), vertexData, GL_STATIC_DRAW);
+                    glBufferData(GL_ARRAY_BUFFER, testMesh->getMesh()->getVerticesArrayMemorySize(), testMesh->getMesh()->getVerticesData(), GL_STATIC_DRAW);
 
-                    //create IBO
+
+                    //unsigned int indexData[] = { 0, 1, 2, 3 };
                     glGenBuffers(1, &gIBO);
                     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gIBO);
-                    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 4 * sizeof(GLuint), indexData, GL_STATIC_DRAW);
-                }
+                    glBufferData(GL_ELEMENT_ARRAY_BUFFER, testMesh->getMesh()->getIndicesArrayMemorySize(), testMesh->getMesh()->getIndicesData(), GL_STATIC_DRAW);
+                 
+                 }
             }
         }
 

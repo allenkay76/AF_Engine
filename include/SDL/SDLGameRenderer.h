@@ -11,6 +11,8 @@
 #include <GL/glu.h>
 // This header file includes the interface class for rendering.
 #include "GameEngine/IRenderer.h"
+
+
 // This preprocessor directive is commented out and provides instructions on how to fix a known issue with SDL2 and main function definition.
 //#define SDL_MAIN_HANDLED //https://stackoverflow.com/questions/32342285/undefined-reference-to-winmain16-c-sdl-2/32343111#32343111
 
