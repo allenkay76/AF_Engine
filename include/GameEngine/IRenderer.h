@@ -8,6 +8,7 @@
 #include <memory>
 #include "Rendering/imageData.h"
 #include "GameEngine/IWindow.h"
+#include "Rendering/AF_Mesh.h"
 /*
 This is an interface class for a rendering engine. 
 It provides a set of pure virtual functions that define the basic operations that a renderer must support. 
@@ -25,11 +26,19 @@ public:
     virtual void BeginFrame() = 0;
     virtual void EndFrame() = 0;
 
+    //std::unique_ptr<std::vector<std::unique_ptr<AF_BaseMesh>>>
+    virtual void addMesh(std::unique_ptr<AF_Mesh> thisBaseMesh) = 0;
+    virtual void removeMesh(std::unique_ptr<AF_Mesh> thisBaseMesh) = 0;
+    virtual void clearMeshes() = 0;
+    virtual void renderMeshes() = 0;
+    virtual const std::unique_ptr<std::vector<std::unique_ptr<AF_Mesh>>>& getMeshes() const  = 0;
     //Load Media from file path and take in an image data struct pointer, and return true if the image is loaded successfully
     //virtual std::unique_ptr<ImageData> loadImage(const char *filePath) = 0;
     //Load Media from file path
     //virtual bool loadImage(const char* filePath, ImageData* imageData) = 0;
     // add more rendering functions as needed
+private:
+    std::unique_ptr<std::vector<std::unique_ptr<AF_Mesh>>> m_meshes;
 };
 
 /*
@@ -44,7 +53,7 @@ which allows for polymorphism and dynamic dispatch.
 
 
 //Null service pattern, initialised in the constructor of inputLocator
-class NullIRenderer: public IRenderer {
+class NullIRenderer : public IRenderer {
 public:
     virtual bool Initialize(const char* windowName, const int windowWidth, const int windowHeight, IWindow* windowPtr) {
         (void)windowName;
@@ -52,12 +61,32 @@ public:
         (void)windowHeight;
         (void)windowPtr;
         return false;
-        return false;
     }
+
     virtual void Shutdown() {}
+
     virtual void BeginFrame() {}
+
     virtual void EndFrame() {}
+
+    virtual void addMesh(std::unique_ptr<AF_Mesh> thisBaseMesh) {
+        (void)thisBaseMesh;
+    }
+
+    virtual void removeMesh(std::unique_ptr<AF_Mesh> thisBaseMesh) {
+        (void)thisBaseMesh;
+    }
+
+    virtual void clearMeshes() {}
+
+    virtual void renderMeshes() {}
+
+    const std::unique_ptr<std::vector<std::unique_ptr<AF_Mesh>>>& getMeshes() const override {
+        static std::unique_ptr<std::vector<std::unique_ptr<AF_Mesh>>> emptyVector = std::make_unique<std::vector<std::unique_ptr<AF_Mesh>>>();
+        return emptyVector;
+    }
 };
+
 
 //Service Locator Pattern
 //https://gameprogrammingpatterns.com/service-locator.html

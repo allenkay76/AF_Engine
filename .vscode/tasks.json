@@ -216,6 +216,11 @@
             
             // Set the current working directory to the workspace folder
             "options": {
+                "presentation": {
+                    "reveal": "silent",
+                    "panel": "shared"
+                },
+                
                 "cwd": "${workspaceFolder}"
             },
             

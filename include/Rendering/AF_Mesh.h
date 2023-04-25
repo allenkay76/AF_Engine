@@ -13,6 +13,8 @@ public:
     AF_Mesh(std::unique_ptr<AF_BaseMesh> thisMesh, std::unique_ptr<IBuffer_Object> thisBufferObject);
     ~AF_Mesh();
 
+    void renderMesh();
+
     const std::unique_ptr<AF_BaseMesh>& getMesh() const;
     const std::unique_ptr<IBuffer_Object>& getBufferObject() const;
 

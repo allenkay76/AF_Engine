@@ -27,3 +27,15 @@ const std::unique_ptr<IBuffer_Object>& AF_Mesh::getBufferObject() const
 {
     return bufferObject;
 }
+
+void AF_Mesh::renderMesh()
+{
+    /*
+    //bind the VAO
+    glBindVertexArray(bufferObject->getVAO());
+    //draw the mesh
+    glDrawElements(GL_TRIANGLES, mesh->getIndices().size(), GL_UNSIGNED_INT, 0);
+    //unbind the VAO
+    glBindVertexArray(0);
+    */
+}

@@ -11,4 +11,5 @@
 [-] Create a render list that holds AF_Mesh objects to render.
 [-] loop through the render list and render the aF_Mesh objects
 [-] Add a method to add render objects i.e. AF_Mesh objects to the render list from a game project.
+[x] Create concept of generic Buffer object that can be overriden depending if openGL or other frameworks are using. e.g. use GLuints for VAO, VBO in the stored buffer objects if using openGL.
 [] key press input recognised and can be called e.g. can evaluate keypress w,a,s,d keys in game

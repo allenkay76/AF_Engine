@@ -41,6 +41,15 @@ public:
     //Load Media from file path and take in an image data struct pointer, and return true if the image is loaded successfully
     //std::unique_ptr<ImageData> loadImage(const char *filePath) override;
 
+
+    void addMesh(std::unique_ptr<AF_Mesh> thisMesh) override;
+
+    void removeMesh(std::unique_ptr<AF_Mesh> thisMesh) override;
+
+    void clearMeshes() override;
+    void renderMeshes() override;
+    const std::unique_ptr<std::vector<std::unique_ptr<AF_Mesh>>>& getMeshes() const override;
+
     //Shader loading utility programs
     void printProgramLog(GLuint program);
     void printShaderLog(GLuint shader);
@@ -66,6 +75,8 @@ private:
     //SDL_Renderer sdlGameRenderer;
     //SDL_Surface sdlGameSurface;
     SDL_GLContext sdlGameGLContext;
-
+    
+    
+    std::unique_ptr<std::vector<std::unique_ptr<AF_Mesh>>> m_meshes;
     //Mesh
 };

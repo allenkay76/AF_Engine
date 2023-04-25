@@ -31,12 +31,17 @@ bool SDLGameRenderer::Initialize(const char* windowName, const int windowWidth, 
     //Initialization flag
     bool success = true;
 
+    //Create the mesh vector
+    m_meshes = std::make_unique<std::vector<std::unique_ptr<AF_Mesh>>>();
+
     //Create the mesh
     quadMesh = std::make_unique<AF_Quad>();
     testBufferObject = std::make_unique<GL_BufferObject>();
     // Create the mesh, ensure we transfer ownership of the mesh to the AF_Mesh object
     // need to also pass in the derived openGL buffer object which is derived from IBuffer_Object. This way we can swap from opegl to other standards
     testMesh = std::make_unique<AF_Mesh>(std::move(quadMesh), std::move(testBufferObject));
+
+    addMesh(std::move(testMesh));
 
     //Initialize SDL
     if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
@@ -217,23 +222,37 @@ bool SDLGameRenderer::initGL(){
                 }else{
                     //Initialize clear color
                     glClearColor(0.f, 0.f, 0.f, 1.f);
+                    
+                    // Get the meshes from the vector and store them in a variable
+                    auto meshes = getMeshes().get();
 
-                    //create VBO
-                    //GLuint vbo = testMesh->getVBO();
-                    GLuint gVBO = testMesh->getBufferObject()->getVBO();
+                    // Generate VBO and IBO objects
+                    GLuint gVBO, gIBO;
                     glGenBuffers(1, &gVBO);
-                    glBindBuffer(GL_ARRAY_BUFFER, gVBO);
-                    glBufferData(GL_ARRAY_BUFFER, testMesh->getMesh()->getVerticesArrayMemorySize(), testMesh->getMesh()->getVerticesData(), GL_STATIC_DRAW);
-                    testMesh->getBufferObject()->setVBO(gVBO);
-
-                    //unsigned int indexData[] = { 0, 1, 2, 3 };
-                    //create IBO
-                    //GLuint ibo = testMesh->getEBO();
-                    GLuint gIBO = testMesh->getBufferObject()->getEBO();
                     glGenBuffers(1, &gIBO);
-                    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gIBO);
-                    glBufferData(GL_ELEMENT_ARRAY_BUFFER, testMesh->getMesh()->getIndicesArrayMemorySize(), testMesh->getMesh()->getIndicesData(), GL_STATIC_DRAW);
-                    testMesh->getBufferObject()->setEBO(gIBO);
+
+                    for (const auto& meshPtr : *meshes) {
+                        if (meshPtr == nullptr) {
+                            LogManager::Log("Mesh is null");
+                            continue;
+                        }
+
+                        auto& mesh = *meshPtr;
+                        // Bind the VBO and set the buffer data
+                        glBindBuffer(GL_ARRAY_BUFFER, gVBO);
+                        glBufferData(GL_ARRAY_BUFFER, mesh.getMesh()->getVerticesArrayMemorySize(), mesh.getMesh()->getVerticesData(), GL_STATIC_DRAW);
+
+                        // Bind the IBO and set the buffer data
+                        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gIBO);
+                        glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh.getMesh()->getIndicesArrayMemorySize(), mesh.getMesh()->getIndicesData(), GL_STATIC_DRAW);
+
+                        // Set the VBO and IBO values in the BufferObject object
+                        //auto bufferObject = std::move(mesh.getBufferObject());
+                        mesh.getBufferObject()->setVBO(gVBO);
+                        mesh.getBufferObject()->setEBO(gIBO);
+                    }
+
+                    
                  }
             }
         }
@@ -294,16 +313,34 @@ void SDLGameRenderer::BeginFrame()
     //Enable vertex position
     glEnableVertexAttribArray( gVertexPos2DLocation );
 
-    //Set vertex data
-    GLuint gVBO = testMesh->getBufferObject()->getVBO();
-    glBindBuffer( GL_ARRAY_BUFFER, gVBO );
-    glVertexAttribPointer( gVertexPos2DLocation, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), NULL );
+ 
+   // Loop through the meshes and set the buffer data
+   // Get the meshes from the vector and store them in a variable
+    auto meshes = getMeshes().get();
 
-    //Set index data and render
-    GLuint gIBO = testMesh->getBufferObject()->getEBO();
-    glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, gIBO );
-    glDrawElements( GL_TRIANGLE_FAN, 4, GL_UNSIGNED_INT, NULL );
+    // Generate VBO and IBO objects
 
+    for (const auto& meshPtr : *meshes) {
+        if (meshPtr == nullptr) {
+            LogManager::Log("Mesh is null");
+                continue;
+                }
+
+            auto& mesh = *meshPtr;
+            // Set vertex data
+            GLuint gVBO = mesh.getBufferObject()->getVBO();
+            glBindBuffer(GL_ARRAY_BUFFER, gVBO);
+            glVertexAttribPointer(gVertexPos2DLocation, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), NULL);
+
+            // Set index data and render
+            GLuint gIBO = mesh.getBufferObject()->getEBO();
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gIBO);
+            glDrawElements(GL_TRIANGLE_FAN, 4, GL_UNSIGNED_INT, NULL);
+
+    }
+ 
+
+    
     //Disable vertex position
     glDisableVertexAttribArray( gVertexPos2DLocation );
 
@@ -503,6 +540,36 @@ void SDLGameRenderer::Shutdown()
 
 
     SDL_Quit();
+}
+
+void SDLGameRenderer::addMesh(std::unique_ptr<AF_Mesh> thisMesh) {
+    if(thisMesh == nullptr){
+        LogManager::Log("SDLGameRenderer::addMesh: Mesh is null");
+        return;
+    }
+    m_meshes->emplace_back(move(thisMesh));
+}
+
+void SDLGameRenderer::removeMesh(std::unique_ptr<AF_Mesh> thisMesh) {
+    if(thisMesh == nullptr){
+        LogManager::Log("SDLGameRenderer::removeMesh: Mesh is null");
+        return;
+    }
+    //m_meshes->erase(std::remove(m_meshes->begin(), meshes.end(), thisBaseMesh), m_meshes->end());
+}
+
+void SDLGameRenderer::clearMeshes() {
+    //m_meshes->clear();
+}
+void SDLGameRenderer::renderMeshes() {
+    /*
+    for (auto& mesh : meshes) {
+        mesh->Render();
+    }*/
+}
+const std::unique_ptr<std::vector<std::unique_ptr<AF_Mesh>>>& SDLGameRenderer::getMeshes() const {
+    
+    return m_meshes;
 }
 
 
