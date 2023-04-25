@@ -26,25 +26,7 @@ class SDLGameRenderer : public IRenderer {
 
 
 public:
-    
-    
-    // This struct holds the SDL2 specific render data.
-    //SDLRenderData sdlRenderData;
-    //SDL_Window* sdlWindowPtr;
-
-    //graphics program
-    GLuint gProgramID = 0;
-    GLuint gVertexPos2DLocation = -1;
-    GLuint gVBO = 0;
-    GLuint gIBO = 0;
-    GLuint gTexture = 0;
-
-    SDL_Window* sdlGameWindowPtr;
-    //SDL_Renderer sdlGameRenderer;
-    //SDL_Surface sdlGameSurface;
-    SDL_GLContext sdlGameGLContext;
-
-    // This function initializes the SDL2 window and renderer.
+   // This function initializes the SDL2 window and renderer.
     bool Initialize(const char* windowName, const int windowWidth, const int windowHeight, IWindow* windowPtr) override;
     bool InitializeSDLRenderer(const char* windowName, const int windowWidth, const int windowHeight);
     // This function shuts down the SDL2 window and renderer.
@@ -68,5 +50,22 @@ public:
     // This is the destructor for the SDLGameRenderer class.
     ~SDLGameRenderer();
 
-    
+private:
+    // This struct holds the SDL2 specific render data.
+    //SDLRenderData sdlRenderData;
+    //SDL_Window* sdlWindowPtr;
+
+    //graphics program
+    GLuint gProgramID = 0;
+    GLuint gVertexPos2DLocation = -1;
+    //GLuint gVBO = 0;
+    //GLuint gIBO = 0;
+    GLuint gTexture = 0;
+
+    SDL_Window* sdlGameWindowPtr;
+    //SDL_Renderer sdlGameRenderer;
+    //SDL_Surface sdlGameSurface;
+    SDL_GLContext sdlGameGLContext;
+
+    //Mesh
 };

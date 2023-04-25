@@ -4,6 +4,7 @@
 
 #include "Rendering/AF_Mesh.h"
 #include "Rendering/AF_MeshType.h"  
+#include "OpenGL/GL_BufferObject.h"
 //#include "Rendering/imageData.h"
 
 
@@ -21,6 +22,7 @@
 
 
 std::unique_ptr<AF_Mesh> testMesh;
+std::unique_ptr<IBuffer_Object> testBufferObject;
 std::unique_ptr<AF_BaseMesh> quadMesh;
 
 // Define the function to initialize the SDLGameRenderer with a given window name and dimensions
@@ -29,8 +31,12 @@ bool SDLGameRenderer::Initialize(const char* windowName, const int windowWidth, 
     //Initialization flag
     bool success = true;
 
+    //Create the mesh
     quadMesh = std::make_unique<AF_Quad>();
-    testMesh = std::make_unique<AF_Mesh>(std::move(quadMesh));
+    testBufferObject = std::make_unique<GL_BufferObject>();
+    // Create the mesh, ensure we transfer ownership of the mesh to the AF_Mesh object
+    // need to also pass in the derived openGL buffer object which is derived from IBuffer_Object. This way we can swap from opegl to other standards
+    testMesh = std::make_unique<AF_Mesh>(std::move(quadMesh), std::move(testBufferObject));
 
     //Initialize SDL
     if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
@@ -213,16 +219,21 @@ bool SDLGameRenderer::initGL(){
                     glClearColor(0.f, 0.f, 0.f, 1.f);
 
                     //create VBO
+                    //GLuint vbo = testMesh->getVBO();
+                    GLuint gVBO = testMesh->getBufferObject()->getVBO();
                     glGenBuffers(1, &gVBO);
                     glBindBuffer(GL_ARRAY_BUFFER, gVBO);
                     glBufferData(GL_ARRAY_BUFFER, testMesh->getMesh()->getVerticesArrayMemorySize(), testMesh->getMesh()->getVerticesData(), GL_STATIC_DRAW);
-
+                    testMesh->getBufferObject()->setVBO(gVBO);
 
                     //unsigned int indexData[] = { 0, 1, 2, 3 };
+                    //create IBO
+                    //GLuint ibo = testMesh->getEBO();
+                    GLuint gIBO = testMesh->getBufferObject()->getEBO();
                     glGenBuffers(1, &gIBO);
                     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gIBO);
                     glBufferData(GL_ELEMENT_ARRAY_BUFFER, testMesh->getMesh()->getIndicesArrayMemorySize(), testMesh->getMesh()->getIndicesData(), GL_STATIC_DRAW);
-                 
+                    testMesh->getBufferObject()->setEBO(gIBO);
                  }
             }
         }
@@ -284,10 +295,12 @@ void SDLGameRenderer::BeginFrame()
     glEnableVertexAttribArray( gVertexPos2DLocation );
 
     //Set vertex data
+    GLuint gVBO = testMesh->getBufferObject()->getVBO();
     glBindBuffer( GL_ARRAY_BUFFER, gVBO );
     glVertexAttribPointer( gVertexPos2DLocation, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), NULL );
 
     //Set index data and render
+    GLuint gIBO = testMesh->getBufferObject()->getEBO();
     glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, gIBO );
     glDrawElements( GL_TRIANGLE_FAN, 4, GL_UNSIGNED_INT, NULL );
 

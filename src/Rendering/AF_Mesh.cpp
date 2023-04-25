@@ -1,16 +1,12 @@
 #include "Rendering/AF_Mesh.h"
 
-//Full values passed inconstructor
-AF_Mesh::AF_Mesh(std::unique_ptr<AF_BaseMesh> thisMesh, unsigned int thisVAO, unsigned int thisVBO, unsigned int thisEBO) : 
+
+
+//partial constructor, only mesh data passed in and using std::move to transfer ownership
+AF_Mesh::AF_Mesh(std::unique_ptr<AF_BaseMesh> thisMesh, std::unique_ptr<IBuffer_Object> thisBufferObject) : 
     mesh(std::move(thisMesh)),
-    VAO(thisVAO), 
-    VBO(thisVBO), 
-    EBO(thisEBO) {
-
-} 
-
-//partial constructor
-AF_Mesh::AF_Mesh(std::unique_ptr<AF_BaseMesh> thisMesh) : mesh(std::move(thisMesh)), VAO(0), VBO(0), EBO(0){
+    bufferObject(std::move(thisBufferObject))
+{
     
 } 
 
@@ -20,47 +16,14 @@ AF_Mesh::~AF_Mesh()
 {
 }
 
+//getters fore mesh 
 const std::unique_ptr<AF_BaseMesh>& AF_Mesh::getMesh() const
 {
     return mesh;
 }
 
-
-// return reference to mesh data
-void AF_Mesh::setVAO(unsigned int thisVAO)
+//getters for buffer object
+const std::unique_ptr<IBuffer_Object>& AF_Mesh::getBufferObject() const
 {
-    this->VAO = thisVAO;
+    return bufferObject;
 }
-
-// return reference to mesh data
-void AF_Mesh::setVBO(unsigned int thisVBO)
-{
-    this->VBO = thisVBO;
-}
-
-// return reference to mesh data
-void AF_Mesh::setEBO(unsigned int thisEBO)
-{
-    this->EBO = thisEBO;
-}
-
-// return const reference to VAO
-unsigned int AF_Mesh::getVAO() const
-{
-    return VAO;
-}
-
-// return const reference to VBO
-unsigned int AF_Mesh::getVBO() const
-{
-    return VBO;
-}
-
-// return const reference to EBO
-unsigned int AF_Mesh::getEBO() const
-{
-    return EBO;
-}
-
-
-
