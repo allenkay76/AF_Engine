@@ -2,9 +2,10 @@
 #include "SDL/SDLGameRenderer.h"
 #include "Utils/LogManager.h"
 
-#include "Rendering/AF_Mesh.h"
+#include "OpenGL/GLMesh.h"
 #include "Rendering/AF_MeshType.h"  
 #include "OpenGL/GL_BufferObject.h"
+#include "OpenGL/GLMaterial.h"
 //#include "Rendering/imageData.h"
 
 
@@ -20,8 +21,8 @@
 //#include "SDLGameRenderer.h"
 //#pragma GCC diagnostic pop
 
-
-std::unique_ptr<AF_Mesh> testMesh;
+std::unique_ptr<IMaterial> testMaterial;
+std::unique_ptr<IMesh> testMesh;
 std::unique_ptr<IBuffer_Object> testBufferObject;
 std::unique_ptr<AF_BaseMesh> quadMesh;
 
@@ -30,18 +31,8 @@ bool SDLGameRenderer::Initialize(const char* windowName, const int windowWidth, 
 {
     //Initialization flag
     bool success = true;
-
-    //Create the mesh vector
-    m_meshes = std::make_unique<std::vector<std::unique_ptr<AF_Mesh>>>();
-
-    //Create the mesh
-    quadMesh = std::make_unique<AF_Quad>();
-    testBufferObject = std::make_unique<GL_BufferObject>();
-    // Create the mesh, ensure we transfer ownership of the mesh to the AF_Mesh object
-    // need to also pass in the derived openGL buffer object which is derived from IBuffer_Object. This way we can swap from opegl to other standards
-    testMesh = std::make_unique<AF_Mesh>(std::move(quadMesh), std::move(testBufferObject));
-
-    addMesh(std::move(testMesh));
+    
+    CreateTestMesh();
 
     //Initialize SDL
     if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
@@ -71,33 +62,9 @@ bool SDLGameRenderer::Initialize(const char* windowName, const int windowWidth, 
             //Save a copy of the window pointer as we will access it a lot. TODO: consider cache coherency as we will be accessing this a lot
             sdlGameWindowPtr = static_cast<SDL_Window*>(windowPtr->getWindow().get()); //this is the window we will use for the renderer
 
-            // Create a new SDL renderer for the window
-            //std::unique_ptr<SDL_Renderer, void(*)(SDL_Renderer*)> renderer(SDL_CreateRenderer(sdlWindowPtr, -1, 0), SDL_DestroyRenderer);
-           
-           /*
-            sdlGameRenderer = SDL_CreateRenderer(sdlGameWindowPtr, -1, 0);
-            //sdlRenderDataPtr->sdlRendererPtr = std::move(renderer);
-            if(sdlGameRenderer == NULL)
-            {
-                LogManager::Log("SDL renderer could not be created! SDL_Error: %s\n", SDL_GetError());
-                success = false;
-            }
-            */
-            //std::unique_ptr<SDL_Surface, void(*)(SDL_Surface*)> surface(*SDL_GetWindowSurface(sdlRenderData.sdlWindowPtr), SDL_FreeSurface);
-            //sdlRenderData.sdlSurfacePtr = std::move(surface);
-            //sdlRenderDataPtr->sdlSurfacePtr = std::unique_ptr<SDL_Surface, void(*)(SDL_Surface*)>(SDL_GetWindowSurface(sdlWindowPtr), SDL_FreeSurface);
-            /*
-            sdlGameSurface = SDL_GetWindowSurface(sdlGameWindowPtr);
-            
-            if(sdlGameSurface == NULL)
-            {
-                LogManager::Log("SDL surface could not be created! SDL_Error: %s\n", SDL_GetError());
-                success = false;
-            }*/
 
             //initialise openGL
            // Create an SDL GL context
-           //sdlRenderDataPtr->sdlContextPtr = SDL_GL_CreateContext(sdlWindowPtr);
             sdlGameGLContext  = SDL_GL_CreateContext(sdlGameWindowPtr);
             if (sdlGameGLContext == NULL) {
                 LogManager::Log("SDL_GL_CreateContext failed: %s\n", SDL_GetError());
@@ -126,11 +93,9 @@ bool SDLGameRenderer::Initialize(const char* windowName, const int windowWidth, 
                     LogManager::Log( "Unable to initialize OpenGL!\n" );
                     success = false;
                 }
-                glViewport(0, 0, windowWidth, windowHeight);
-                //glMatrixMode(GL_PROJECTION);
-                //glLoadIdentity();
+                //set the glViewport and the perspective
+                glViewport(0, 0, windowWidth, windowHeight);\
                 gluPerspective(45.0f, (GLfloat)windowWidth / (GLfloat)windowHeight, 0.1f, 100.0f);
-                //glMatrixMode(GL_MODELVIEW);
                 glLoadIdentity();
             }
 
@@ -143,123 +108,49 @@ bool SDLGameRenderer::Initialize(const char* windowName, const int windowWidth, 
     return success;
 }
 
+// Define the function to render the SDLGameRenderer. Do all the init things
 bool SDLGameRenderer::initGL(){
     bool success = true;
     GLenum error = GL_NO_ERROR;
-    
-    //Generate Program
-    gProgramID = glCreateProgram();
 
-    //Create vertex shader
-    GLuint vertexShader = glCreateShader( GL_VERTEX_SHADER );
 
-    //Get vertex source
-    const GLchar* vertexShaderSource[] =
-    {
-        "#version 140\nin vec2 LVertexPos2D; void main() { gl_Position = vec4( LVertexPos2D.x, LVertexPos2D.y, 0, 1 ); }"  
-    };
-
-    //Set vertex source
-    glShaderSource(vertexShader, 1, vertexShaderSource, NULL);
-
-    //Compile vertex source
-    glCompileShader(vertexShader);
-
-    //check vertex shader for errors
-    GLint vShaderCompiled = GL_FALSE;
-    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &vShaderCompiled);
-    if(vShaderCompiled != GL_TRUE){
-        LogManager::Log("Unable to compile vertex shader %d!\n", vertexShader);
-        printShaderLog(vertexShader);
-        success = false;
-    }
-    else{
-        //Attach vertex shader to program
-        glAttachShader(gProgramID, vertexShader);
-
-        //Create fragment shader
-        GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-
-        //Get fragment source
-        const GLchar* fragmentShaderSource[] =
-        {
-            "#version 140\nout vec4 LFragment; void main() { LFragment = vec4(1.0, 1.0, 1.0, 1.0 ); }"
-        };
-
-        //Set fragment source
-        glShaderSource(fragmentShader, 1, fragmentShaderSource, NULL);
-
-        //Compile fragment source
-        glCompileShader(fragmentShader);
-
-        //Check fragment shader for errors
-        GLint fShaderCompiled = GL_FALSE;
-        glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &fShaderCompiled);
-        if(fShaderCompiled != GL_TRUE){
-            LogManager::Log("Unable to compile fragment shader %d!\n", fragmentShader);
-            printShaderLog(fragmentShader);
-            success = false;
-        }else{
-            //Attach fragment shader to program
-            glAttachShader(gProgramID, fragmentShader);
-
-            //Link program
-            glLinkProgram(gProgramID);
-            
-            //Check for errors
-            GLint programSuccess = GL_TRUE;
-            glGetProgramiv(gProgramID, GL_LINK_STATUS, &programSuccess);
-            if(programSuccess != GL_TRUE){
-                LogManager::Log("Error linking program %d!\n", gProgramID);
-                printProgramLog(gProgramID);
-                success = false;
-            }else{
-                //get vertex attribute location
-                gVertexPos2DLocation = glGetAttribLocation(gProgramID, "LVertexPos2D");
-                if(gVertexPos2DLocation == static_cast<GLuint>(-1)){
-                    LogManager::Log("LVertexPos2D is not a valid glsl program variable!\n");
-                    success = false;
-                }else{
-                    //Initialize clear color
-                    glClearColor(0.f, 0.f, 0.f, 1.f);
-                    
-                    // Get the meshes from the vector and store them in a variable
-                    auto meshes = getMeshes().get();
-
-                    // Generate VBO and IBO objects
-                    GLuint gVBO, gIBO;
-                    glGenBuffers(1, &gVBO);
-                    glGenBuffers(1, &gIBO);
-
-                    for (const auto& meshPtr : *meshes) {
-                        if (meshPtr == nullptr) {
-                            LogManager::Log("Mesh is null");
-                            continue;
-                        }
-
-                        auto& mesh = *meshPtr;
-                        // Bind the VBO and set the buffer data
-                        glBindBuffer(GL_ARRAY_BUFFER, gVBO);
-                        glBufferData(GL_ARRAY_BUFFER, mesh.getMesh()->getVerticesArrayMemorySize(), mesh.getMesh()->getVerticesData(), GL_STATIC_DRAW);
-
-                        // Bind the IBO and set the buffer data
-                        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gIBO);
-                        glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh.getMesh()->getIndicesArrayMemorySize(), mesh.getMesh()->getIndicesData(), GL_STATIC_DRAW);
-
-                        // Set the VBO and IBO values in the BufferObject object
-                        //auto bufferObject = std::move(mesh.getBufferObject());
-                        mesh.getBufferObject()->setVBO(gVBO);
-                        mesh.getBufferObject()->setEBO(gIBO);
-                    }
-
-                    
-                 }
+    // Get the meshes from the vector and store them in a variable
+    auto meshes = getMeshes().get();
+    // Generate VBO and IBO objects for each mesh
+    for (const auto& meshPtr : *meshes) {
+        if (meshPtr == nullptr) {
+            LogManager::Log("\nMesh is null\n");
+                continue;
             }
+        // Get the mesh from the unique_ptr
+        auto& mesh = *meshPtr;
+        bool shaderSuccess = false;
+        // Create the shader program
+        shaderSuccess = mesh.createShaders();
+        if(shaderSuccess == false)
+        {
+            // Break the initGL loop if we fail to create a shader
+            LogManager::Log("\nShader creation failed\n");
+            success = false;
+            break;
         }
 
+        // Create the VBO and IBO objects
+        mesh.initBuffers();
     }
 
+    
+    //Check for error
+    error = glGetError();
+    if( error != GL_NO_ERROR )
+    {
+        printf( "\nError initializing OpenGL! after shader and buffer init %s\n", gluErrorString( error ) );
+        success = false;
+    }
 
+    //Initialize clear color
+    glClearColor(0.f, 0.f, 0.f, 1.f);
+                    
     //Initialize Projection Matrix
     glMatrixMode( GL_PROJECTION );
     glLoadIdentity();
@@ -268,7 +159,7 @@ bool SDLGameRenderer::initGL(){
     error = glGetError();
     if( error != GL_NO_ERROR )
     {
-        printf( "Error initializing OpenGL! %s\n", gluErrorString( error ) );
+        printf( "\nError initializing OpenGL! after glMatrixMode/loadIdentify %s\n", gluErrorString( error ) );
         success = false;
     }
 
@@ -280,7 +171,7 @@ bool SDLGameRenderer::initGL(){
     error = glGetError();
     if( error != GL_NO_ERROR )
     {
-        printf( "Error initializing OpenGL! %s\n", gluErrorString( error ) );
+        printf( "\nError initializing OpenGL! after loading model view %s\n", gluErrorString( error ) );
         success = false;
     }
      //Initialize clear color
@@ -290,7 +181,7 @@ bool SDLGameRenderer::initGL(){
     error = glGetError();
     if( error != GL_NO_ERROR )
     {
-        printf( "Error initializing OpenGL! %s\n", gluErrorString( error ) );
+        printf( "\nError initializing OpenGL! after clear color for last time %s\n", gluErrorString( error ) );
         success = false;
     }
     
@@ -301,25 +192,17 @@ bool SDLGameRenderer::initGL(){
 
 // Define the function to begin a new rendering frame
 void SDLGameRenderer::BeginFrame()
-{
-    
-    
+{   
+    // Clear the screen
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    //Bind program
-    glUseProgram( gProgramID );
-
-    //Enable vertex position
-    glEnableVertexAttribArray( gVertexPos2DLocation );
 
  
    // Loop through the meshes and set the buffer data
    // Get the meshes from the vector and store them in a variable
     auto meshes = getMeshes().get();
 
-    // Generate VBO and IBO objects
-
+    // Loop through the meshes tell to render
     for (const auto& meshPtr : *meshes) {
         if (meshPtr == nullptr) {
             LogManager::Log("Mesh is null");
@@ -327,222 +210,43 @@ void SDLGameRenderer::BeginFrame()
                 }
 
             auto& mesh = *meshPtr;
-            // Set vertex data
-            GLuint gVBO = mesh.getBufferObject()->getVBO();
-            glBindBuffer(GL_ARRAY_BUFFER, gVBO);
-            glVertexAttribPointer(gVertexPos2DLocation, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), NULL);
-
-            // Set index data and render
-            GLuint gIBO = mesh.getBufferObject()->getEBO();
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gIBO);
-            glDrawElements(GL_TRIANGLE_FAN, 4, GL_UNSIGNED_INT, NULL);
-
+            mesh.renderMesh();
     }
  
-
-    
-    //Disable vertex position
-    glDisableVertexAttribArray( gVertexPos2DLocation );
-
-    //Unbind program
-    glUseProgram(0);
-
-
-
-    
-    // Clear the renderer
-    //set the background color from the config
-    //SDL_SetRenderDrawColor(sdlRenderData.sdlRendererPtr.get(), 50, 50, 100, 255);
-    //clear the screen
-    //SDL_RenderClear(sdlRenderData.sdlRendererPtr.get());
-
-    //Work thrugh a list of render commands to draw things to the screen.
-    // Render any sprites or other game objects here
-    // Render the image using the renderer
-
-    
-  
-    /**/
-    /*
-    //Loading of an image
-    sdlRenderData.imagePtr = new ImageData();
-    const char* filePath = "assets/textures/atom_forge_art.png";
-    loadSDLImage(filePath, sdlRenderData.imagePtr);
-    */
-    
     
 }
 
+// Define the function to end a rendering frame
 void SDLGameRenderer::EndFrame()
 {
-    /*
-    int imgWidth = sdlRenderData.sdlImageSurface->w;
-    int imgHeight = sdlRenderData.sdlImageSurface->h;
-    SDL_Rect dstRect = { (sdlRenderData.imagePtr->width - imgWidth) / 2, (sdlRenderData.imagePtr->height - imgHeight) / 2, imgWidth, imgHeight };
-    */
-    //SDL_RenderCopy(sdlRenderData.sdlRendererPtr, sdlRenderData.sdlTexturePtr, nullptr, &dstRect);
-    /*
-    for(size_t i = 0; i < sdlRenderData.sdlTexSurfList.size(); i++){
-        if(sdlRenderData.dlTexSurfList[i]->texturePtr == nullptr){
-            LogManager::Log("SDL texture is null");
-            return;
-        }
-        SDL_RenderCopy(&sdlRenderData.sdlRendererPtr, sdlRenderData.sdlTexSurfList[i]->texturePtr.get(), nullptr, nullptr);
-    }*/
-    
-    //SDL_RenderCopy(sdlRenderData.sdlRendererPtr, sdlRenderData.sdlTexturePtr, nullptr, nullptr);
-    
-
-    // Present the renderer to the window
-    //SDL_RenderPresent(sdlRenderData.sdlRendererPtr.get());
-    //SDL_GL_SetSwapInterval(1);
+    // Swap the buffers
     SDL_GL_SwapWindow(sdlGameWindowPtr);
 }
 
 
-/*
-std::unique_ptr<ImageData> SDLGameRenderer::loadImage(const char *filePath)
-{
-    std::unique_ptr<ImageData> imageData (new ImageData());
-    //Initialization flag
-    bool success = true;
-    LogManager::Log("Attempting to load image %s!\n", filePath);
-
-    int width, height, channels;
-    unsigned char* imageBits = stbi_load(filePath, &width, &height, &channels, STBI_rgb_alpha);
-    if (imageBits == nullptr) {
-        LogManager::Log("Error loading image: %s\n", stbi_failure_reason());
-        LogManager::Log("Unable to load image %s!\n", filePath);
-
-        success = false;
-    } else {
-        LogManager::Log("Loaded image: %s (%d x %d x %d)", filePath, width, height, channels);
-        imageData->width = width;
-        imageData->height = height;
-        imageData->channels = channels;
-        imageData->data = imageBits;
-
-        //Create a surface from the image data
-        std::unique_ptr<SDLTexSurfData> newTexSurf(new SDLTexSurfData());
-
-
-        newTexSurf->surfacePtr.reset(SDL_CreateRGBSurfaceFrom(imageData->data, imageData->width, imageData->height, 32, 4 * imageData->width, 0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000));
-        //sdlRenderData.sdlImageSurface = SDL_CreateRGBSurfaceFrom(imageData->data,imageData->width, imageData->height, 32, 4 * imageData->width, 0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000);
-        if (newTexSurf->surfacePtr == nullptr) {
-            LogManager::Log("Unable to create SDL surface for image %s!\n", filePath);
-            stbi_image_free(imageData->data);
-            success = false ;
-        }
-
-        LogManager::Log("SDLGameRenderer: Creating texture from surface");
-        //Create a texture from the surface
-        newTexSurf->texturePtr.reset(SDL_CreateTextureFromSurface(sdlRenderDataPtr->sdlRendererPtr.get(), newTexSurf->surfacePtr.get()));
-        //sdlRenderData.sdlTexturePtr = SDL_CreateTextureFromSurface(sdlRenderData.sdlRendererPtr, sdlRenderData.sdlImageSurface);
-        if (newTexSurf->texturePtr == nullptr) {
-            LogManager::Log("SDL texture failed to create");
-            success = false;
-        }
-
-        //Add the new texture to the list of textures
-        if(success){
-            sdlRenderDataPtr->sdlTexSurfList.emplace_back(move(newTexSurf));
-        }
-    }
-
-    return imageData;
-}
-
-*/
-void SDLGameRenderer::printProgramLog(GLuint program){
-    //Make sure the name is shader
-    if(glIsProgram(program)){
-        //Program log length
-        int infoLogLength = 0;
-        int maxLength = infoLogLength;
-
-        //Get info string length
-        glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
-
-        //Allocate string
-        char* infoLog = new char[maxLength];
-
-        //Get info log
-        glGetProgramInfoLog(program, maxLength, &infoLogLength, infoLog);
-        if(infoLogLength >0){
-            //Print Log
-            LogManager::Log("%s\n", infoLog);
-        }
-
-        //deallocate string
-        delete[] infoLog;
-    }else{
-        LogManager::Log("Name %d is not a program\n", program);
-    }
-}
-
-void SDLGameRenderer::printShaderLog(GLuint shader){
-    //Make sure name is shader
-    if(glIsShader(shader)){
-        //Shader log length
-        int infoLogLength = 0;
-        int maxLength = infoLogLength;
-
-        //Get info string length
-        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
-
-        //Allocate string
-        char* infoLog = new char[maxLength];
-
-        //Get info log
-        glGetShaderInfoLog(shader, maxLength, &infoLogLength, infoLog);
-        if(infoLogLength >0){
-            //Print Log
-            LogManager::Log("%s\n", infoLog);
-        }
-
-        //deallocate string
-        delete[] infoLog;
-    }else{
-        LogManager::Log("Name %d is not a shader\n", shader);
-    }
-}
-
-
-
-// Define the destructor for the SDLGameRenderer class
-SDLGameRenderer::SDLGameRenderer()
-{
-    //just init the pointers to null
-    sdlGameWindowPtr = nullptr;
-}
-SDLGameRenderer::~SDLGameRenderer()
-{
-}
-
+// Define the function to shutdown the renderer
 void SDLGameRenderer::Shutdown()
 {
-    /*
-    for (size_t i = 0; i < sdlRenderData.sdlTexSurfList.size(); i++) {
-        SDLTexSurfData* texSurfData = sdlRenderData.sdlTexSurfList[i].get();
-        SDL_FreeSurface(texSurfData->surfacePtr.get());
-        SDL_DestroyTexture(texSurfData->texturePtr.get());
+    //Cleanup all the meshes
+    auto meshes = getMeshes().get();
+    for (const auto& meshPtr : *meshes) {
+        if (meshPtr == nullptr) {
+            LogManager::Log("Mesh is null");
+                continue;
+                }
+
+            auto& mesh = *meshPtr;
+            mesh.cleanUpMesh();
     }
-    */
-    //sdlRenderData.dlTexSurfList.clear();
-    //SDL_FreeSurface(&sdlGameSurface);
 
+    // Destroy the context
     SDL_GL_DeleteContext(sdlGameGLContext);
-
-    //SDL_DestroyRenderer(sdlGameRenderer);
-    //SDL_DestroyWindow(sdlRenderData.windowPtr.get());
-    //Deallocate program
-	glDeleteProgram( gProgramID );
-
-
+    // Destroy the SDL
     SDL_Quit();
 }
 
-void SDLGameRenderer::addMesh(std::unique_ptr<AF_Mesh> thisMesh) {
+// Define the function to add a mesh
+void SDLGameRenderer::addMesh(std::unique_ptr<IMesh> thisMesh) {
     if(thisMesh == nullptr){
         LogManager::Log("SDLGameRenderer::addMesh: Mesh is null");
         return;
@@ -550,26 +254,46 @@ void SDLGameRenderer::addMesh(std::unique_ptr<AF_Mesh> thisMesh) {
     m_meshes->emplace_back(move(thisMesh));
 }
 
-void SDLGameRenderer::removeMesh(std::unique_ptr<AF_Mesh> thisMesh) {
+// Define the function to remove a mesh
+void SDLGameRenderer::removeMesh(std::unique_ptr<IMesh> thisMesh) {
+    LogManager::Log("SDLGameRenderer::removeMesh: Not implemented");
     if(thisMesh == nullptr){
         LogManager::Log("SDLGameRenderer::removeMesh: Mesh is null");
         return;
     }
-    //m_meshes->erase(std::remove(m_meshes->begin(), meshes.end(), thisBaseMesh), m_meshes->end());
+    
 }
 
-void SDLGameRenderer::clearMeshes() {
-    //m_meshes->clear();
-}
-void SDLGameRenderer::renderMeshes() {
-    /*
-    for (auto& mesh : meshes) {
-        mesh->Render();
-    }*/
-}
-const std::unique_ptr<std::vector<std::unique_ptr<AF_Mesh>>>& SDLGameRenderer::getMeshes() const {
+// Define the function to get the meshes
+const std::unique_ptr<std::vector<std::unique_ptr<IMesh>>>& SDLGameRenderer::getMeshes() const {
     
     return m_meshes;
 }
+
+void SDLGameRenderer::CreateTestMesh(){
+    //Create the mesh vector
+    m_meshes = std::make_unique<std::vector<std::unique_ptr<IMesh>>>();
+    //Create the mesh
+    quadMesh = std::make_unique<AF_Quad>();
+    testBufferObject = std::make_unique<GL_BufferObject>();
+    testMaterial = std::make_unique<GLMaterial>();
+    // Create the mesh, ensure we transfer ownership of the mesh to the IMesh object
+    // need to also pass in the derived openGL buffer object which is derived from IBuffer_Object. This way we can swap from opegl to other standards
+    testMesh = std::make_unique<GLMesh>(std::move(quadMesh), std::move(testBufferObject), std::move(testMaterial));
+    addMesh(std::move(testMesh));
+}
+
+// Define the destructor for the SDLGameRenderer class
+SDLGameRenderer::SDLGameRenderer()
+{
+    //just init the pointers to null
+    sdlGameWindowPtr = nullptr;
+}
+// Define the destructor for the SDLGameRenderer class
+SDLGameRenderer::~SDLGameRenderer()
+{
+}
+
+
 
 

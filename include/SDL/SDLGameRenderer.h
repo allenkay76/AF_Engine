@@ -42,17 +42,17 @@ public:
     //std::unique_ptr<ImageData> loadImage(const char *filePath) override;
 
 
-    void addMesh(std::unique_ptr<AF_Mesh> thisMesh) override;
+    void addMesh(std::unique_ptr<IMesh> thisMesh) override;
 
-    void removeMesh(std::unique_ptr<AF_Mesh> thisMesh) override;
+    void removeMesh(std::unique_ptr<IMesh> thisMesh) override;
 
-    void clearMeshes() override;
-    void renderMeshes() override;
-    const std::unique_ptr<std::vector<std::unique_ptr<AF_Mesh>>>& getMeshes() const override;
+    const std::unique_ptr<std::vector<std::unique_ptr<IMesh>>>& getMeshes() const override;
 
     //Shader loading utility programs
     void printProgramLog(GLuint program);
     void printShaderLog(GLuint shader);
+
+    void CreateTestMesh();
 
     // This is the constructor for the SDLGameRenderer class.
     SDLGameRenderer();
@@ -77,6 +77,6 @@ private:
     SDL_GLContext sdlGameGLContext;
     
     
-    std::unique_ptr<std::vector<std::unique_ptr<AF_Mesh>>> m_meshes;
+    std::unique_ptr<std::vector<std::unique_ptr<IMesh>>> m_meshes;
     //Mesh
 };

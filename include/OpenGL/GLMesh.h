@@ -1,175 +1,33 @@
 #pragma once
-/*
 
-#include "Shader.h"
-namespace AtomForge {
+#include <GL/glew.h>
+#include "Rendering/IMesh.h"
 
-	struct Mesh_Quad {
-		 float vertices[9] =
-		{ 
-		  -0.5f, -0.5f, 0.0f,
-		  0.5f, -0.5f, 0.0f,
-		  0.0f,  0.5f, 0.0f
-		};
-	};
+// Mesh class to store reference to a modifiable AF_BaseMesh that becomes a derived version e.g. AF_Quad, AF_Triangle etc. Vertices, Indices stored in the AF_BaseMesh.
+//Also stores a generic base class IBuffer_Object which becomes a derived version depending on the rendering engine e.g. OpenGL or DirectX or other. VBO, EBO, VAO stored in the IBuffer_Object.
 
-	struct Mesh_Cube_Lit {
-		//std::vector<GLfloat> vertices = {
-		std::vector<GLfloat> verticies = {
-			// positions          // normals           // texture coords
-			-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
-			 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  0.0f,
-			 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
-			 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
-			-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  1.0f,
-			-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
+class GLMesh :  public IMesh {
+public:
+    //Constructors and destructors
+    GLMesh(std::unique_ptr<AF_BaseMesh> thisMesh, std::unique_ptr<IBuffer_Object> thisBufferObject, std::unique_ptr <IMaterial> thisMaterial);
+    ~GLMesh();
 
-			-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
-			 0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  0.0f,
-			 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
-			 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
-			-0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f,
-			-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
+	bool createShaders() override;
+	void initBuffers() override;
+    void renderMesh() override;
+	void cleanUpMesh() override;
 
-			-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-			-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
-			-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-			-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-			-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
-			-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-
-			 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-			 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
-			 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-			 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-			 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
-			 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-
-			-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
-			 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  1.0f,
-			 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
-			 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
-			-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,
-			-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
-
-			-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f,
-			 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  1.0f,
-			 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
-			 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
-			-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
-			-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
-		};
-		const int length = 288;
-	};
-
-	class Mesh {
-	public:
-		struct Vertex {
-			// position
-			glm::vec3 Position;
-			// normal
-			glm::vec3 Normal;
-			// texCoords
-			glm::vec2 TexCoords;
-			// tangent
-			glm::vec3 Tangent;
-			// bitangent
-			glm::vec3 Bitangent;
-		};
-
-		struct Texture {
-			unsigned int id;
-			std::string type;
-			std::string path;
-		};
-
-		std::vector<Texture*>* textures;
-		std::vector <unsigned int> indices;
-		std::vector<Vertex> modelVerticies;
-		//std::vector<GLfloat> vertices;
-		//GLfloat vertices[]; //convert back to std::vector
-		std::vector<GLfloat>* vertices;
-		
-		unsigned int Vao;
-		unsigned int Vbo;
-		unsigned int Ebo;
-
-		void SetVerticies(std::vector<GLfloat>* thisVerticies){//std::vector<GLfloat> thisVerticies) {
-			vertices = thisVerticies;
-		}
-
-		Mesh();
-		Mesh(GLfloat thisVerticies[], const std::vector<unsigned int> thisIndices, std::vector<Texture>* thisTextures);
-		void SetupMesh(unsigned int thisVAO, unsigned int thisVBO, unsigned int thisEBO);
-		~Mesh();
+    const std::unique_ptr<AF_BaseMesh>& getMesh() const override;
+    const std::unique_ptr<IBuffer_Object>& getBufferObject() const override;
+	const std::unique_ptr<IMaterial>& getMaterial() const override;
 
 
-		void Draw(const Shader shader);
 
-		
 
-		void SetVerticyCount(const int thisInt) {
-			verticiesCount = thisInt;
-		}
-		int GetVerticyCount() {
-			return verticiesCount;
-		}
-
-		
-
-		unsigned int GetVAO() {
-			
-			return Vao;
-		}
-
-		void SetVAO(const unsigned int thisVAO) {
-			Vao = thisVAO;
-		}
-
-		unsigned int GetVBO() {
-			return Vbo;
-		}
-
-		void SetVBO(const unsigned int thisVBO) {
-			Vbo = thisVBO;
-		}
-		
-		void SetEBO(const unsigned int thisEBO) {
-			Ebo = thisEBO;
-		}
-
-		unsigned int GetEBO() {
-			return Ebo;
-		}
-
-		Texture* GetDefaulTexture() {
-			return defaultTexture;
-		}
-
-		glm::vec3 GetPosition() {
-			return position;
-		}
-
-		void SetPosition(glm::vec3 thisPosition) {
-			position = thisPosition;
-		}
-		
-		Texture* CreateTexture(std::string path);
-
-		void SetDirtyFlag(const bool value) {
-			dirtyFlag = value;
-		}
-
-		bool GetDirtyFlag() {
-			return dirtyFlag;
-		}
-	private:
-		int verticiesCount;
-		glm::vec3 position;
-		Texture* defaultTexture;
-		bool dirtyFlag = true;
-		
-
-	};
-}
-*/
+private:
+    // Mesh data
+    std::unique_ptr<AF_BaseMesh> mesh;
+    // Buffer object
+    std::unique_ptr<IBuffer_Object> bufferObject;
+	std::unique_ptr<IMaterial> material;
+};
