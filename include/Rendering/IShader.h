@@ -30,7 +30,6 @@ public:
 	virtual void setVec3(const std::string & name, float x, float y, float z) const = 0;
 	virtual void setVec4(const std::string & name, float x, float y, float z, float w) = 0;
     virtual unsigned int getID() const = 0;
-    //virtual const char* readFile(const char* filePath) = 0;
     virtual std::string readFile(std::string thisFilePath) = 0;
     
 };

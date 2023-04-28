@@ -14,16 +14,19 @@ public:
     GL_Shader(const std::string&  vertexShaderPath, const std::string & fragmentShaderPath);
     ~GL_Shader();
 
+    //Getters and setters
     GLuint getProgramID() const override;
     GLuint getVertexPos2DLocation() const override;
 
     void setProgramID(GLuint thisProgramID)  override;
     void setVertexPos2DLocation(GLuint thisVertexPos2DLocation)  override;
 
+    //debug functions
     void printProgramLog(GLuint program) override;
 	void printShaderLog(GLuint shader) override;
-
     bool checkCompileErrors(const GLuint shader, const std::string type) override;
+
+    //Shader functions
     void use() override;
 	void setBool(const std::string & name, bool value) const override;
 	void setInt(const std::string & name, int value) const override;

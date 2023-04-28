@@ -2,6 +2,7 @@
 #include <GL/glew.h>
 
 
+//Read the file from the string path and return a string text
 std::string GL_Shader::readFile(std::string thisFilePath){
     std::string line,text;
     std::ifstream in(thisFilePath);
@@ -13,6 +14,7 @@ std::string GL_Shader::readFile(std::string thisFilePath){
     return text;
 }
 
+//constructor
 GL_Shader::GL_Shader(const std::string& vertexShaderPath, const std::string& fragmentShaderPath)
 	{
         bool success = true;
@@ -114,34 +116,37 @@ GL_Shader::GL_Shader(const std::string& vertexShaderPath, const std::string& fra
 
 
 
-
+    //destructor
     GL_Shader::~GL_Shader()
     {
     }
 
-    // activate the shader
-	
 
+    //Use the shader
     void GL_Shader::use()
     {
 		glUseProgram(getID());
 	}
+
 	// utility uniform functions
 	// ------------------------------------------------------------------------
 	void GL_Shader::setBool(const std::string & name, bool value) const
 	{
 		glUniform1i(glGetUniformLocation(getID(), name.c_str()), (int)value);
 	}
+
 	// ------------------------------------------------------------------------
 	void GL_Shader::setInt(const std::string & name, int value) const
 	{
 		glUniform1i(glGetUniformLocation(getID(), name.c_str()), value);
 	}
+
 	// ------------------------------------------------------------------------
 	void GL_Shader::setFloat(const std::string & name, float value) const
 	{
 		glUniform1f(glGetUniformLocation(getID(), name.c_str()), value);
 	}
+
 	// ------------------------------------------------------------------------
     /*
 	void setVec2(const std::string & name, const glm::vec2 & value) const
@@ -222,10 +227,9 @@ GL_Shader::GL_Shader(const std::string& vertexShaderPath, const std::string& fra
         return returnSuccess;
 	}
 
-unsigned int GL_Shader::getID() const
-    {
+unsigned int GL_Shader::getID() const {
         return ID;
-    }
+}
 
 GLuint GL_Shader::getProgramID() const {
     return programID;
@@ -245,7 +249,7 @@ void GL_Shader::setVertexPos2DLocation(GLuint thisVertexPos2DLocation) {
 }
 
 
-
+//Prints Program log
 void GL_Shader::printProgramLog(GLuint program){
     //Make sure the name is shader
     if(glIsProgram(program)){
@@ -273,6 +277,7 @@ void GL_Shader::printProgramLog(GLuint program){
     }
 }
 
+//Prints shader log
 void GL_Shader::printShaderLog(GLuint shader){
     //Make sure name is shader
     if(glIsShader(shader)){
