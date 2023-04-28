@@ -1,4 +1,5 @@
 #include "OpenGL/GLMesh.h"
+#include <GL/glew.h>
 //partial constructor, only mesh data passed in and using std::move to transfer ownership
 GLMesh::GLMesh(std::unique_ptr<AF_BaseMesh> thisMesh, std::unique_ptr<IBuffer_Object> thisBufferObject, std::unique_ptr<IMaterial> thisMaterial) : 
     mesh(std::move(thisMesh)),
@@ -62,13 +63,13 @@ const std::unique_ptr<IMaterial>& GLMesh::getMaterial() const
 void GLMesh::renderMesh()
 {
     //Bind program
-    glUseProgram( getMaterial()->getProgramID());
+    glUseProgram( getMaterial()->getShader()->getProgramID());
     //Enable vertex position
-    glEnableVertexAttribArray( getMaterial()->getVertexPos2DLocation());
+    glEnableVertexAttribArray( getMaterial()->getShader()->getVertexPos2DLocation());
 
     GLuint gVBO = getBufferObject()->getVBO();
     glBindBuffer(GL_ARRAY_BUFFER, gVBO);
-    glVertexAttribPointer(getMaterial()->getVertexPos2DLocation(), 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), NULL);
+    glVertexAttribPointer(getMaterial()->getShader()->getVertexPos2DLocation(), 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), NULL);
 
     // Set index data and render
     GLuint gIBO = getBufferObject()->getEBO();
@@ -76,13 +77,13 @@ void GLMesh::renderMesh()
     glDrawElements(GL_TRIANGLE_FAN, 4, GL_UNSIGNED_INT, NULL);
 
     //Disable vertex position
-    glDisableVertexAttribArray(getMaterial()->getVertexPos2DLocation());
+    glDisableVertexAttribArray(getMaterial()->getShader()->getVertexPos2DLocation());
 
     //Unbind program
     glUseProgram(0);
 }
 
 void GLMesh::cleanUpMesh(){
-    glDeleteProgram( getMaterial()->getProgramID());
+    glDeleteProgram( getMaterial()->getShader()->getProgramID());
 }
 

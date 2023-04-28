@@ -32,7 +32,7 @@ bool SDLGameRenderer::Initialize(const char* windowName, const int windowWidth, 
     //Initialization flag
     bool success = true;
     
-    CreateTestMesh();
+    
 
     //Initialize SDL
     if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
@@ -86,6 +86,9 @@ bool SDLGameRenderer::Initialize(const char* windowName, const int windowWidth, 
                     LogManager::Log( "Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError() );
                     success = false;
                 }
+
+                //Now do render stup things.
+                CreateTestMesh();
 
                 //Initialize OpenGL
                 if( !initGL() )

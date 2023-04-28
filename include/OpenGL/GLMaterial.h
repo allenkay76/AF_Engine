@@ -1,7 +1,6 @@
 #pragma once
-#include <GL/glew.h>
 #include "Rendering/IMaterial.h"
-
+#include "OpenGL/GL_Shader.h"
 
 class GLMaterial : public IMaterial {
     public:
@@ -10,19 +9,12 @@ class GLMaterial : public IMaterial {
         ~GLMaterial();
 
         bool loadShader(std::string vertexShaderPath, std::string fragmentShaderPath) override;
-        GLuint getProgramID() override;
-        GLuint getVertexPos2DLocation() override;
+
         GLuint getTexture() override;
-
-        void setProgramID(GLuint thisProgramID) override;
-        void setVertexPos2DLocation(GLuint thisVertexPos2DLocation) override;
-        void setTexture(GLuint thisTexture) override;
-
-        void printProgramLog(unsigned int program) override;
-	    void printShaderLog(unsigned int shader) override;
+        const IShader* getShader() const override;
+        
 
     private:
-        GLuint programID;
-        GLuint vertexPos2DLocation;
-        GLuint texture;
+        std::unique_ptr<IShader> shader;
+        
 };
