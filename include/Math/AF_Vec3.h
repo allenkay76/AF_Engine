@@ -8,8 +8,8 @@ struct AF_Vec3{
     float z;
 
     //Constructors
-    AF_Vec3();
-    AF_Vec3(float x, float y, float z);
+    AF_Vec3() : x(0.0f), y(0.0f), z(0.0f) {};
+    AF_Vec3(float argX, float argY, float argZ) : x(argX), y(argY), z(argZ) {};
 
     //Operators
     //Add Operator

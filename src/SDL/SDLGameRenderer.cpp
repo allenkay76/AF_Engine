@@ -106,8 +106,6 @@ bool SDLGameRenderer::Initialize(const char* windowName, const int windowWidth, 
         }
     }
 
-    
-
     return success;
 }
 
@@ -292,6 +290,7 @@ SDLGameRenderer::SDLGameRenderer()
     //just init the pointers to null
     sdlGameWindowPtr = nullptr;
 }
+
 // Define the destructor for the SDLGameRenderer class
 SDLGameRenderer::~SDLGameRenderer()
 {
