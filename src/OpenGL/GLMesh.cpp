@@ -1,5 +1,7 @@
 #include "OpenGL/GLMesh.h"
 #include <GL/glew.h>
+
+//GLMesh is a custom open GL mesh class that interits from the IMesh interface
 //partial constructor, only mesh data passed in and using std::move to transfer ownership
 GLMesh::GLMesh(std::unique_ptr<AF_BaseMesh> thisMesh, std::unique_ptr<IBuffer_Object> thisBufferObject, std::unique_ptr<IMaterial> thisMaterial) : 
     mesh(std::move(thisMesh)),
@@ -21,14 +23,7 @@ const std::unique_ptr<AF_BaseMesh>& GLMesh::getMesh() const
     return mesh;
 }
 
-bool GLMesh::createShaders(){
-    bool success = true;
-    //GLenum error = GL_NO_ERROR;
-    
-    getMaterial()->loadShader("","");
-    return success;
-}
-
+//Init the open GL buffers
 void GLMesh::initBuffers()
 {
     GLuint gVBO, gIBO;
@@ -55,11 +50,13 @@ const std::unique_ptr<IBuffer_Object>& GLMesh::getBufferObject() const
     return bufferObject;
 }
 
+//getters for material
 const std::unique_ptr<IMaterial>& GLMesh::getMaterial() const
 {
     return material;
 }
 
+//render mesh
 void GLMesh::renderMesh()
 {
     //Bind program
@@ -83,6 +80,7 @@ void GLMesh::renderMesh()
     glUseProgram(0);
 }
 
+//clean up mesh
 void GLMesh::cleanUpMesh(){
     glDeleteProgram( getMaterial()->getShader()->getProgramID());
 }

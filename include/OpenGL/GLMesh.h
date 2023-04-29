@@ -1,3 +1,10 @@
+#define AF_ENGINE_EXPORTS
+#ifdef AF_ENGINE_EXPORTS
+#define AF_Engine_API __declspec(dllexport)
+#else
+#define AF_Engine_API __declspec(dllimport)
+#endif
+
 #pragma once
 
 #include "Rendering/IMesh.h"
@@ -8,14 +15,15 @@
 class GLMesh :  public IMesh {
 public:
     //Constructors and destructors
-    GLMesh(std::unique_ptr<AF_BaseMesh> thisMesh, std::unique_ptr<IBuffer_Object> thisBufferObject, std::unique_ptr <IMaterial> thisMaterial);
-    ~GLMesh();
+    AF_Engine_API GLMesh(std::unique_ptr<AF_BaseMesh> thisMesh, std::unique_ptr<IBuffer_Object> thisBufferObject, std::unique_ptr <IMaterial> thisMaterial);
+    AF_Engine_API ~GLMesh();
 
-	bool createShaders() override;
+    //SEtup functions for mesh
 	void initBuffers() override;
     void renderMesh() override;
 	void cleanUpMesh() override;
 
+    //getters for mesh
     const std::unique_ptr<AF_BaseMesh>& getMesh() const override;
     const std::unique_ptr<IBuffer_Object>& getBufferObject() const override;
 	const std::unique_ptr<IMaterial>& getMaterial() const override;

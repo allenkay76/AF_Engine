@@ -1,5 +1,4 @@
 #include "GameEngine/IRenderer.h"
-
 IRenderer* IRendererLocator::m_service = &IRendererLocator::m_nullService;
 NullIRenderer IRendererLocator::m_nullService;
 

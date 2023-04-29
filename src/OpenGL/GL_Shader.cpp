@@ -59,7 +59,7 @@ GL_Shader::GL_Shader(const std::string& vertexShaderPath, const std::string& fra
         GLint vShaderCompiled = GL_FALSE;
         glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &vShaderCompiled);
         if(vShaderCompiled != GL_TRUE){
-            LogManager::Log("Unable to compile vertex shader %d!\n", vertexShader);
+            LogManager::Log("\nUnable to compile vertex shader %d!\n", vertexShader);
             printShaderLog(vertexShader);
             success = false;
         }
@@ -97,21 +97,21 @@ GL_Shader::GL_Shader(const std::string& vertexShaderPath, const std::string& fra
                 GLint programSuccess = GL_TRUE;
                 glGetProgramiv(getProgramID(), GL_LINK_STATUS, &programSuccess);
                 if(programSuccess != GL_TRUE){
-                    LogManager::Log("Error linking program %d!\n", getProgramID());
+                    LogManager::Log("\nError linking program %d!\n", getProgramID());
                     printProgramLog(getProgramID());
                     success = false;
                 }else{
                     //get vertex attribute location
                     setVertexPos2DLocation(glGetAttribLocation(getProgramID(), "LVertexPos2D"));
                     if(getVertexPos2DLocation() == static_cast<GLuint>(-1)){
-                        LogManager::Log("LVertexPos2D is not a valid glsl program variable!\n");
+                        LogManager::Log("\nLVertexPos2D is not a valid glsl program variable!\n");
                         success = false;
                     }
                 }
             }
         }
     }
-        LogManager::Log("Shader loaded successfully %s\n", success ? "true" : "false");
+        //LogManager::Log("\nShader loaded successfully %s\n", success ? "true" : "false");
     }
 
 

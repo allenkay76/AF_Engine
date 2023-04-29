@@ -48,10 +48,6 @@ public:
 
     const std::unique_ptr<std::vector<std::unique_ptr<IMesh>>>& getMeshes() const override;
 
-    //Shader loading utility programs
-    void printProgramLog(GLuint program);
-    void printShaderLog(GLuint shader);
-
     void CreateTestMesh();
 
     // This is the constructor for the SDLGameRenderer class.

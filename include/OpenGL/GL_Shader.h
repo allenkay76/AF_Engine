@@ -1,4 +1,11 @@
 #pragma once
+#define AF_ENGINE_EXPORTS
+#ifdef AF_ENGINE_EXPORTS
+#define AF_Engine_API __declspec(dllexport)
+#else
+#define AF_Engine_API __declspec(dllimport)
+#endif
+
 #include <GL/glew.h>
 #include "Rendering/IShader.h"
 #include <string>
@@ -11,8 +18,8 @@ class GL_Shader : public IShader
 {
 public:
     //Constructors and destructors
-    GL_Shader(const std::string&  vertexShaderPath, const std::string & fragmentShaderPath);
-    ~GL_Shader();
+    AF_Engine_API GL_Shader(const std::string&  vertexShaderPath, const std::string& fragmentShaderPath);
+    AF_Engine_API ~GL_Shader();
 
     //Getters and setters
     GLuint getProgramID() const override;

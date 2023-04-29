@@ -75,6 +75,7 @@ public:
         (void)thisBaseMesh;
     }
 
+
     const std::unique_ptr<std::vector<std::unique_ptr<IMesh>>>& getMeshes() const override {
         static std::unique_ptr<std::vector<std::unique_ptr<IMesh>>> emptyVector = std::make_unique<std::vector<std::unique_ptr<IMesh>>>();
         return emptyVector;
@@ -105,3 +106,4 @@ public:
     }
 
 };
+

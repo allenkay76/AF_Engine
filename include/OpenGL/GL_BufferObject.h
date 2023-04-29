@@ -1,3 +1,9 @@
+#define AF_ENGINE_EXPORTS
+#ifdef AF_ENGINE_EXPORTS
+#define AF_Engine_API __declspec(dllexport)
+#else
+#define AF_Engine_API __declspec(dllimport)
+#endif
 #include "Rendering/IBuffer_Object.h"
 #include <GL/glew.h>
 
@@ -6,7 +12,7 @@
 class GL_BufferObject : public IBuffer_Object {
 public:
     //Constructors and destructors
-    GL_BufferObject();
+    AF_Engine_API GL_BufferObject();
     ~GL_BufferObject();
 
     //getters and setters

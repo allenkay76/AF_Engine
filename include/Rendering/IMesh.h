@@ -14,12 +14,12 @@ public:
     //virtual IMesh(std::unique_ptr<AF_BaseMesh> thisMesh, std::unique_ptr<IBuffer_Object> thisBufferObject) = 0;
     //virtual ~IMesh() = 0;
 
-    virtual bool createShaders() = 0;
+    //helper functions for mesh
     virtual void initBuffers() = 0;
     virtual void renderMesh() = 0;
     virtual void cleanUpMesh() = 0;
     
-
+    //getters for mesh
     virtual const std::unique_ptr<AF_BaseMesh>& getMesh() const = 0;
     virtual const std::unique_ptr<IBuffer_Object>& getBufferObject() const = 0;
     virtual const std::unique_ptr<IMaterial>& getMaterial() const = 0;

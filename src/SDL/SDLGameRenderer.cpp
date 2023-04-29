@@ -25,6 +25,7 @@ std::unique_ptr<IMaterial> testMaterial;
 std::unique_ptr<IMesh> testMesh;
 std::unique_ptr<IBuffer_Object> testBufferObject;
 std::unique_ptr<AF_BaseMesh> quadMesh;
+std::unique_ptr<IShader> testShader;
 
 // Define the function to initialize the SDLGameRenderer with a given window name and dimensions
 bool SDLGameRenderer::Initialize(const char* windowName, const int windowWidth, const int windowHeight, IWindow* windowPtr)
@@ -87,8 +88,7 @@ bool SDLGameRenderer::Initialize(const char* windowName, const int windowWidth, 
                     success = false;
                 }
 
-                //Now do render stup things.
-                CreateTestMesh();
+                
 
                 //Initialize OpenGL
                 if( !initGL() )
@@ -105,6 +105,9 @@ bool SDLGameRenderer::Initialize(const char* windowName, const int windowWidth, 
             
         }
     }
+    //Now do render stup things.
+    m_meshes = std::make_unique<std::vector<std::unique_ptr<IMesh>>>();
+    //CreateTestMesh();
 
     return success;
 }
@@ -115,32 +118,6 @@ bool SDLGameRenderer::initGL(){
     GLenum error = GL_NO_ERROR;
 
 
-    // Get the meshes from the vector and store them in a variable
-    auto meshes = getMeshes().get();
-    // Generate VBO and IBO objects for each mesh
-    for (const auto& meshPtr : *meshes) {
-        if (meshPtr == nullptr) {
-            LogManager::Log("\nMesh is null\n");
-                continue;
-            }
-        // Get the mesh from the unique_ptr
-        auto& mesh = *meshPtr;
-        bool shaderSuccess = false;
-        // Create the shader program
-        shaderSuccess = mesh.createShaders();
-        if(shaderSuccess == false)
-        {
-            // Break the initGL loop if we fail to create a shader
-            LogManager::Log("\nShader creation failed\n");
-            success = false;
-            break;
-        }
-
-        // Create the VBO and IBO objects
-        mesh.initBuffers();
-    }
-
-    
     //Check for error
     error = glGetError();
     if( error != GL_NO_ERROR )
@@ -198,7 +175,6 @@ void SDLGameRenderer::BeginFrame()
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
- 
    // Loop through the meshes and set the buffer data
    // Get the meshes from the vector and store them in a variable
     auto meshes = getMeshes().get();
@@ -212,9 +188,7 @@ void SDLGameRenderer::BeginFrame()
 
             auto& mesh = *meshPtr;
             mesh.renderMesh();
-    }
- 
-    
+    }   
 }
 
 // Define the function to end a rendering frame
@@ -232,7 +206,7 @@ void SDLGameRenderer::Shutdown()
     auto meshes = getMeshes().get();
     for (const auto& meshPtr : *meshes) {
         if (meshPtr == nullptr) {
-            LogManager::Log("Mesh is null");
+            LogManager::Log("\nMesh is null\n");
                 continue;
                 }
 
@@ -246,38 +220,46 @@ void SDLGameRenderer::Shutdown()
     SDL_Quit();
 }
 
-// Define the function to add a mesh
+
+
+// Add the mesh to the mesh list
 void SDLGameRenderer::addMesh(std::unique_ptr<IMesh> thisMesh) {
     if(thisMesh == nullptr){
-        LogManager::Log("SDLGameRenderer::addMesh: Mesh is null");
+        LogManager::Log("\nSDLGameRenderer::addMesh: Mesh is null\n");
         return;
     }
+    
+    // Create the VBO and IBO objects
+    thisMesh->initBuffers();
+    // Add the mesh to the vector
     m_meshes->emplace_back(move(thisMesh));
 }
 
 // Define the function to remove a mesh
 void SDLGameRenderer::removeMesh(std::unique_ptr<IMesh> thisMesh) {
-    LogManager::Log("SDLGameRenderer::removeMesh: Not implemented");
+    LogManager::Log("\nSDLGameRenderer::removeMesh: Not implemented\n");
     if(thisMesh == nullptr){
-        LogManager::Log("SDLGameRenderer::removeMesh: Mesh is null");
+        LogManager::Log("\nSDLGameRenderer::removeMesh: Mesh is null\n");
         return;
     }
-    
 }
 
 // Define the function to get the meshes
 const std::unique_ptr<std::vector<std::unique_ptr<IMesh>>>& SDLGameRenderer::getMeshes() const {
-    
     return m_meshes;
 }
 
 void SDLGameRenderer::CreateTestMesh(){
     //Create the mesh vector
-    m_meshes = std::make_unique<std::vector<std::unique_ptr<IMesh>>>();
+    
     //Create the mesh
     quadMesh = std::make_unique<AF_Quad>();
     testBufferObject = std::make_unique<GL_BufferObject>();
     testMaterial = std::make_unique<GLMaterial>();
+    std::string vert = "./bin/debug_WIN_x64/assets/shaders/basicUnlit.vs";
+    std::string frag = "./bin/debug_WIN_x64/assets/shaders/basicUnlit.fs";
+    testShader = std::make_unique<GL_Shader>(vert, frag);
+    testMaterial->setShader(std::move(testShader));
     // Create the mesh, ensure we transfer ownership of the mesh to the IMesh object
     // need to also pass in the derived openGL buffer object which is derived from IBuffer_Object. This way we can swap from opegl to other standards
     testMesh = std::make_unique<GLMesh>(std::move(quadMesh), std::move(testBufferObject), std::move(testMaterial));
@@ -289,6 +271,7 @@ SDLGameRenderer::SDLGameRenderer()
 {
     //just init the pointers to null
     sdlGameWindowPtr = nullptr;
+    IRendererLocator::provide(this);
 }
 
 // Define the destructor for the SDLGameRenderer class
