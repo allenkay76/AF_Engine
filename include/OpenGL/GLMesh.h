@@ -6,7 +6,6 @@
 #endif
 
 #pragma once
-
 #include "Rendering/IMesh.h"
 
 // Mesh class to store reference to a modifiable AF_BaseMesh that becomes a derived version e.g. AF_Quad, AF_Triangle etc. Vertices, Indices stored in the AF_BaseMesh.
@@ -28,7 +27,7 @@ public:
     const std::unique_ptr<IBuffer_Object>& getBufferObject() const override;
 	const std::unique_ptr<IMaterial>& getMaterial() const override;
 
-
+    AF_Transform& getTransform() override;
 
 
 private:
@@ -37,4 +36,6 @@ private:
     // Buffer object
     std::unique_ptr<IBuffer_Object> bufferObject;
 	std::unique_ptr<IMaterial> material;
+
+    AF_Transform transform;
 };

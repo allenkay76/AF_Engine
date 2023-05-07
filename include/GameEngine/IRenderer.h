@@ -27,16 +27,16 @@ public:
     virtual void EndFrame() = 0;
 
     //std::unique_ptr<std::vector<std::unique_ptr<AF_BaseMesh>>>
-    virtual void addMesh(std::unique_ptr<IMesh> thisBaseMesh) = 0;
-    virtual void removeMesh(std::unique_ptr<IMesh> thisBaseMesh) = 0;
-    virtual const std::unique_ptr<std::vector<std::unique_ptr<IMesh>>>& getMeshes() const  = 0;
+    virtual void addMesh(std::shared_ptr<IMesh> thisBaseMesh) = 0;
+    virtual void removeMesh(std::shared_ptr<IMesh> thisBaseMesh) = 0;
+    virtual const std::unique_ptr<std::vector<std::shared_ptr<IMesh>>>& getMeshes() const  = 0;
     //Load Media from file path and take in an image data struct pointer, and return true if the image is loaded successfully
     //virtual std::unique_ptr<ImageData> loadImage(const char *filePath) = 0;
     //Load Media from file path
     //virtual bool loadImage(const char* filePath, ImageData* imageData) = 0;
     // add more rendering functions as needed
 private:
-    std::unique_ptr<std::vector<std::unique_ptr<IMesh>>> m_meshes;
+    std::unique_ptr<std::vector<std::shared_ptr<IMesh>>> m_meshes;
 };
 
 /*
@@ -67,17 +67,17 @@ public:
 
     virtual void EndFrame() {}
 
-    virtual void addMesh(std::unique_ptr<IMesh> thisBaseMesh) {
+    virtual void addMesh(std::shared_ptr<IMesh> thisBaseMesh) {
         (void)thisBaseMesh;
     }
 
-    virtual void removeMesh(std::unique_ptr<IMesh> thisBaseMesh) {
+    virtual void removeMesh(std::shared_ptr<IMesh> thisBaseMesh) {
         (void)thisBaseMesh;
     }
 
 
-    const std::unique_ptr<std::vector<std::unique_ptr<IMesh>>>& getMeshes() const override {
-        static std::unique_ptr<std::vector<std::unique_ptr<IMesh>>> emptyVector = std::make_unique<std::vector<std::unique_ptr<IMesh>>>();
+    const std::unique_ptr<std::vector<std::shared_ptr<IMesh>>>& getMeshes() const override {
+        static std::unique_ptr<std::vector<std::shared_ptr<IMesh>>> emptyVector = std::make_unique<std::vector<std::shared_ptr<IMesh>>>();
         return emptyVector;
     }
 };

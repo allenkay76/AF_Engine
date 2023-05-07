@@ -22,7 +22,7 @@
 //#pragma GCC diagnostic pop
 
 std::unique_ptr<IMaterial> testMaterial;
-std::unique_ptr<IMesh> testMesh;
+std::shared_ptr<IMesh> testMesh;
 std::unique_ptr<IBuffer_Object> testBufferObject;
 std::unique_ptr<AF_BaseMesh> quadMesh;
 std::unique_ptr<IShader> testShader;
@@ -47,9 +47,13 @@ bool SDLGameRenderer::Initialize(const char* windowName, const int windowWidth, 
 
         //use OpenGL 3.1 core
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-        
+    
+        // Set the attributes for the SDL window
+        SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+        SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+        SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
     
         if(windowPtr->getWindow() == nullptr)
         {
@@ -98,15 +102,15 @@ bool SDLGameRenderer::Initialize(const char* windowName, const int windowWidth, 
                 }
                 //set the glViewport and the perspective
                 glViewport(0, 0, windowWidth, windowHeight);\
-                gluPerspective(45.0f, (GLfloat)windowWidth / (GLfloat)windowHeight, 0.1f, 100.0f);
-                glLoadIdentity();
+                //gluPerspective(45.0f, (GLfloat)windowWidth / (GLfloat)windowHeight, 0.1f, 100.0f);
+                //glLoadIdentity();
             }
 
             
         }
     }
     //Now do render stup things.
-    m_meshes = std::make_unique<std::vector<std::unique_ptr<IMesh>>>();
+    m_meshes = std::make_unique<std::vector<std::shared_ptr<IMesh>>>();
     //CreateTestMesh();
 
     return success;
@@ -130,6 +134,7 @@ bool SDLGameRenderer::initGL(){
     glClearColor(0.f, 0.f, 0.f, 1.f);
                     
     //Initialize Projection Matrix
+    /*
     glMatrixMode( GL_PROJECTION );
     glLoadIdentity();
     
@@ -144,7 +149,7 @@ bool SDLGameRenderer::initGL(){
     //Initialize Modelview Matrix
     glMatrixMode( GL_MODELVIEW );
     glLoadIdentity();
-
+    */
     //Check for error
     error = glGetError();
     if( error != GL_NO_ERROR )
@@ -223,7 +228,7 @@ void SDLGameRenderer::Shutdown()
 
 
 // Add the mesh to the mesh list
-void SDLGameRenderer::addMesh(std::unique_ptr<IMesh> thisMesh) {
+void SDLGameRenderer::addMesh(std::shared_ptr<IMesh> thisMesh) {
     if(thisMesh == nullptr){
         LogManager::Log("\nSDLGameRenderer::addMesh: Mesh is null\n");
         return;
@@ -236,7 +241,7 @@ void SDLGameRenderer::addMesh(std::unique_ptr<IMesh> thisMesh) {
 }
 
 // Define the function to remove a mesh
-void SDLGameRenderer::removeMesh(std::unique_ptr<IMesh> thisMesh) {
+void SDLGameRenderer::removeMesh(std::shared_ptr<IMesh> thisMesh) {
     LogManager::Log("\nSDLGameRenderer::removeMesh: Not implemented\n");
     if(thisMesh == nullptr){
         LogManager::Log("\nSDLGameRenderer::removeMesh: Mesh is null\n");
@@ -245,7 +250,7 @@ void SDLGameRenderer::removeMesh(std::unique_ptr<IMesh> thisMesh) {
 }
 
 // Define the function to get the meshes
-const std::unique_ptr<std::vector<std::unique_ptr<IMesh>>>& SDLGameRenderer::getMeshes() const {
+const std::unique_ptr<std::vector<std::shared_ptr<IMesh>>>& SDLGameRenderer::getMeshes() const {
     return m_meshes;
 }
 
@@ -262,8 +267,8 @@ void SDLGameRenderer::CreateTestMesh(){
     testMaterial->setShader(std::move(testShader));
     // Create the mesh, ensure we transfer ownership of the mesh to the IMesh object
     // need to also pass in the derived openGL buffer object which is derived from IBuffer_Object. This way we can swap from opegl to other standards
-    testMesh = std::make_unique<GLMesh>(std::move(quadMesh), std::move(testBufferObject), std::move(testMaterial));
-    addMesh(std::move(testMesh));
+    testMesh = std::make_shared<GLMesh>(std::move(quadMesh), std::move(testBufferObject), std::move(testMaterial));
+    addMesh(testMesh);
 }
 
 // Define the destructor for the SDLGameRenderer class

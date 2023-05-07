@@ -13,4 +13,6 @@ public:
     virtual AF_Transform& getTransform() = 0;
     virtual IMesh& getMesh() = 0;
 
+    virtual void setMesh(std::shared_ptr<IMesh> thisMesh) = 0;
+
 };

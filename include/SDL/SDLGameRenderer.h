@@ -41,12 +41,11 @@ public:
     //Load Media from file path and take in an image data struct pointer, and return true if the image is loaded successfully
     //std::unique_ptr<ImageData> loadImage(const char *filePath) override;
 
+    void addMesh(std::shared_ptr<IMesh> thisMesh) override;
 
-    void addMesh(std::unique_ptr<IMesh> thisMesh) override;
+    void removeMesh(std::shared_ptr<IMesh> thisMesh) override;
 
-    void removeMesh(std::unique_ptr<IMesh> thisMesh) override;
-
-    const std::unique_ptr<std::vector<std::unique_ptr<IMesh>>>& getMeshes() const override;
+    const std::unique_ptr<std::vector<std::shared_ptr<IMesh>>>& getMeshes() const override;
 
     void CreateTestMesh();
 
@@ -73,6 +72,6 @@ private:
     SDL_GLContext sdlGameGLContext;
     
     
-    std::unique_ptr<std::vector<std::unique_ptr<IMesh>>> m_meshes;
+    std::unique_ptr<std::vector<std::shared_ptr<IMesh>>> m_meshes;
     //Mesh
 };
