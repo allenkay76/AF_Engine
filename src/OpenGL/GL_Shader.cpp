@@ -107,6 +107,8 @@ GL_Shader::GL_Shader(const std::string& vertexShaderPath, const std::string& fra
                         LogManager::Log("\nLVertexPos2D is not a valid glsl program variable!\n");
                         success = false;
                     }
+
+
                 }
             }
         }

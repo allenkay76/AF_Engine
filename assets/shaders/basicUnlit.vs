@@ -1,7 +1,7 @@
 #version 330 core
 
 in vec2 LVertexPos2D;
-in float LColVal;
+uniform float LColVal;
 
 uniform mat4 projectionMatrix; // Add this line to declare the projectionMatrix uniform
 

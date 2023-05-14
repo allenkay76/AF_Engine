@@ -69,7 +69,10 @@ void GLMesh::renderMesh()
      GLenum error = GL_NO_ERROR;
 
     //Bind program
-    glUseProgram( getMaterial()->getShader()->getProgramID());
+    if(getMaterial()->getShader()->getProgramID() == 0){
+        LogManager::Log("\nprogram id is 0: Likely shader wasn't created or failed during creation.\n");
+    }
+    glUseProgram(getMaterial()->getShader()->getProgramID());
 
     //Check for error
     error = glGetError();
@@ -78,24 +81,33 @@ void GLMesh::renderMesh()
         printf( "\nglUseProgram %s\n", gluErrorString( error ) );
     }
     //update the shader position
-    LogManager::Log("\nLColVal post: %f %i\n" , 1 /getTransform().position.y , getMaterial()->getShader()->getProgramID());
+    //LogManager::Log("\nLColVal post: %f %i\n" , getTransform().position.y + 0.01f , getMaterial()->getShader()->getProgramID());
     //getMaterial()->getShader()->setFloat("LColVal", 1 / getTransform().position.y);
     //getMaterial()->getShader()->setVec3("LVertexPos2D", getTransform().position.x, getTransform().position.y, getTransform().position.z);
     int shaderProgram = getMaterial()->getShader()->getProgramID();
-    int vertextColorLocation = glGetUniformLocation(getMaterial()->getShader()->getProgramID(), "LColVal");
+    int vertexColorLocation = glGetUniformLocation(getMaterial()->getShader()->getProgramID(), "LColVal");
+    if(vertexColorLocation == -1){
+        LogManager::Log("\ntestMesh shaderID at GLMesh::renderMesh is: %i\n", getMaterial()->getShader()->getProgramID());
+        LogManager::Log("\nLColVal pos is -1 i.e. wasn't found: %i\n" , vertexColorLocation);
+    }
+    //LogManager::Log("\nLColVal pos: %i\n" , vertextColorLocation);
+
     //Check for error
     error = glGetError();
     if( error != GL_NO_ERROR )
     {
+
         printf( "\nglGetIniformLocation %s\n", gluErrorString( error ) );
     }
 
-    glUniform1f(vertextColorLocation, 1 / getTransform().position.y);//1 / getTransform().position.y);
+    float value = 1.0f / getTransform().position.y;
+    value = std::max(0.0f, std::min(1.0f, value));
+    glUniform1f(vertexColorLocation, value);
     //Check for error
     error = glGetError();
     if( error != GL_NO_ERROR )
     {
-        printf( "\nEglUniform1f %s\n", gluErrorString( error ) );
+        printf( "\nglUniform1f %s\n", gluErrorString( error ) );
     }
 
     // Get the location of the projection matrix uniform in the shader
@@ -158,7 +170,7 @@ void GLMesh::renderMesh()
     error = glGetError();
     if( error != GL_NO_ERROR )
     {
-        printf( "\nglEnableVertexAttribArray %s\n", gluErrorString( error ) );
+        printf( "\nglEnableVertexAttribArray for the position attribute %s\n", gluErrorString( error ) );
     }
 
 
