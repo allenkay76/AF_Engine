@@ -176,7 +176,7 @@
                 "-fdiagnostics-color=always",   // Enable color output for diagnostics
                 "-g",                           // Enable debugging information
                 "-I${workspaceFolder}/include", // Add the include directory to the search path
-                "-I${workspaceFolder}/../SDK/mingw_dev_lib/i686-w64-mingw32/include/SDL2", // Add the SDL2 include directory to the search path
+                "-I${workspaceFolder}/../SDK/mingw_dev_lib/i686-w64-mingw32/include", // Add the SDL2 include directory to the search path
                 "-L${workspaceFolder}/../SDK/mingw_dev_lib/i686-w64-mingw32/lib", // Add the SDL2 library directory to the search path
                 "-I${workspaceFolder}/../SDK/SDL2_ttf-devel-2.20.2-mingw/SDL2_ttf-2.20.2/i686-w64-mingw32/include", // Add the SDL2_ttf include directory to the search path
                 "-L${workspaceFolder}/../SDK/SDL2_ttf-devel-2.20.2-mingw/SDL2_ttf-2.20.2/i686-w64-mingw32/lib", // Add the SDL2_ttf library directory to the search path
@@ -252,7 +252,7 @@
             "detail": "Compiles the AF_Engine library with g++ for Windows",
             
             // Define that the task depends on the "clean" task
-            "dependsOn": "clean",
+            //"dependsOn": "clean",
             
             // Define additional arguments to use on Linux systems
             "linux": {
