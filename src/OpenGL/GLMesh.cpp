@@ -100,9 +100,14 @@ void GLMesh::renderMesh()
         printf( "\nglGetIniformLocation %s\n", gluErrorString( error ) );
     }
 
-    float value = 1.0f / getTransform().position.y;
-    value = std::max(0.0f, std::min(1.0f, value));
-    glUniform1f(vertexColorLocation, value);
+    //float value = 1.0f / getTransform().position.y;
+    //value = std::max(0.0f, std::min(1.0f, value));
+    //glUniform1f(vertexColorLocation, value);
+
+    //update the shader color based on the material color
+    AF_Vec4& materialColor = getMaterial()->getMaterialColor();
+    glUniform4f(vertexColorLocation, materialColor.x, materialColor.y, materialColor.z, materialColor.w);
+    
     //Check for error
     error = glGetError();
     if( error != GL_NO_ERROR )

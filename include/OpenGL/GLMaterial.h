@@ -8,6 +8,7 @@
 #include "Rendering/IMaterial.h"
 #include "OpenGL/GL_Shader.h"
 
+
 class GLMaterial : public IMaterial {
     public:
         //Constructors and destructors
@@ -18,9 +19,12 @@ class GLMaterial : public IMaterial {
         GLuint getTexture() override;
         const IShader* getShader() const override;
         void setShader(std::unique_ptr<IShader> thisShader) override;
+        AF_Vec4& getMaterialColor() override;
+        void setMaterialColor(const AF_Vec4& color) override;
         
 
     private:
+
         std::unique_ptr<IShader> shader;
-        
+        AF_Vec4 m_color;
 };

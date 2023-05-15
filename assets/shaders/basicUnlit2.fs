@@ -1,10 +1,10 @@
 
 #version 330 core
 
-in float FragColor;
+in vec4 FragColor;
 out vec4 LFragment; 
 
 void main() { 
-    LFragment = vec4(FragColor, 0.5, 0.5, 1.0); 
+    LFragment = FragColor;//vec4(FragColor.x, FragColor.y, FragColor.y, 1.0); 
 }
 
